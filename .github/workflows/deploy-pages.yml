@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -28,12 +28,14 @@ jobs:
         env:
           # Project site lives at https://<owner>.github.io/<repo>/
           BASE_PATH: /${{ github.event.repository.name }}/
-      - uses: actions/configure-pages@v5
+      # Disable Jekyll so Pages serves dist as-is (needed for the branch-based path).
+      - run: touch dist/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
+  # Path A: Pages source = "GitHub Actions".
+  deploy-actions:
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -42,3 +44,22 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # Path B: Pages source = "Deploy from a branch" → point it at `gh-pages` / root.
+  # Keeps the live site built even if the repo setting was never switched to Actions.
+  deploy-branch:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: /tmp/pages
+      - run: mkdir -p /tmp/site && tar -xf /tmp/pages/artifact.tar -C /tmp/site
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: /tmp/site
+          publish_branch: gh-pages
+          force_orphan: true
