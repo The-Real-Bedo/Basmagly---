@@ -28,19 +28,14 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2">
           <div className="space-y-2 max-w-3xl">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-lg text-[13px] font-mono font-bold bg-beige-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700">
-                {course.code}
-              </span>
-              {course.instructor && (
-                <span className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-zinc-400">
-                  <User className="w-4 h-4 shrink-0" />
-                  <span dir="auto" className={hasArabic(course.instructor) ? 'font-arabic' : 'font-mono'}>
-                    {course.instructor}
-                  </span>
+            {course.instructor && (
+              <span className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-zinc-400">
+                <User className="w-4 h-4 shrink-0" />
+                <span dir="auto" className={hasArabic(course.instructor) ? 'font-arabic' : 'font-mono'}>
+                  {course.instructor}
                 </span>
-              )}
-            </div>
+              </span>
+            )}
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-stone-100">
               {course.title}

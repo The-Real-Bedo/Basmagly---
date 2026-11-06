@@ -1,6 +1,7 @@
 import React from 'react';
-import { GraduationCap, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { ArabicText } from './ArabicText';
+import { BrandLogo } from './BrandLogo';
 
 interface NavbarProps {
   currentTerm: 1 | 2;
@@ -25,24 +26,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={onHomeClick}
           className="flex items-center gap-3.5 text-left group transition-transform active:scale-95 min-w-0"
         >
-          <div className="w-11 h-11 rounded-2xl bg-stone-900 dark:bg-stone-100 flex items-center justify-center text-white dark:text-stone-900 shadow-sm transition-all shrink-0">
-            <GraduationCap className="w-6 h-6" />
-          </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-lg text-stone-900 dark:text-stone-100 tracking-tight font-arabic">
-                بصمجّلي شكرًا
-              </span>
-              <span className="hidden sm:inline text-xs font-mono font-medium text-stone-600 dark:text-zinc-400">
-                (Basmagly)
-              </span>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <BrandLogo />
               <span className="hidden sm:inline px-2 py-0.5 rounded-md text-[13px] font-mono font-bold bg-beige-200 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700">
                 2026/2027
               </span>
             </div>
             {/* Tagline: hidden on small screens so the brand and controls fit on one row */}
-            <ArabicText as="p" className="hidden lg:block text-sm font-medium text-stone-600 dark:text-zinc-300 pt-0.5 text-left">
-              زتونة المنهج للامتحان • ملخصات مركزة، معامل تفاعلية، وبنك أسئلة تضمن بيه الـ GPA
+            <ArabicText as="p" className="hidden lg:block text-sm font-medium text-stone-600 dark:text-zinc-300 pt-1 text-left">
+              المنهج في بصمة… وابصم بالعشرة إنك داخل الامتحان فاهم
             </ArabicText>
           </div>
         </button>

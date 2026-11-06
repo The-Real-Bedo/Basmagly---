@@ -60,7 +60,6 @@ export interface Lecture {
 
 export interface Course {
   id: string;
-  code: string;
   title: string;
   titleAr: string;
   instructor?: string;

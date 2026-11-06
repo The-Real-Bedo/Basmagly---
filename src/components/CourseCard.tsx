@@ -35,9 +35,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[13px] font-bold px-2.5 py-1 rounded-lg bg-beige-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-200 dark:border-stone-700">
-              {course.code}
-            </span>
             {course.isAvailable ? (
               <span className="text-[13px] font-bold px-2.5 py-1 rounded-full bg-emerald-100/80 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
                 جاهزة للمذاكرة
