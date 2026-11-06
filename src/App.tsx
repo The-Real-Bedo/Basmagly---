@@ -71,7 +71,7 @@ const ALL_LABS: LabDirectoryItem[] = [
     categoryLabel: 'Networks',
     categoryLabelAr: 'شبكات الحاسب',
     title: 'IPv4 Subnetting & Bitwise AND Engine',
-    subtitleAr: 'حاسبة السابنتينج والوحايد والأصفار',
+    subtitleAr: 'حاسبة الـ Subnetting بالوحايد والأصفار',
     descriptionAr: 'سلايدر مباشر لحساب الـ CIDR وعنوان الشبكة (Network ID) والبث (Broadcast) وعدد الأجهزة الصالحة.',
     icon: Calculator,
     badge: 'CIDR & Binary'
@@ -137,7 +137,7 @@ const ALL_LABS: LabDirectoryItem[] = [
     categoryLabelAr: 'إنترنت الأشياء',
     title: 'Edge vs Cloud Computing Tradeoff Lab',
     subtitleAr: 'معمل الـ Edge مقابل الـ Cloud في الطوارئ',
-    descriptionAr: 'محاكاة حريق بمصنع: شوف سرعة استجابة الـ Edge (3ms) مقارنة بالكلاود (240ms) وماذا يحدث لو انقطع النت.',
+    descriptionAr: 'محاكاة حريق في مصنع: شوف سرعة استجابة الـ Edge (3ms) مقارنة بالـ Cloud (240ms)، وإيه اللي بيحصل لو النت فصل.',
     icon: Cpu,
     badge: 'Edge vs Cloud'
   },
@@ -150,7 +150,7 @@ const ALL_LABS: LabDirectoryItem[] = [
     categoryLabelAr: 'إنترنت الأشياء',
     title: 'IoT 4-Stage End-to-End Pipeline',
     subtitleAr: 'محاكي السلسلة الرباعية لإنترنت الأشياء',
-    descriptionAr: 'سلايدرات تحكم حية لسنسور الحرارة، نقل الداتا عبر شبكات MQTT، التحليل السحابي، وتشغيل المحابس.',
+    descriptionAr: 'سلايدرات تحكم حية لسنسور الحرارة، نقل الداتا عبر MQTT، التحليل على الـ Cloud، وتشغيل المحابس أوتوماتيك.',
     icon: Sliders,
     badge: 'IoT Pipeline'
   }
@@ -254,7 +254,7 @@ export const App: React.FC = () => {
               onClick={() => setCurrentTerm(1)}
               className="px-5 py-2.5 rounded-xl bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 text-sm font-bold transition-all active:scale-95 shadow-sm"
             >
-              الرجوع لمقررات الترم الأول (Return to Term 1)
+              <ArabicText as="span" className="text-white dark:text-stone-900">الرجوع لمواد الترم الأول (Back to Term 1)</ArabicText>
             </button>
           </div>
         ) : (
@@ -282,35 +282,36 @@ export const App: React.FC = () => {
 
               {/* Minimalist Summary Badges */}
               <div className="flex items-center gap-3 shrink-0">
-                <div className="bg-[#FAF7F2] dark:bg-stone-950 p-3.5 rounded-2xl text-center min-w-[85px] border border-beige-300 dark:border-stone-800">
-                  <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">Courses</span>
-                  <span className="text-2xl font-bold font-mono text-stone-900 dark:text-stone-100">6</span>
-                </div>
-                <div className="bg-[#FAF7F2] dark:bg-stone-950 p-3.5 rounded-2xl text-center min-w-[85px] border border-beige-300 dark:border-stone-800">
-                  <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">Active Units</span>
-                  <span className="text-2xl font-bold font-mono text-stone-900 dark:text-stone-100">{totalLecturesCount}</span>
-                </div>
-                <div className="bg-[#FAF7F2] dark:bg-stone-950 p-3.5 rounded-2xl text-center min-w-[85px] border border-beige-300 dark:border-stone-800">
-                  <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">Simulators</span>
-                  <span className="text-2xl font-bold font-mono text-stone-900 dark:text-stone-100">{ALL_LABS.length} Labs</span>
-                </div>
+                {[
+                  { label: 'Courses', value: termCourses.length },
+                  { label: 'Lectures', value: totalLecturesCount },
+                  { label: 'Labs', value: ALL_LABS.length },
+                ].map(stat => (
+                  <div
+                    key={stat.label}
+                    className="bg-[#FAF7F2] dark:bg-stone-950 p-3.5 rounded-2xl text-center min-w-[85px] border border-beige-300 dark:border-stone-800"
+                  >
+                    <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">{stat.label}</span>
+                    <span className="text-2xl font-bold font-mono text-stone-900 dark:text-stone-100">{stat.value}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Courses Grid Section */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-beige-200 dark:border-stone-800 pb-3">
+              <div className="flex items-start sm:items-center justify-between gap-3 border-b border-beige-200 dark:border-stone-800 pb-3">
                 <div>
                   <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
                     Courses Curriculum ({termCourses.length} Subjects)
                   </h2>
                   <ArabicText className="text-sm font-normal text-stone-600 dark:text-zinc-300">
-                    المواد الدراسية الستة للترم الأول
+                    مواد الترم الأول — ادخل على المادة وذاكر محاضرة محاضرة
                   </ArabicText>
                 </div>
                 {/* Requirement 1: Increased contrast on Semester 1 badge */}
-                <span className="text-[13px] font-mono font-bold px-3 py-1 rounded-lg bg-beige-100 dark:bg-stone-800 text-stone-700 dark:text-zinc-200 border border-beige-200 dark:border-stone-700 shadow-2xs">
-                  Semester 1
+                <span className="text-[13px] font-mono font-bold px-3 py-1 rounded-lg bg-beige-100 dark:bg-stone-800 text-stone-700 dark:text-zinc-200 border border-beige-200 dark:border-stone-700 shadow-sm whitespace-nowrap shrink-0">
+                  Term 1
                 </span>
               </div>
 
@@ -386,7 +387,7 @@ export const App: React.FC = () => {
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-beige-200 dark:bg-stone-800 flex items-center justify-center text-stone-800 dark:text-zinc-200 shrink-0 mt-0.5 group-hover:bg-stone-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-stone-900 transition-colors shadow-2xs">
+                          <div className="w-9 h-9 rounded-xl bg-beige-200 dark:bg-stone-800 flex items-center justify-center text-stone-800 dark:text-zinc-200 shrink-0 mt-0.5 group-hover:bg-stone-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-stone-900 transition-colors shadow-sm">
                             <IconComp className="w-5 h-5" />
                           </div>
                           <div>

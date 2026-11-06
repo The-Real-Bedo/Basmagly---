@@ -75,42 +75,47 @@
     font-size: var(--font-size-sm);
     line-height: var(--line-height-normal);
   }
+
+  /* ========================================================================
+     ARABIC TYPOGRAPHY & RTL / LTR RULES
+     Kept in the base layer so Tailwind utilities (text-center, text-left,
+     font-mono, leading-*) can still override them per element.
+     ======================================================================== */
+  .font-arabic,
+  [dir="rtl"] {
+    font-family: var(--font-arabic);
+    line-height: var(--line-height-arabic);
+  }
+
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* English terms isolated inside Arabic text; inline so long phrases can wrap */
+  bdi[dir="ltr"],
+  span[dir="ltr"] {
+    unicode-bidi: isolate;
+  }
 }
 
-/* ==========================================================================
-   ARABIC TYPOGRAPHY & RTL / LTR RULES
-   - Arabic text increased by 10-15% relative to English text
-   - Line height set to 1.75
-   - Native Arabic fonts (IBM Plex Sans Arabic, Cairo)
-   - Proper dir="rtl" and right alignment
-   ========================================================================== */
-.font-arabic,
-[dir="rtl"] {
-  font-family: var(--font-arabic);
-  line-height: var(--line-height-arabic);
-}
-
-/* 10-15% size boost for Arabic to match visual optical weight of Latin */
+/* 10-15% size boost for Arabic to match the optical weight of Latin.
+   Deliberately outside the base layer so it applies on top of text-* utilities
+   (Arabic is always ~1.12x the size its Latin sibling would get). */
 .font-arabic {
   font-size: 1.12em;
 }
 
-/* RTL Text Alignment */
-[dir="rtl"] {
-  direction: rtl;
-  text-align: right;
-}
-
-[dir="ltr"] {
-  direction: ltr;
-  text-align: left;
-}
-
-/* Punctuation and English terms isolation inside Arabic text */
-bdi[dir="ltr"],
-span[dir="ltr"] {
-  unicode-bidi: isolate;
-  display: inline-block;
+/* Default colour for <ArabicText>; any text-* utility on the element overrides it. */
+@layer components {
+  .arabic-text {
+    @apply text-stone-700 dark:text-zinc-300;
+  }
 }
 
 /* Reusable class for high-contrast secondary text */

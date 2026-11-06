@@ -1,189 +1,266 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { Bot, RotateCcw } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
 
-interface PeasScenario {
+type Room = 'A' | 'B';
+type PeasKey = 'performance' | 'environment' | 'actuators' | 'sensors';
+
+interface Bilingual {
+  en: string;
+  ar: string;
+}
+
+interface PeasScenario extends Record<PeasKey, Bilingual> {
   title: string;
   titleAr: string;
-  performance: { en: string; ar: string };
-  environment: { en: string; ar: string };
-  actuators: { en: string; ar: string };
-  sensors: { en: string; ar: string };
 }
+
+const PEAS_FIELDS: { key: PeasKey; letter: string; ar: string; en: string }[] = [
+  { key: 'performance', letter: 'P', ar: 'مقياس الأداء', en: 'Performance Measure' },
+  { key: 'environment', letter: 'E', ar: 'البيئة', en: 'Environment' },
+  { key: 'actuators', letter: 'A', ar: 'المحركات', en: 'Actuators' },
+  { key: 'sensors', letter: 'S', ar: 'الحساسات', en: 'Sensors' },
+];
 
 const PEAS_DATA: PeasScenario[] = [
   {
     title: 'Automated Vacuum Cleaner',
-    titleAr: 'المكنسة الذكية (عالم المكنسة الشهير)',
+    titleAr: 'المكنسة الآلية (Vacuum World)',
     performance: {
-      en: 'Cleanliness percentage, battery efficiency, time taken, minimal noise.',
-      ar: 'نسبة النظافة، توفير شحن البطارية، الوقت المستغرق، وعدم الخبط في الحيطان.'
+      en: 'Floor cleanliness, battery efficiency, time taken, minimal noise.',
+      ar: 'نظافة الأرضية، توفير شحن البطارية، الوقت المستغرق، وأقل ضجيج ممكن.',
     },
     environment: {
-      en: 'Room flooring, carpets, dirt particles, furniture obstacles, stairs.',
-      ar: 'أرضية السيراميك، السجاد، التراب والزبالة، الكراسي والعفش، والسلالم عشان متقعش.'
+      en: 'Room floors, carpets, dirt, furniture obstacles, stairs.',
+      ar: 'أرضية السيراميك والسجاد، التراب والزبالة، الكراسي والعفش (عوائق)، والسلالم (خطر السقوط).',
     },
     actuators: {
-      en: 'Drive wheels, suction motor, spinning brush, audio speaker/alarm.',
-      ar: 'عجلات الحركة يمين وشمال، ماتور الشفط القوي، الفرش الدوارة، وسارينة التنبيه.'
+      en: 'Drive wheels, suction motor, rotating brush, audio alarm.',
+      ar: 'عجلات الحركة (يمين وشمال)، موتور الشفط، الفرشاة الدوارة، وسرينة التنبيه.',
     },
     sensors: {
-      en: 'Dirt sensor, bump bumper, cliff detector (IR), wheel optical encoder.',
-      ar: 'حساس كشف التراب، حساس الصدمات، حساس الحافة (إنفراريد للسلالم)، وحساس دوران العجل.'
-    }
+      en: 'Dirt sensor, bump sensor, cliff sensor (IR), wheel encoder.',
+      ar: 'حساس التراب، حساس الاصطدام، حساس الحافة (Infrared) للسلالم، وحساس دوران العجلات (Wheel Encoder).',
+    },
   },
   {
     title: 'Autonomous Self-Driving Taxi (Waymo/Tesla)',
-    titleAr: 'تاكسي القيادة الذاتية بدون سائق',
+    titleAr: 'تاكسي بدون سائق (Self-Driving Taxi)',
     performance: {
-      en: 'Passenger safety, reaching destination, obeying traffic laws, smooth ride.',
-      ar: 'أمان الركاب أولاً، الوصول السريع للوجهة، احترام إشارات المرور، وركوبة مريحة بدون فرملة مفاجئة.'
+      en: 'Passenger safety, reaching the destination, obeying traffic laws, smooth ride.',
+      ar: 'أمان الركاب أولاً، الوصول للوجهة بسرعة، احترام قوانين وإشارات المرور، وركوبة مريحة من غير فرملة مفاجئة.',
     },
     environment: {
-      en: 'Urban city roads, pedestrians, other vehicles, rain/fog, traffic lights.',
-      ar: 'شوارع المدينة، المشاة اللي بيعدوا فجأة، العربيات التانية، المطرة والشبورة، وإشارات المرور.'
+      en: 'City roads, pedestrians, other vehicles, rain/fog, traffic lights.',
+      ar: 'شوارع المدينة، المشاة اللي بيعدوا فجأة، العربيات التانية، المطر والشبورة، وإشارات المرور.',
     },
     actuators: {
-      en: 'Steering wheel motor, accelerator pedal, disc brakes, turn signals, horn.',
-      ar: 'دركسيون التوجيه، دواسة البنزين، فرامل الطوارئ، إشارات الانعطاف، والكلاكس.'
+      en: 'Steering, accelerator, brakes, turn signals, horn.',
+      ar: 'الدركسيون (التوجيه)، دواسة البنزين، الفرامل، إشارات الانعطاف، والكلاكس.',
     },
     sensors: {
-      en: 'LiDAR, HD cameras, RADAR, GPS, sonar distance sensors, speedometer.',
-      ar: 'كاميرات عالية الدقة 360، رادار وليدار لقياس المسافات، GPS، وحساس السرعة.'
-    }
+      en: 'LiDAR, HD cameras, radar, GPS, sonar distance sensors, speedometer.',
+      ar: 'كاميرات عالية الدقة، رادار، LiDAR، حساسات سونار لقياس المسافات، GPS، وعداد السرعة.',
+    },
   },
   {
     title: 'Medical Diagnosis AI System',
-    titleAr: 'نظام التشخيص الطبي الذكي للمرضى',
+    titleAr: 'نظام تشخيص طبي بالذكاء الاصطناعي',
     performance: {
-      en: 'High diagnostic accuracy, reduced treatment cost, patient recovery speed.',
-      ar: 'دقة التشخيص وخلوه من الأخطاء القاتلة، تقليل تكاليف الفحوصات غير الضرورية، وسرعة شفاء المريض.'
+      en: 'High diagnostic accuracy, reduced treatment costs, faster patient recovery.',
+      ar: 'دقة التشخيص وتجنب الأخطاء الخطيرة، تقليل تكلفة الفحوصات غير الضرورية، وسرعة تعافي المريض.',
     },
     environment: {
-      en: 'Hospital clinic, patient symptoms, lab test results, disease databases.',
-      ar: 'المستشفى والعيادة، شكوى المريض وأعراضه، نتائج التحاليل والأشعة، وتاريخه الطبي.'
+      en: 'Hospital/clinic, patient symptoms and medical history, lab results, disease databases.',
+      ar: 'المستشفى أو العيادة، شكوى المريض وأعراضه وتاريخه الطبي، نتائج التحاليل والأشعة، وقواعد بيانات الأمراض.',
     },
     actuators: {
-      en: 'Screen display, prescription generation, test referral order, dosage alert.',
-      ar: 'شاشة التقرير للدكتور، طباعة الروشتة وجرعات العلاج، وطلب تحاليل إضافية لو شاكك.'
+      en: 'Screen display, prescription generation, test referral orders, dosage alerts.',
+      ar: 'شاشة عرض التشخيص للدكتور، طباعة الروشتة، طلب تحاليل إضافية لو فيه شك، وتنبيه بجرعات الدواء.',
     },
     sensors: {
-      en: 'Keyboard symptom input, EHR electronic records, blood analyzer scanner.',
-      ar: 'لوحة المفاتيح لإدخال الأعراض، الربط بقاعدة بيانات التحاليل، وقارئ الأشعة السينية.'
-    }
-  }
+      en: 'Keyboard entry of symptoms, EHR (electronic health records), lab analyzer results.',
+      ar: 'إدخال الأعراض من لوحة المفاتيح، الربط مع السجلات الطبية الإلكترونية (EHR)، ونتائج أجهزة التحاليل.',
+    },
+  },
 ];
+
+/* ---------- Simulation ---------- */
+
+const STEP_MS = 1000;
+const SUCK_MS = 500;
+
+const DIRT_EMOJI: Record<Room, string[]> = {
+  A: ['🍂', '🍪', '🌾', '🍂'],
+  B: ['🍂', '🍂', '🍞', '🍂'],
+};
+
+// Simple reflex agent (Russell & Norvig, Fig. 2.8): percept = [location, status].
+const AGENT_RULES = [
+  { percept: '[A or B, Dirty]', action: 'Suck' },
+  { percept: '[A, Clean]', action: 'Move to B' },
+  { percept: '[B, Clean]', action: 'Move to A' },
+];
+
+const otherRoom = (room: Room): Room => (room === 'A' ? 'B' : 'A');
+const cleanCount = (dirty: Record<Room, boolean>) => (dirty.A ? 0 : 1) + (dirty.B ? 0 : 1);
+const formatScore = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `\u2212${Math.abs(n)}` : '0');
+
+const LOG_INITIAL = 'الوكيل جاهز في الغرفة A. اضغط "خطوة واحدة" أو "تشغيل تلقائي" وشوف بيتصرف إزاي.';
+const LOG_RESET = 'تم ضبط المحاكي من الأول: الغرفتين فيهم تراب والوكيل في الغرفة A.';
+const LOG_DONE =
+  '🎉 الغرفتين بقوا نضاف والمحاكاة وقفت. الـ Simple Reflex Agent مش بيفتكر إن الغرفة التانية نضيفة، فكان هيفضل يتحرك ويخسر نقطة في كل خطوة.';
+
+interface World {
+  dirty: Record<Room, boolean>;
+  pos: Room;
+  score: number;
+  steps: number;
+  sucking: boolean;
+  autoPlay: boolean;
+  log: string;
+}
+
+type WorldAction =
+  | { type: 'STEP'; auto?: boolean }
+  | { type: 'SUCK_DONE' }
+  | { type: 'TOGGLE_DIRT'; room: Room }
+  | { type: 'TOGGLE_AUTO' }
+  | { type: 'RESET' };
+
+const INITIAL_WORLD: World = {
+  dirty: { A: true, B: true },
+  pos: 'A',
+  score: 0,
+  steps: 0,
+  sucking: false,
+  autoPlay: false,
+  log: LOG_INITIAL,
+};
+
+function worldReducer(s: World, a: WorldAction): World {
+  switch (a.type) {
+    case 'STEP': {
+      if (s.sucking) return s;
+      if (a.auto && !s.dirty.A && !s.dirty.B) return { ...s, autoPlay: false, log: LOG_DONE };
+
+      const steps = s.steps + 1;
+      if (s.dirty[s.pos]) {
+        // The room is removed from `dirty` on SUCK_DONE (after the animation),
+        // but this step's score already counts it as clean.
+        const score = s.score + cleanCount({ ...s.dirty, [s.pos]: false });
+        return {
+          ...s,
+          steps,
+          score,
+          sucking: true,
+          log: `🧹 الإجراء: Suck. الغرفة ${s.pos} كان فيها تراب، فالوكيل شفطه.`,
+        };
+      }
+
+      const next = otherRoom(s.pos);
+      return {
+        ...s,
+        pos: next,
+        steps,
+        score: s.score + cleanCount(s.dirty) - 1,
+        log: `➡️ الإجراء: Move to ${next}. الغرفة ${s.pos} نضيفة، فالوكيل انتقل للغرفة التانية.`,
+      };
+    }
+    case 'SUCK_DONE': {
+      if (!s.sucking) return s;
+      const dirty = { ...s.dirty, [s.pos]: false };
+      const finished = s.autoPlay && !dirty.A && !dirty.B;
+      return {
+        ...s,
+        dirty,
+        sucking: false,
+        autoPlay: finished ? false : s.autoPlay,
+        log: finished ? LOG_DONE : s.log,
+      };
+    }
+    case 'TOGGLE_DIRT':
+      return { ...s, dirty: { ...s.dirty, [a.room]: !s.dirty[a.room] } };
+    case 'TOGGLE_AUTO':
+      return { ...s, autoPlay: !s.autoPlay };
+    case 'RESET':
+      return { ...INITIAL_WORLD, log: LOG_RESET };
+  }
+}
+
+/* ---------- Shared styles ---------- */
+
+const pillClass = (active: boolean) =>
+  `px-3 py-1.5 rounded-xl text-sm font-arabic transition-all ${
+    active
+      ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
+      : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-stone-100'
+  }`;
+
+const secondaryBtn =
+  'px-3.5 py-2 rounded-xl font-arabic text-sm font-bold bg-white dark:bg-stone-900 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700 hover:bg-beige-100 dark:hover:bg-stone-800 shadow-sm transition-colors';
+
+const infoCard =
+  'p-4 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-2';
 
 export const VacuumWorldAgentLab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'simulation' | 'peas'>('simulation');
-  const [roomAIsDirty, setRoomAIsDirty] = useState<boolean>(true);
-  const [roomBIsDirty, setRoomBIsDirty] = useState<boolean>(true);
-  const [agentPos, setAgentPos] = useState<'A' | 'B'>('A');
-  const [isSucking, setIsSucking] = useState<boolean>(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(false);
-  const [score, setScore] = useState<number>(0);
-  const [actionLog, setActionLog] = useState<string>('الوكيل جاهز في غرفة A. اضغط على أزرار التحكم وجرب الذكاء الاصطناعي.');
-  const [agentType, setAgentType] = useState<'reflex' | 'rational'>('rational');
-
   const [selectedPeasIndex, setSelectedPeasIndex] = useState<number>(0);
+  const [world, dispatch] = useReducer(worldReducer, INITIAL_WORLD);
 
-  // Single step execution
-  const executeStep = () => {
-    const isCurrentDirty = agentPos === 'A' ? roomAIsDirty : roomBIsDirty;
-
-    if (isCurrentDirty) {
-      // Suck action
-      setIsSucking(true);
-      setActionLog(`🧹 الإجراء: SUCK! الغرفة ${agentPos} كان فيها تراب، الوكيل الذكي شفط الزبالة.`);
-      setScore(prev => prev + 10);
-
-      setTimeout(() => {
-        if (agentPos === 'A') setRoomAIsDirty(false);
-        else setRoomBIsDirty(false);
-        setIsSucking(false);
-      }, 500);
-    } else {
-      // Move action
-      const nextPos = agentPos === 'A' ? 'B' : 'A';
-      setAgentPos(nextPos);
-      setScore(prev => prev - 1); // Movement cost penalty
-      setActionLog(`➡️ الإجراء: MOVE TO ${nextPos}! الغرفة ${agentPos} خلاص نضيفة، الوكيل اتحرك للغرفة التانية.`);
-    }
-  };
-
-  // Auto clean simulation loop
+  // Suck animation: the room is cleaned when the timer fires.
   useEffect(() => {
-    let timer: any;
-    if (isAutoPlaying) {
-      timer = setInterval(() => {
-        const isCurrentDirty = agentPos === 'A' ? roomAIsDirty : roomBIsDirty;
-        const otherIsDirty = agentPos === 'A' ? roomBIsDirty : roomAIsDirty;
+    if (!world.sucking) return;
+    const id = setTimeout(() => dispatch({ type: 'SUCK_DONE' }), SUCK_MS);
+    return () => clearTimeout(id);
+  }, [world.sucking]);
 
-        if (isCurrentDirty) {
-          executeStep();
-        } else if (otherIsDirty) {
-          executeStep();
-        } else {
-          // Both clean!
-          setIsAutoPlaying(false);
-          setActionLog('🎉 الله ينور! كل الغرف بقت بتبرق ونظيفة 100%! الوكيل وقف عشان يوفر بطارية.');
-        }
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [isAutoPlaying, agentPos, roomAIsDirty, roomBIsDirty]);
-
-  const handleReset = () => {
-    setIsAutoPlaying(false);
-    setRoomAIsDirty(true);
-    setRoomBIsDirty(true);
-    setAgentPos('A');
-    setScore(0);
-    setIsSucking(false);
-    setActionLog('تم تصفير الغرف ورجع التراب والوكيل في غرفة A.');
-  };
+  useEffect(() => {
+    if (!world.autoPlay) return;
+    const id = setInterval(() => dispatch({ type: 'STEP', auto: true }), STEP_MS);
+    return () => clearInterval(id);
+  }, [world.autoPlay]);
 
   const currentPeas = PEAS_DATA[selectedPeasIndex];
+  const activeRule = world.dirty[world.pos] ? 0 : world.pos === 'A' ? 1 : 2;
 
   return (
-    <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 sm:p-7 shadow-sm space-y-6">
+    <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-beige-200 dark:border-stone-800">
-        <div className="flex items-center gap-3">
-          <span className="p-2.5 rounded-xl bg-beige-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200">
-            <Bot className="w-5 h-5" />
-          </span>
-          <div>
-            <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-              Rational Agents & Vacuum World Interactive Lab
-            </h3>
-            <ArabicText className="text-sm text-stone-600 dark:text-zinc-300">
-              محاكي الوكيل العقلاني (Russell & Norvig Vacuum Environment) وإطار الـ PEAS للامتحانات
-            </ArabicText>
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
+              <Bot className="w-5 h-5" />
+            </span>
+            <div>
+              <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+                Rational Agent & Vacuum World Lab
+              </h3>
+              <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">
+                جرب بنفسك إزاي الوكيل العقلاني (Rational Agent) بيتصرف في عالم المكنسة (Vacuum World)، وراجع جدول الـ PEAS للامتحان
+              </ArabicText>
+            </div>
           </div>
         </div>
 
         {/* Tab Toggle */}
-        <div className="flex items-center gap-1.5 bg-beige-100 dark:bg-stone-800 p-1.5 rounded-2xl border border-beige-300 dark:border-stone-700">
+        <div className="self-start sm:self-auto bg-beige-100 dark:bg-stone-800/80 p-1.5 rounded-2xl flex flex-wrap items-center gap-1 font-bold border border-beige-300 dark:border-stone-700">
           <button
+            dir="rtl"
+            aria-pressed={activeTab === 'simulation'}
             onClick={() => setActiveTab('simulation')}
-            className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all ${
-              activeTab === 'simulation'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-sm border border-stone-200 dark:border-stone-700'
-                : 'text-stone-700 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white'
-            }`}
+            className={pillClass(activeTab === 'simulation')}
           >
-            عالم المكنسة التفاعلي 🧹
+            المحاكاة (Simulation) 🧹
           </button>
           <button
+            dir="rtl"
+            aria-pressed={activeTab === 'peas'}
             onClick={() => setActiveTab('peas')}
-            className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all ${
-              activeTab === 'peas'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-sm border border-stone-200 dark:border-stone-700'
-                : 'text-stone-700 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white'
-            }`}
+            className={pillClass(activeTab === 'peas')}
           >
-            مصفوفة PEAS للامتحان ⚡
+            جدول PEAS 📋
           </button>
         </div>
       </div>
@@ -191,62 +268,75 @@ export const VacuumWorldAgentLab: React.FC = () => {
       {activeTab === 'simulation' ? (
         <div className="space-y-6">
           {/* Controls Bar */}
-          <div className="bg-[#FAF7F2] dark:bg-stone-950 p-5 rounded-2xl border border-beige-300 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4 text-sm">
-            {/* Score & Agent Mode */}
-            <div className="flex items-center gap-4">
+          <div className="bg-[#FAF7F2] dark:bg-stone-950 p-4 rounded-2xl border border-beige-300 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4 text-sm">
+            {/* Score & Time Step */}
+            <div className="flex flex-wrap items-center gap-3">
               <div className="bg-white dark:bg-stone-900 px-3.5 py-2 rounded-xl border border-beige-300 dark:border-stone-700">
-                <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">Performance Score</span>
-                <span className={`text-lg font-bold font-mono ${score >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600'}`}>
-                  {score > 0 ? `+${score}` : score} pts
+                <ArabicText as="span" className="block text-xs text-stone-600 dark:text-zinc-400">
+                  النتيجة (Performance Score)
+                </ArabicText>
+                <span
+                  dir="ltr"
+                  className={`block text-lg font-bold font-mono ${
+                    world.score > 0
+                      ? 'text-emerald-700 dark:text-emerald-400'
+                      : world.score < 0
+                        ? 'text-rose-600 dark:text-rose-400'
+                        : 'text-stone-800 dark:text-stone-200'
+                  }`}
+                >
+                  {formatScore(world.score)}
                 </span>
               </div>
-
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-stone-700 dark:text-zinc-300">نوع الوكيل:</span>
-                <button
-                  onClick={() => setAgentType(agentType === 'reflex' ? 'rational' : 'reflex')}
-                  className="px-3 py-1.5 rounded-xl bg-beige-200 dark:bg-stone-800 text-stone-900 dark:text-zinc-100 font-mono font-bold hover:bg-beige-300 dark:hover:bg-stone-700 transition-colors"
-                >
-                  {agentType === 'rational' ? 'Rational Agent (عقلاني ذكي)' : 'Simple Reflex (رد فعل مباشر)'}
-                </button>
+              <div className="bg-white dark:bg-stone-900 px-3.5 py-2 rounded-xl border border-beige-300 dark:border-stone-700">
+                <ArabicText as="span" className="block text-xs text-stone-600 dark:text-zinc-400">
+                  الخطوة (Time Step)
+                </ArabicText>
+                <span dir="ltr" className="block text-lg font-bold font-mono text-stone-800 dark:text-stone-200">
+                  {world.steps}
+                </span>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2 flex-wrap">
+              {(['A', 'B'] as const).map((room) => (
+                <button
+                  key={room}
+                  dir="rtl"
+                  onClick={() => dispatch({ type: 'TOGGLE_DIRT', room })}
+                  className={secondaryBtn}
+                >
+                  {world.dirty[room] ? `نضّف ${room} يدوياً 🧽` : `ارمي تراب في ${room} 🍂`}
+                </button>
+              ))}
+
               <button
-                onClick={() => setRoomAIsDirty(!roomAIsDirty)}
-                className="px-3.5 py-2 rounded-xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-700 font-bold hover:bg-beige-100 dark:hover:bg-stone-800 shadow-2xs"
+                dir="rtl"
+                onClick={() => dispatch({ type: 'STEP' })}
+                disabled={world.autoPlay || world.sucking}
+                className="px-4 py-2 rounded-xl font-arabic text-sm bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {roomAIsDirty ? 'كنس A يدوياً 🧽' : 'رمي تراب في A 🍂'}
+                خطوة واحدة ⏭️
               </button>
 
               <button
-                onClick={() => setRoomBIsDirty(!roomBIsDirty)}
-                className="px-3.5 py-2 rounded-xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-700 font-bold hover:bg-beige-100 dark:hover:bg-stone-800 shadow-2xs"
+                dir="rtl"
+                onClick={() => dispatch({ type: 'TOGGLE_AUTO' })}
+                className={`px-4 py-2 rounded-xl font-arabic text-sm font-bold border transition-all shadow-sm ${
+                  world.autoPlay
+                    ? 'bg-amber-500 hover:bg-amber-400 border-amber-500 text-stone-900'
+                    : 'bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-900 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 dark:border-amber-700/60 dark:text-amber-200'
+                }`}
               >
-                {roomBIsDirty ? 'كنس B يدوياً 🧽' : 'رمي تراب في B 🍂'}
+                {world.autoPlay ? 'إيقاف مؤقت ⏸️' : 'تشغيل تلقائي ▶️'}
               </button>
 
               <button
-                onClick={executeStep}
-                disabled={isAutoPlaying}
-                className="px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold transition-all shadow-sm disabled:opacity-40"
-              >
-                خطوة واحدة ⏯️
-              </button>
-
-              <button
-                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold transition-all shadow-sm"
-              >
-                {isAutoPlaying ? 'إيقاف مؤقت ⏸️' : 'تشغيل ذكي تلقائي 🤖'}
-              </button>
-
-              <button
-                onClick={handleReset}
-                className="p-2.5 rounded-xl bg-beige-100 dark:bg-stone-800 hover:bg-beige-200 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700 shadow-2xs"
-                title="تصفير"
+                onClick={() => dispatch({ type: 'RESET' })}
+                className="p-2.5 rounded-xl bg-beige-100 dark:bg-stone-800 hover:bg-beige-200 dark:hover:bg-stone-700 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700 shadow-sm transition-colors"
+                title="إعادة ضبط"
+                aria-label="إعادة ضبط"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -254,126 +344,130 @@ export const VacuumWorldAgentLab: React.FC = () => {
           </div>
 
           {/* 2-Room Floor Environment */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#FAF8F5] dark:bg-stone-950 p-6 rounded-3xl border border-beige-300 dark:border-stone-800 min-h-[280px]">
-            {/* Room A */}
-            <div className={`p-6 rounded-2xl border-2 transition-all flex flex-col justify-between relative overflow-hidden ${
-              roomAIsDirty
-                ? 'border-amber-400/80 bg-amber-50/50 dark:bg-amber-950/20'
-                : 'border-emerald-400/70 bg-emerald-50/20 dark:bg-emerald-950/10'
-            }`}>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-base font-extrabold text-stone-800 dark:text-stone-200">
-                  ROOM A (الغرفة أ)
-                </span>
-                <span className={`px-3 py-1 rounded-full text-[13px] font-bold ${
-                  roomAIsDirty ? 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200' : 'bg-emerald-200 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-200'
-                }`}>
-                  {roomAIsDirty ? '🍂 Dirty (مليانة تراب)' : '✨ Clean (نظيفة بتبرق)'}
-                </span>
-              </div>
-
-              {/* Dirt Visuals in Room A */}
-              {roomAIsDirty && (
-                <div className="my-6 flex justify-around opacity-80 animate-pulse text-2xl">
-                  <span>🍂</span>
-                  <span>🍪</span>
-                  <span>🌾</span>
-                  <span>🍂</span>
-                </div>
-              )}
-
-              {/* Vacuum Robot inside Room A */}
-              {agentPos === 'A' && (
-                <div className={`mt-auto mx-auto p-4 rounded-2xl bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 border border-stone-700 shadow-xl flex items-center gap-3 transition-transform ${
-                  isSucking ? 'vacuum-active scale-105' : ''
-                }`}>
-                  <div className="w-9 h-9 rounded-xl bg-amber-500 text-stone-900 flex items-center justify-center font-bold">
-                    <Bot className="w-5 h-5" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#FAF7F2] dark:bg-stone-950 p-4 sm:p-6 rounded-2xl border border-beige-300 dark:border-stone-800">
+            {(['A', 'B'] as const).map((room) => {
+              const isDirty = world.dirty[room];
+              return (
+                <div
+                  key={room}
+                  className={`p-4 sm:p-6 min-h-[240px] rounded-2xl border-2 transition-all flex flex-col justify-between gap-4 relative overflow-hidden ${
+                    isDirty
+                      ? 'border-amber-400/80 bg-amber-50/50 dark:border-amber-500/50 dark:bg-amber-950/20'
+                      : 'border-emerald-400/70 bg-emerald-50/30 dark:border-emerald-600/50 dark:bg-emerald-950/10'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <ArabicText as="span" className="text-base font-extrabold text-stone-800 dark:text-stone-200">
+                      {`الغرفة ${room}`}
+                    </ArabicText>
+                    <ArabicText
+                      as="span"
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        isDirty
+                          ? 'bg-amber-200 text-amber-900 dark:bg-amber-900/70 dark:text-amber-200'
+                          : 'bg-emerald-200 text-emerald-900 dark:bg-emerald-900/70 dark:text-emerald-200'
+                      }`}
+                    >
+                      {isDirty ? '🍂 مليانة تراب (Dirty)' : '✨ نضيفة (Clean)'}
+                    </ArabicText>
                   </div>
-                  <div>
-                    <span className="font-mono text-sm font-bold block">VACUUM ROBOT</span>
-                    <span className="text-[13px] text-amber-400 dark:text-amber-600 font-mono font-semibold">
-                      {isSucking ? '🌀 SUCKING DIRT...' : '👀 SENSING FLOOR'}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
 
-            {/* Room B */}
-            <div className={`p-6 rounded-2xl border-2 transition-all flex flex-col justify-between relative overflow-hidden ${
-              roomBIsDirty
-                ? 'border-amber-400/80 bg-amber-50/50 dark:bg-amber-950/20'
-                : 'border-emerald-400/70 bg-emerald-50/20 dark:bg-emerald-950/10'
-            }`}>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-base font-extrabold text-stone-800 dark:text-stone-200">
-                  ROOM B (الغرفة ب)
-                </span>
-                <span className={`px-3 py-1 rounded-full text-[13px] font-bold ${
-                  roomBIsDirty ? 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200' : 'bg-emerald-200 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-200'
-                }`}>
-                  {roomBIsDirty ? '🍂 Dirty (مليانة تراب)' : '✨ Clean (نظيفة بتبرق)'}
-                </span>
-              </div>
+                  {isDirty && (
+                    <div aria-hidden="true" className="flex justify-around opacity-80 animate-pulse text-2xl">
+                      {DIRT_EMOJI[room].map((emoji, i) => (
+                        <span key={i}>{emoji}</span>
+                      ))}
+                    </div>
+                  )}
 
-              {/* Dirt Visuals in Room B */}
-              {roomBIsDirty && (
-                <div className="my-6 flex justify-around opacity-80 animate-pulse text-2xl">
-                  <span>🍂</span>
-                  <span>🍂</span>
-                  <span>🍞</span>
-                  <span>🍂</span>
+                  {world.pos === room && (
+                    <div
+                      className={`mt-auto mx-auto p-3 sm:p-4 rounded-2xl bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 border border-stone-700 dark:border-stone-300 shadow-xl flex items-center gap-3 transition-transform ${
+                        world.sucking ? 'vacuum-active scale-105' : ''
+                      }`}
+                    >
+                      <div className="w-9 h-9 shrink-0 rounded-xl bg-amber-500 text-stone-900 flex items-center justify-center">
+                        <Bot className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="font-mono text-sm font-bold block">Vacuum Agent</span>
+                        <span
+                          dir="rtl"
+                          className="font-arabic text-xs font-semibold block text-amber-300 dark:text-amber-800"
+                        >
+                          {world.sucking ? 'بيشفط التراب…' : 'بيفحص الأرضية'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-
-              {/* Vacuum Robot inside Room B */}
-              {agentPos === 'B' && (
-                <div className={`mt-auto mx-auto p-4 rounded-2xl bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 border border-stone-700 shadow-xl flex items-center gap-3 transition-transform ${
-                  isSucking ? 'vacuum-active scale-105' : ''
-                }`}>
-                  <div className="w-9 h-9 rounded-xl bg-amber-500 text-stone-900 flex items-center justify-center font-bold">
-                    <Bot className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="font-mono text-sm font-bold block">VACUUM ROBOT</span>
-                    <span className="text-[13px] text-amber-400 dark:text-amber-600 font-mono font-semibold">
-                      {isSucking ? '🌀 SUCKING DIRT...' : '👀 SENSING FLOOR'}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
 
           {/* Action Log Commentary */}
-          <div className="p-5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/25 border border-amber-300 dark:border-amber-700/60 text-sm space-y-1.5">
-            <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-300">
-              <span>🤖</span>
-              <span>تفسير تصرف الوكيل الذكي:</span>
-            </div>
-            <ArabicText className="text-sm text-stone-800 dark:text-zinc-200 font-medium leading-[1.75]">
-              {actionLog}
+          <div
+            aria-live="polite"
+            className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/25 border border-amber-300 dark:border-amber-700/60 text-sm space-y-1.5"
+          >
+            <ArabicText as="div" className="font-bold text-amber-900 dark:text-amber-300">
+              🤖 آخر إجراء للوكيل (Action Log)
             </ArabicText>
+            <ArabicText className="text-sm text-stone-800 dark:text-stone-200 font-medium">{world.log}</ArabicText>
           </div>
 
-          {/* Core Concept Notes */}
+          {/* Agent Program, Performance Measure & Concept Notes */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-1.5">
-              <span className="font-bold text-stone-900 dark:text-stone-100 block">
-                مفهوم العقلانية (Rationality):
-              </span>
-              <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 leading-relaxed">
-                الوكيل العقلاني مش بيعمل "سحر"، هو بيختار الإجراء (Action) اللي يعظم مقياس الأداء (Performance Measure) بناءً على إدراكه بالبيئة (Percept Sequence) والمعرفة المخزنة عنده.
+            <div className={infoCard}>
+              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
+                برنامج الوكيل (Simple Reflex Agent)
+              </ArabicText>
+              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
+                الوكيل بيشوف الـ Percept الحالي بس (مكانه وحالة الغرفة) من غير ذاكرة، وبيرد عليه بواحدة من القواعد دي:
+              </ArabicText>
+              <ul dir="ltr" className="space-y-1.5 font-mono text-xs">
+                {AGENT_RULES.map((rule, i) => (
+                  <li
+                    key={rule.percept}
+                    className={`flex flex-wrap items-center justify-between gap-x-3 px-3 py-1.5 rounded-lg border transition-colors ${
+                      i === activeRule
+                        ? 'bg-amber-100 border-amber-300 text-amber-900 dark:bg-amber-950/40 dark:border-amber-700/60 dark:text-amber-200'
+                        : 'bg-white border-beige-300 text-stone-700 dark:bg-stone-900 dark:border-stone-800 dark:text-zinc-300'
+                    }`}
+                  >
+                    <span>{rule.percept}</span>
+                    <span className="font-bold">→ {rule.action}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={infoCard}>
+              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
+                مقياس الأداء (Performance Measure)
+              </ArabicText>
+              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
+                في آخر كل خطوة (Time Step) الوكيل بياخد{' '}
+                <span dir="ltr" className="font-mono font-bold">+1</span> عن كل غرفة نضيفة، ويخسر{' '}
+                <span dir="ltr" className="font-mono font-bold">{'\u2212'}1</span> لو اتحرك (استهلاك كهربا). عشان كده الحركة من غير داعي بتقلل النتيجة.
               </ArabicText>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-1.5">
-              <span className="font-bold text-stone-900 dark:text-stone-100 block">
-                العقلانية ليست المعرفة المطلقة (Omniscience):
-              </span>
-              <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 leading-relaxed">
-                الدكتورة بتسأل في دي دايماً: العقلاني بيعمل الصح بناءً على اللي يقدر يعرفه، إنما الـ Omniscience بيعرف الغيب والمستقبل وده مستحيل عملياً!
+            <div className={infoCard}>
+              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
+                مفهوم العقلانية (Rationality)
+              </ArabicText>
+              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
+                الوكيل العقلاني مش بيعمل "سحر"، هو بيختار الإجراء (Action) المتوقع إنه يحقق أعلى مقياس أداء (Performance Measure) بناءً على سلسلة الإدراكات (Percept Sequence) اللي شافها والمعرفة المدمجة عنده.
+              </ArabicText>
+            </div>
+
+            <div className={infoCard}>
+              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
+                العقلانية مش علم مطلق (Omniscience)
+              </ArabicText>
+              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
+                الدكتورة بتسأل في النقطة دي دايماً: الوكيل العقلاني بيعمل الصح بناءً على اللي يقدر يعرفه وقت القرار، أما الـ Omniscience فمعناها إنه يعرف النتيجة الفعلية لكل إجراء مسبقاً، وده مستحيل عملياً.
               </ArabicText>
             </div>
           </div>
@@ -381,15 +475,17 @@ export const VacuumWorldAgentLab: React.FC = () => {
       ) : (
         /* PEAS Framework Tab */
         <div className="space-y-6">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-sm">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
             {PEAS_DATA.map((p, idx) => (
               <button
-                key={idx}
+                key={p.title}
+                dir="rtl"
+                aria-pressed={selectedPeasIndex === idx}
                 onClick={() => setSelectedPeasIndex(idx)}
-                className={`px-4 py-2 rounded-xl font-bold transition-all whitespace-nowrap text-sm ${
+                className={`px-4 py-2 rounded-xl font-arabic font-bold border transition-all ${
                   selectedPeasIndex === idx
-                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
-                    : 'bg-white dark:bg-stone-900 text-stone-700 dark:text-zinc-300 hover:bg-beige-100 dark:hover:bg-stone-800 border border-beige-300 dark:border-stone-800'
+                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 border-stone-900 dark:border-stone-100 shadow-sm'
+                    : 'bg-white dark:bg-stone-900 text-stone-700 dark:text-zinc-300 border-beige-300 dark:border-stone-800 hover:bg-beige-100 dark:hover:bg-stone-800'
                 }`}
               >
                 {p.titleAr}
@@ -398,72 +494,38 @@ export const VacuumWorldAgentLab: React.FC = () => {
           </div>
 
           {/* PEAS 4-Quadrant Matrix */}
-          <div className="bg-[#FAF8F5] dark:bg-stone-950 p-6 rounded-3xl border border-beige-300 dark:border-stone-800 space-y-5">
+          <div className="bg-[#FAF7F2] dark:bg-stone-950 p-4 sm:p-6 rounded-2xl border border-beige-300 dark:border-stone-800 space-y-5">
             <div className="border-b border-beige-200 dark:border-stone-800 pb-3">
-              <h4 className="text-lg font-extrabold text-stone-900 dark:text-stone-100">
-                {currentPeas.title}
-              </h4>
-              <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 pt-1">
-                {currentPeas.titleAr} — تفصيلة عناصر الـ PEAS الأربعة المعتمدة في الامتحان
+              <h4 className="text-lg font-bold text-stone-900 dark:text-stone-100">{currentPeas.title}</h4>
+              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
+                {`${currentPeas.titleAr}: عناصر الـ PEAS الأربعة للمثال ده`}
               </ArabicText>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* P: Performance */}
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 space-y-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-bold font-mono text-sm flex items-center justify-center">P</span>
-                  <span className="font-bold text-sm text-stone-900 dark:text-stone-100">Performance Measure (مقياس الأداء والنجاح)</span>
+              {PEAS_FIELDS.map((field) => (
+                <div
+                  key={field.key}
+                  className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 space-y-2"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-8 h-8 shrink-0 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold font-mono text-sm flex items-center justify-center">
+                      {field.letter}
+                    </span>
+                    <ArabicText as="div" className="font-bold text-sm text-stone-900 dark:text-stone-100">
+                      {`${field.ar} (${field.en})`}
+                    </ArabicText>
+                  </div>
+                  <p dir="ltr" className="text-sm text-stone-800 dark:text-stone-200 font-sans">
+                    {currentPeas[field.key].en}
+                  </p>
+                  <div className="pt-2 border-t border-beige-200 dark:border-stone-800">
+                    <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
+                      {currentPeas[field.key].ar}
+                    </ArabicText>
+                  </div>
                 </div>
-                <p className="text-sm text-stone-800 dark:text-stone-200 font-sans">{currentPeas.performance.en}</p>
-                <div className="pt-2 border-t border-beige-200 dark:border-stone-800">
-                  <ArabicText className="text-sm text-stone-600 dark:text-zinc-300">
-                    <strong>الخلاصة: </strong> {currentPeas.performance.ar}
-                  </ArabicText>
-                </div>
-              </div>
-
-              {/* E: Environment */}
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 space-y-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 font-bold font-mono text-sm flex items-center justify-center">E</span>
-                  <span className="font-bold text-sm text-stone-900 dark:text-stone-100">Environment (بيئة العمل الخارجية)</span>
-                </div>
-                <p className="text-sm text-stone-800 dark:text-stone-200 font-sans">{currentPeas.environment.en}</p>
-                <div className="pt-2 border-t border-beige-200 dark:border-stone-800">
-                  <ArabicText className="text-sm text-stone-600 dark:text-zinc-300">
-                    <strong>الخلاصة: </strong> {currentPeas.environment.ar}
-                  </ArabicText>
-                </div>
-              </div>
-
-              {/* A: Actuators */}
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 space-y-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 font-bold font-mono text-sm flex items-center justify-center">A</span>
-                  <span className="font-bold text-sm text-stone-900 dark:text-stone-100">Actuators (المحركات ووسائل التأثير)</span>
-                </div>
-                <p className="text-sm text-stone-800 dark:text-stone-200 font-sans">{currentPeas.actuators.en}</p>
-                <div className="pt-2 border-t border-beige-200 dark:border-stone-800">
-                  <ArabicText className="text-sm text-stone-600 dark:text-zinc-300">
-                    <strong>الخلاصة: </strong> {currentPeas.actuators.ar}
-                  </ArabicText>
-                </div>
-              </div>
-
-              {/* S: Sensors */}
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 space-y-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 font-bold font-mono text-sm flex items-center justify-center">S</span>
-                  <span className="font-bold text-sm text-stone-900 dark:text-stone-100">Sensors (الحساسات ومستقبلات الداتا)</span>
-                </div>
-                <p className="text-sm text-stone-800 dark:text-stone-200 font-sans">{currentPeas.sensors.en}</p>
-                <div className="pt-2 border-t border-beige-200 dark:border-stone-800">
-                  <ArabicText className="text-sm text-stone-600 dark:text-zinc-300">
-                    <strong>الخلاصة: </strong> {currentPeas.sensors.ar}
-                  </ArabicText>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

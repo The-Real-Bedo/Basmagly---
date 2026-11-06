@@ -32,17 +32,18 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
           className="inline-flex items-center gap-1.5 text-sm font-bold text-stone-700 hover:text-stone-900 dark:text-zinc-300 dark:hover:text-white transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>الرجوع لقائمة المحاضرات (Back to Course Outline)</span>
+          <span className="font-arabic">الرجوع لقائمة المحاضرات</span>
+          <span className="font-mono font-medium text-[13px] opacity-80">(Back to Course Outline)</span>
         </button>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-lg text-sm font-mono font-bold bg-beige-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700">
-              المحاضرة رقم {lecture.lectureNumber}
+        <div className="space-y-2 max-w-3xl">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="px-3 py-1 rounded-md text-[13px] font-mono font-bold bg-beige-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-200 dark:border-stone-700">
+              Lecture {lecture.lectureNumber}
             </span>
             <span className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-zinc-400 font-mono">
               <Clock className="w-3.5 h-3.5" />
-              {lecture.durationMinutes} دقيقة مذاكرة مركزة
+              {lecture.durationMinutes} min read
             </span>
           </div>
 
@@ -128,9 +129,9 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
 
               {/* Simplified Explanation Box */}
               <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-2">
-                <span className="text-sm font-bold text-stone-800 dark:text-zinc-200 uppercase tracking-wider block font-mono">
+                <ArabicText as="span" className="text-sm font-bold text-stone-800 dark:text-zinc-200 block">
                   💡 الفكرة ببساطة:
-                </span>
+                </ArabicText>
                 <ArabicText className="text-sm font-medium text-stone-700 dark:text-zinc-300 leading-[1.75]">
                   {section.contentAr}
                 </ArabicText>
@@ -162,10 +163,10 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
 
               {/* Requirement 8: Key Exam Rule Callout (Gold Accent Preserved) */}
               {section.keyRule && (
-                <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700/60 text-sm space-y-2 shadow-xs">
-                  <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300 font-bold">
-                    <span>⭐</span>
-                    <span className="font-mono">High-Yield Rule:</span>
+                <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700/60 text-sm space-y-2 shadow-sm">
+                  <div className="flex items-start gap-2 text-amber-900 dark:text-amber-300 font-bold">
+                    <span className="shrink-0">⭐</span>
+                    <span className="font-mono shrink-0">High-Yield Rule:</span>
                     <span className="font-semibold text-stone-900 dark:text-stone-100 font-sans">{section.keyRule}</span>
                   </div>
                   {section.keyRuleAr && (
@@ -206,9 +207,9 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
       {activeTab === 'cheatSheet' && (
         <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm space-y-5">
           <div className="border-b border-beige-200 dark:border-stone-800 pb-3">
-            <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+            <ArabicText as="h3" className="text-lg font-bold text-stone-900 dark:text-stone-100">
               زتونة الامتحان وروشتة المراجعة المركزة
-            </h3>
+            </ArabicText>
             <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 pt-1">
               أهم النقط اللي الدكاترة بيحطوها في الامتحانات النصفية والنهائية
             </ArabicText>
@@ -221,7 +222,7 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
                 className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-200 dark:border-stone-800 space-y-2"
               >
                 <div className="flex items-start gap-2.5">
-                  <span className="w-6 h-6 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 flex items-center justify-center text-[13px] font-bold font-mono shrink-0 mt-0.5 shadow-2xs">
+                  <span className="w-6 h-6 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 flex items-center justify-center text-[13px] font-bold font-mono shrink-0 mt-0.5 shadow-sm">
                     {idx + 1}
                   </span>
                   <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 leading-relaxed font-sans">
@@ -243,9 +244,9 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
       {activeTab === 'terms' && (
         <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm space-y-5">
           <div className="border-b border-beige-200 dark:border-stone-800 pb-3">
-            <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+            <ArabicText as="h3" className="text-lg font-bold text-stone-900 dark:text-stone-100">
               المصطلحات الأساسية ببساطة
-            </h3>
+            </ArabicText>
             <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 pt-1">
               المصطلح الأكاديمي المطلوب في الامتحان مع توضيح مباشر ومختصر يثبت في دماغك
             </ArabicText>
