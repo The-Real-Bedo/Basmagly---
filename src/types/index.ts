@@ -1,0 +1,73 @@
+export type QuestionType = 'mcq' | 'true_false' | 'essay';
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
+export interface Question {
+  id: string;
+  courseId: string;
+  lectureId: string;
+  type: QuestionType;
+  question: string;
+  questionAr: string;
+  options?: string[];
+  optionsAr?: string[];
+  correctAnswer: number | boolean | string;
+  explanation?: string;
+  explanationAr?: string;
+  modelAnswer?: string;
+  modelAnswerAr?: string;
+  keyPoints?: string[];
+  difficulty?: Difficulty;
+}
+
+export interface SummarySection {
+  title: string;
+  titleAr: string;
+  content: string;
+  contentAr: string;
+  bulletPoints?: string[];
+  bulletPointsAr?: string[];
+  keyRule?: string;
+  keyRuleAr?: string;
+}
+
+export interface TermDefinition {
+  term: string;
+  termAr: string;
+  definition: string;
+  definitionAr: string;
+}
+
+export interface CheatSheetItem {
+  en: string;
+  ar: string;
+}
+
+export interface Lecture {
+  id: string;
+  courseId: string;
+  lectureNumber: number;
+  title: string;
+  titleAr: string;
+  brief: string;
+  briefAr: string;
+  durationMinutes: number;
+  sections: SummarySection[];
+  terms: TermDefinition[];
+  cheatSheet: CheatSheetItem[];
+  interactiveTools: string[];
+  questions: Question[];
+}
+
+export interface Course {
+  id: string;
+  code: string;
+  title: string;
+  titleAr: string;
+  instructor?: string;
+  description: string;
+  descriptionAr: string;
+  term: 1 | 2;
+  icon: string;
+  lectures: Lecture[];
+  isAvailable: boolean;
+}
