@@ -10,6 +10,7 @@ export default {
       fontFamily: {
         sans: ['var(--font-sans)', '"Inter"', 'system-ui', 'sans-serif'],
         arabic: ['var(--font-arabic)', '"IBM Plex Sans Arabic"', '"Cairo"', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', '"Changa"', '"Cairo"', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', '"JetBrains Mono"', 'monospace'],
       },
       fontSize: {

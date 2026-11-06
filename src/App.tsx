@@ -7,6 +7,7 @@ import { CourseDetail } from './components/CourseDetail';
 import { LectureSummary } from './components/LectureSummary';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
+import { BrandLogo } from './components/BrandLogo';
 import { Wrench, Clock, ArrowRight, Zap, Bot, Cpu, Network, Route, Calculator, Radio, Sliders, Layers } from 'lucide-react';
 
 interface LabDirectoryItem {
@@ -267,16 +268,15 @@ export const App: React.FC = () => {
                 <span className="text-[13px] font-mono font-bold text-stone-700 dark:text-zinc-300 uppercase tracking-wider block">
                   Academic Year 2026 / 2027 • Term 1
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-stone-100 tracking-tight flex flex-wrap items-center gap-2">
-                  <span className="font-arabic">بصمجّلي شكرًا</span>
-                  <span className="text-xl sm:text-2xl font-sans font-bold text-stone-500 dark:text-zinc-400 font-mono">• Basmagly</span>
+                <h1 className="pt-1">
+                  <BrandLogo size="hero" />
                 </h1>
                 {/* Secondary description */}
-                <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-1">
+                <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-2">
                   Concise lecture summaries, bilingual translations, interactive labs for deep conceptual understanding, and exam-standard quizzes.
                 </p>
                 <ArabicText className="text-sm font-medium text-stone-600 dark:text-zinc-300">
-                  زتونة المنهج من غير رغي وحشو.. الشرح ببساطة ومن الآخر، معامل تفاعلية تفهمك الفكرة في ثواني، وبنك أسئلة يخليك تدخل الامتحان متطمن وشكرًا.
+                  المنهج في بصمة من غير رغي وحشو: شرح ببساطة ومن الآخر، معامل تفاعلية تفهمك الفكرة في ثواني، وبنك أسئلة يخليك تبصم بالعشرة إنك داخل الامتحان فاهم.
                 </ArabicText>
               </div>
 

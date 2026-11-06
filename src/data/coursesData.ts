@@ -3,7 +3,6 @@ import { Course } from '../types';
 export const COURSES_DATA: Course[] = [
   {
     id: 'networks',
-    code: 'CS311',
     title: 'Computer Networks',
     titleAr: 'شبكات الحاسب',
     instructor: 'Cisco Networking Curriculum',
@@ -355,7 +354,6 @@ export const COURSES_DATA: Course[] = [
   },
   {
     id: 'ai',
-    code: 'CS321',
     title: 'Artificial Intelligence',
     titleAr: 'الذكاء الاصطناعي',
     instructor: 'د. نسمة محمود',
@@ -514,7 +512,6 @@ export const COURSES_DATA: Course[] = [
   },
   {
     id: 'iot',
-    code: 'CS331',
     title: 'Internet of Things (IoT)',
     titleAr: 'إنترنت الأشياء (IoT)',
     instructor: 'د. سارة شهاب',
@@ -630,7 +627,6 @@ export const COURSES_DATA: Course[] = [
   },
   {
     id: 'windows-programming',
-    code: 'CS341',
     title: 'Visual & Windows Programming',
     titleAr: 'البرمجة المرئية وبرمجة تطبيقات Windows',
     instructor: 'هيئة التدريس',
@@ -643,7 +639,6 @@ export const COURSES_DATA: Course[] = [
   },
   {
     id: 'database-systems',
-    code: 'CS351',
     title: 'Database Systems & Design',
     titleAr: 'نظم قواعد البيانات وتصميمها',
     instructor: 'هيئة التدريس',
@@ -656,7 +651,6 @@ export const COURSES_DATA: Course[] = [
   },
   {
     id: 'software-engineering',
-    code: 'CS361',
     title: 'Software Engineering & Lifecycle',
     titleAr: 'هندسة البرمجيات ودورة حياة التطوير',
     instructor: 'هيئة التدريس',
