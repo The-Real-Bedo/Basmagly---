@@ -58,6 +58,28 @@ export interface Lecture {
   questions: Question[];
 }
 
+export interface SheetProblem {
+  id: string;
+  problemNumber: number;
+  question: string;
+  questionAr: string;
+  solution?: string;
+  solutionAr?: string;
+}
+
+export interface CourseSheet {
+  id: string;
+  courseId: string;
+  sheetNumber: number;
+  title: string;
+  titleAr: string;
+  brief: string;
+  briefAr: string;
+  problemsCount: number;
+  hasSolution: boolean;
+  problems?: SheetProblem[];
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -68,5 +90,6 @@ export interface Course {
   term: 1 | 2;
   icon: string;
   lectures: Lecture[];
+  sheets?: CourseSheet[];
   isAvailable: boolean;
 }

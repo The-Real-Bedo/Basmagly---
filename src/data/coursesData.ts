@@ -350,6 +350,74 @@ export const COURSES_DATA: Course[] = [
           }
         ]
       }
+    ],
+    sheets: [
+      {
+        id: 'net-sheet-1',
+        courseId: 'networks',
+        sheetNumber: 1,
+        title: 'Sheet 1: Network Fundamentals & Topologies',
+        titleAr: 'شيت 1: أساسيات الشبكات والتخطيط الطوبولوجي (Topologies)',
+        brief: 'Fundamental questions on LAN vs WAN, star/mesh topologies, and OSI model layers.',
+        briefAr: 'تمارين عملية ومسائل مقارنة على شبكات LAN و WAN، طوبولوجيا النجمة والشبكة الكاملة (Star vs Mesh)، وطبقات نموذج OSI.',
+        problemsCount: 3,
+        hasSolution: true,
+        problems: [
+          {
+            id: 'p-net1-1',
+            problemNumber: 1,
+            question: 'Calculate the total number of physical duplex links required to build a Fully-Connected Mesh topology containing N = 8 host nodes.',
+            questionAr: 'احسب عدد الكابلات (Physical Links) المطلوبة لعمل شبكة كاملة التوصيل (Full Mesh Topology) بين 8 أجهزة.',
+            solution: 'Formula: Links = N * (N - 1) / 2. For N = 8: Links = 8 * 7 / 2 = 28 full-duplex cables.',
+            solutionAr: 'القانون: Links = N * (N - 1) / 2. تعويض مباشر لـ 8 أجهزة: 8 × 7 ÷ 2 = 28 كابل اتصال مباشر.'
+          },
+          {
+            id: 'p-net1-2',
+            problemNumber: 2,
+            question: 'Compare Star topology with Bus topology regarding single-point of failure and ease of troubleshooting.',
+            questionAr: 'قارن بين طوبولوجيا النجمة (Star) والخط الناقل (Bus) من حيث نقطة الانهيار الفردية (Single Point of Failure) وسهولة تحديد الأعطال.',
+            solution: 'In Star topology, central switch/hub is a single point of failure; cable failure only affects one node. In Bus topology, cable break halts the whole network; Star is much easier to isolate and troubleshoot.',
+            solutionAr: 'في شبكة Star: نقطة العطل الوحيدة هي السويتش المركزي (لو وقع الشبكة كلها تفصل، بس لو سلك جهاز اتقطع الباقي شغال). في شبكة Bus: لو الكابل الرئيسي اتقطع من أي مكان الشبكة كلها بتقع فوراً. بالتالي Star أسهل بكتير في تتبع الأعطال وعزلها.'
+          },
+          {
+            id: 'p-net1-3',
+            problemNumber: 3,
+            question: 'Which OSI layers add headers and which layer adds both a header and a trailer to data packets?',
+            questionAr: 'أنهي طبقات في نموذج OSI بتضيف Header (ترويسة)، وأنهي طبقة بالذات بتضيف Header و Trailer معاً؟',
+            solution: 'Layers 6 down to 3 add specific headers (Presentation, Session, Transport, Network). The Data Link Layer (Layer 2) adds both a Frame Header and a Frame Trailer (FCS / CRC checksum).',
+            solutionAr: 'الطبقات من 6 لحد 3 بتضيف Headers خاصة بيها. الطبقة الوحيدة اللي بتضيف ترويسة وخاتمة (Header & Trailer) هي طبقة ربط البيانات (Data Link Layer - Layer 2)، والـ Trailer بيكون فيه كود فحص الأخطاء (CRC/FCS).'
+          }
+        ]
+      },
+      {
+        id: 'net-sheet-2',
+        courseId: 'networks',
+        sheetNumber: 2,
+        title: 'Sheet 2: IPv4 Subnetting & CIDR Calculation',
+        titleAr: 'شيت 2: تقسيم الشبكات وحسابات الـ Subnetting و CIDR',
+        brief: 'Practical problems calculating network ID, broadcast address, valid host range, and VLSM designs.',
+        briefAr: 'مسائل حسابية على استخراج عنوان الشبكة، عنوان البث (Broadcast)، نطاق العناوين الصالحة للأجهزة، وقناع الشبكة بالبادئة /CIDR.',
+        problemsCount: 2,
+        hasSolution: true,
+        problems: [
+          {
+            id: 'p-net2-1',
+            problemNumber: 1,
+            question: 'For IP 172.16.45.10 / 20: Determine (a) Subnet Mask in dotted decimal, (b) Network Address, and (c) Directed Broadcast Address.',
+            questionAr: 'للعنوان 172.16.45.10 / 20: اوجد (أ) قناع الشبكة (Subnet Mask)، (ب) عنوان الشبكة (Network Address)، (ج) عنوان البث (Broadcast Address).',
+            solution: '(a) Mask: /20 = 255.255.240.0. (b) Block size = 256 - 240 = 16. In 3rd octet: 45 / 16 gives interval 32..47. Network Address = 172.16.32.0. (c) Broadcast Address = 172.16.47.255.',
+            solutionAr: '(أ) القناع: /20 يعني 255.255.240.0. (ب) حجم القفزة (Block size) = 256 - 240 = 16 في الخانة التالتة. مضاعفات الـ 16 الأقرب لـ 45 هي 32، يبقى عنوان الشبكة 172.16.32.0. (ج) عنوان الـ Broadcast هو آخر عنوان في النطاق = 172.16.47.255.'
+          },
+          {
+            id: 'p-net2-2',
+            problemNumber: 2,
+            question: 'An organization needs 5 subnets, each requiring at least 25 usable host IP addresses. Which CIDR mask should be chosen starting from a Class C /24 network?',
+            questionAr: 'مؤسسة محتاجة تقسم شبكة Class C (/24) لـ 5 شبكات فرعية على الأقل، وكل شبكة تستوعب 25 جهاز على الأقل. ما هو قناع الـ CIDR المناسب؟',
+            solution: 'Need 5 subnets -> borrow 3 subnet bits (2^3 = 8 >= 5). Remaining host bits = 8 - 3 = 5. Usable hosts = 2^5 - 2 = 30 >= 25. Thus, new mask is /24 + 3 = /27 (255.255.255.224).',
+            solutionAr: 'محتاجين 5 شبكات -> نستلف 3 بتات للشبكات (2³ = 8 شبكات، تكفي وزيادة). يتبقى للأجهزة 5 بتات (2⁵ - 2 = 30 جهاز صالح لكل شبكة). إذن القناع هو /24 + 3 = /27 (255.255.255.224).'
+          }
+        ]
+      }
     ]
   },
   {
@@ -508,6 +576,37 @@ export const COURSES_DATA: Course[] = [
           }
         ]
       }
+    ],
+    sheets: [
+      {
+        id: 'ai-sheet-1',
+        courseId: 'ai',
+        sheetNumber: 1,
+        title: 'Sheet 1: Intelligent Agents & PEAS Formalization',
+        titleAr: 'شيت 1: الوكلاء الأذكياء وتوصيف بيئة PEAS',
+        brief: 'Exercises covering the 4 approaches to AI, Turing Test criteria, and complete PEAS design for automated systems.',
+        briefAr: 'تمارين على المناهج الأربعة للذكاء الاصطناعي، شروط اختبار تورينج، وتوصيف منظومة PEAS لأنظمة القيادة الذاتية والمساعد الطبي.',
+        problemsCount: 2,
+        hasSolution: true,
+        problems: [
+          {
+            id: 'p-ai1-1',
+            problemNumber: 1,
+            question: 'Formalize the PEAS environment (Performance, Environment, Actuators, Sensors) for an Autonomous Taxi Agent.',
+            questionAr: 'اكتب التوصيف الكامل لبيئة PEAS (الأداء، البيئة، المشغلات، الحساسات) لتاكسي ذاتي القيادة (Autonomous Taxi).',
+            solution: 'Performance: Safety, speed, legal compliance, passenger comfort, fuel efficiency. Environment: City streets, pedestrians, traffic, weather, customers. Actuators: Steering, accelerator, brakes, horn, display/voice. Sensors: Cameras, LIDAR, radar, speedometer, GPS, sonar.',
+            solutionAr: 'الأداء (Performance): الأمان، الوصول في وقت معقول، الالتزام بقواعد المرور، راحة الراكب، وتوفير استهلاك الوقود. البيئة (Environment): شوارع المدينة، المشاة، العربيات المجاورة، إشارات المرور، وتقلبات الطقس. المشغلات (Actuators): عجلة القيادة، دواسة البنزين، الفرامل، الكلاكس، وشاشة التوجيه. الحساسات (Sensors): الكاميرات، حساسات LIDAR، الرادار، عداد السرعة، والـ GPS.'
+          },
+          {
+            id: 'p-ai1-2',
+            problemNumber: 2,
+            question: 'Classify the Autonomous Taxi environment across the 6 environment dimensions: Observable, Deterministic, Episodic, Static, Discrete, and Single/Multi-agent.',
+            questionAr: 'صنف بيئة التاكسي ذاتي القيادة عبر الأبعاد الستة للبيئات: هل هي (Partially Observable, Stochastic, Sequential, Dynamic, Continuous, Multi-agent)؟ مع ذكر السبب.',
+            solution: 'Partially Observable (cannot see around corners), Stochastic (traffic/pedestrian actions have random factors), Sequential (current driving decisions affect future road state), Dynamic (world moves while deciding), Continuous (speed and distance are real numbers), Multi-agent (other vehicles/pedestrians act independently).',
+            solutionAr: 'Partially Observable: مش شايف اللي ورا الملفات أو المباني. Stochastic: حركة المرور والمشاة فيها تصرفات غير متوقعة. Sequential: كل خطوة قيادة بتاثر على اللي بعدها. Dynamic: الشارع بيتغير وانت بتفكر وبتتحرك. Continuous: السرعة والمسافات أرقام مستمرة مش درجات منفصلة. Multi-agent: بتتعامل مع سواقين ومشاة تانيين حواليك.'
+          }
+        ]
+      }
     ]
   },
   {
@@ -623,6 +722,37 @@ export const COURSES_DATA: Course[] = [
           }
         ]
       }
+    ],
+    sheets: [
+      {
+        id: 'iot-sheet-1',
+        courseId: 'iot',
+        sheetNumber: 1,
+        title: 'Sheet 1: Sensors, Actuators & Edge Architecture',
+        titleAr: 'شيت 1: الحساسات والمشغلات ومعمارية معالجة الحافة (Edge)',
+        brief: 'Problems analyzing sensor data acquisition, edge vs cloud trade-offs, and IoT protocol choices.',
+        briefAr: 'مسائل مقارنة وتحليل بين معالجة البيانات عند الحافة (Edge Computing) وفي السحابة (Cloud)، واختيار الحساسات المناسبة للمشاريع الزراعية والصناعية.',
+        problemsCount: 2,
+        hasSolution: true,
+        problems: [
+          {
+            id: 'p-iot1-1',
+            problemNumber: 1,
+            question: 'In a mission-critical Smart Factory vibration monitoring system, explain why local Edge processing is favored over sending raw high-frequency sensor readings directly to a remote Cloud server.',
+            questionAr: 'في مصنع ذكي يراقب اهتزاز الماكينات الحرجة (Vibration Monitoring)، اشرح ليه بنفضل معالجة القراءات محلياً عند الحافة (Edge) بدل إرسال القراءات الخام كلها فوراً للسحابة (Cloud)؟',
+            solution: '1) Ultra-low latency: Immediate shutdown command before mechanical failure occurs. 2) Bandwidth conservation: Millisecond vibration telemetry generates gigabytes/hour; edge aggregates anomalies only. 3) Offline resilience: Plant remains safe even if Internet connection drops.',
+            solutionAr: '1) سرعة الاستجابة اللحظية (Ultra-low latency): فصل الماكينة فوراً قبل ما تتحرق أو تسبب كارثة، بدون انتظار بطء استجابة الإنترنت. 2) توفير الباندويث: حساس الاهتزاز بيبعت آلاف القراءات فالثانية، المعالجة عند الحافة بتبعت للسحابة التقرير أو التنبيه بس. 3) استمرارية العمل (Offline Resilience): لو شبكة النت فصلت، نظام الحماية المحلي يفضل شغال ومأمن المصنع.'
+          },
+          {
+            id: 'p-iot1-2',
+            problemNumber: 2,
+            question: 'Compare Analog vs Digital sensors with respect to ADC converter requirements, noise vulnerability, and microcontroller pin usage.',
+            questionAr: 'قارن بين الحساسات التناظرية (Analog) والرقمية (Digital) من حيث الحاجة لمحولات ADC، التأثر بالتشويش (Noise)، وعدد منافذ التوصيل مع المتحكم.',
+            solution: 'Analog sensors output continuous voltage requiring an ADC on the MCU and are susceptible to EMI noise over long wires. Digital sensors include internal ADC/signal conditioning, communicate over I2C/SPI (bus architecture allows multiple sensors on shared pins), and offer high noise immunity.',
+            solutionAr: 'الحساسات التناظرية (Analog): بتخرج جهد مستمر بيحتاج مدخل ومحول تناظري رقمي (ADC) في الميكروكنترولر، وبتتأثر بالتشويش الكهربائي مع الأسلاك الطويلة. الحساسات الرقمية (Digital): فيها شريحة تحويل داخلية، بتنقل البيانات عبر بروتوكولات رقمية زي I2C أو SPI وبتسمح بتوصيل كذا حساس على نفس الأسلاك (Shared Bus) وعندها مناعة عالية ضد التشويش.'
+          }
+        ]
+      }
     ]
   },
   {
@@ -635,7 +765,8 @@ export const COURSES_DATA: Course[] = [
     term: 1,
     icon: 'Layout',
     isAvailable: false,
-    lectures: []
+    lectures: [],
+    sheets: []
   },
   {
     id: 'database-systems',
@@ -647,7 +778,8 @@ export const COURSES_DATA: Course[] = [
     term: 1,
     icon: 'Database',
     isAvailable: false,
-    lectures: []
+    lectures: [],
+    sheets: []
   },
   {
     id: 'software-engineering',
@@ -659,6 +791,7 @@ export const COURSES_DATA: Course[] = [
     term: 1,
     icon: 'FolderKanban',
     isAvailable: false,
-    lectures: []
+    lectures: [],
+    sheets: []
   }
 ];
