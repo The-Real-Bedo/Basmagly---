@@ -1,7 +1,7 @@
 import React from 'react';
 import { Course, Lecture } from '../types';
 import { BookOpen, User, ChevronLeft, ArrowRight, Clock, Wrench } from 'lucide-react';
-import { ArabicText } from './ArabicText';
+import { ArabicText, hasArabic } from './ArabicText';
 
 interface CourseDetailProps {
   course: Course;
@@ -22,7 +22,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
           className="inline-flex items-center gap-1.5 text-sm font-bold text-stone-700 hover:text-stone-900 dark:text-zinc-300 dark:hover:text-white transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>الرجوع لكل المواد (Back to All Courses)</span>
+          <span className="font-arabic">الرجوع لكل المواد</span>
+          <span className="font-mono font-medium text-[13px] opacity-80">(Back to All Courses)</span>
         </button>
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-2">
@@ -32,9 +33,11 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
                 {course.code}
               </span>
               {course.instructor && (
-                <span className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-zinc-400 font-mono">
-                  <User className="w-4 h-4" />
-                  <span>{course.instructor}</span>
+                <span className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-zinc-400">
+                  <User className="w-4 h-4 shrink-0" />
+                  <span dir="auto" className={hasArabic(course.instructor) ? 'font-arabic' : 'font-mono'}>
+                    {course.instructor}
+                  </span>
                 </span>
               )}
             </div>
@@ -109,7 +112,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
                     {lec.interactiveTools.length > 0 && (
                       <span className="px-2.5 py-1 rounded-md text-[13px] font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-200 dark:border-stone-700 flex items-center gap-1.5">
                         <Wrench className="w-3.5 h-3.5" />
-                        {lec.interactiveTools.length} Interactive Lab(s)
+                        {lec.interactiveTools.length} {lec.interactiveTools.length === 1 ? 'Interactive Lab' : 'Interactive Labs'}
                       </span>
                     )}
                   </div>
@@ -140,7 +143,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
                   onClick={() => onSelectLecture(lec)}
                   className="px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95"
                 >
-                  <span>Open Study Unit</span>
+                  <span className="font-arabic">ابدأ المذاكرة</span>
+                  <span className="font-mono font-medium text-[13px] opacity-80">(Open Lecture)</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -148,11 +152,11 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
           </div>
         ) : (
           <div className="bg-[#FAF7F2] dark:bg-stone-950 border border-dashed border-beige-300 dark:border-stone-800 rounded-3xl p-10 text-center space-y-3">
-            <h3 className="text-base font-bold text-stone-800 dark:text-stone-200">
-              مكان المادة جاهز في السيستم — في انتظار السلايدات
-            </h3>
-            <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 max-w-lg mx-auto leading-relaxed">
-              المادة دي متظبط مكانها بالتمام، وأول ما تبعت ملفات محاضراتها هينزل تلخيصها وبنك أسئلتها ومعاملها علطول يا هندسة!
+            <ArabicText as="h3" className="text-base font-bold text-stone-800 dark:text-stone-200 text-center">
+              مكان المادة جاهز في السيستم — مستنيين السلايدات
+            </ArabicText>
+            <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 max-w-lg mx-auto leading-relaxed text-center">
+              المادة دي مكانها متظبط بالتمام، وأول ما ملفات محاضراتها توصلنا هينزل تلخيصها وبنك أسئلتها ومعاملها على طول يا هندسة!
             </ArabicText>
           </div>
         )}

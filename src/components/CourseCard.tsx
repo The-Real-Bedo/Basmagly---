@@ -1,7 +1,7 @@
 import React from 'react';
 import { Course } from '../types';
 import { BookOpen, HelpCircle, ArrowRight, User, Network, Bot, Cpu, Layout, Database, FolderKanban, Wrench } from 'lucide-react';
-import { ArabicText } from './ArabicText';
+import { ArabicText, hasArabic } from './ArabicText';
 
 const ICON_MAP: { [key: string]: any } = {
   Network,
@@ -30,7 +30,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
       <div className="space-y-4">
         {/* Top: Icon & Status Badge */}
         <div className="flex items-start justify-between gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-beige-100 dark:bg-stone-800 border border-beige-300 dark:border-stone-700 flex items-center justify-center text-stone-800 dark:text-stone-200 group-hover:scale-105 transition-transform shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-beige-100 dark:bg-stone-800 border border-beige-300 dark:border-stone-700 flex items-center justify-center text-stone-800 dark:text-stone-200 group-hover:scale-105 transition-transform shadow-sm">
             <IconComp className="w-6 h-6" />
           </div>
 
@@ -46,7 +46,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
               /* Requirement 5: High-contrast readable awaiting badge */
               <span
                 dir="rtl"
-                className="text-[13px] font-semibold px-2.5 py-1 rounded-full bg-stone-200/90 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-300 dark:border-stone-600 shadow-2xs"
+                className="text-[13px] font-semibold px-2.5 py-1 rounded-full bg-stone-200/90 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-300 dark:border-stone-600 shadow-sm"
               >
                 مستنيين السلايدات
               </span>
@@ -67,9 +67,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
           </ArabicText>
 
           {course.instructor && (
-            <p className="text-[13px] text-stone-600 dark:text-zinc-400 flex items-center gap-1.5 pt-1 font-mono">
-              <User className="w-3.5 h-3.5" />
-              <span>{course.instructor}</span>
+            <p className="text-[13px] text-stone-600 dark:text-zinc-400 flex items-center gap-1.5 pt-1">
+              <User className="w-3.5 h-3.5 shrink-0" />
+              <span dir="auto" className={hasArabic(course.instructor) ? 'font-arabic' : 'font-mono'}>
+                {course.instructor}
+              </span>
             </p>
           )}
         </div>
@@ -101,7 +103,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
           )}
         </div>
 
-        <span className="w-8 h-8 rounded-xl bg-beige-100 dark:bg-stone-800 text-stone-700 dark:text-zinc-300 flex items-center justify-center group-hover:bg-stone-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-stone-900 transition-all shadow-2xs">
+        <span className="w-8 h-8 rounded-xl bg-beige-100 dark:bg-stone-800 text-stone-700 dark:text-zinc-300 flex items-center justify-center group-hover:bg-stone-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-stone-900 transition-all shadow-sm">
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </span>
       </div>

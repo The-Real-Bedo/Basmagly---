@@ -1,41 +1,53 @@
 import React from 'react';
 
+const ARABIC_RE = /[\u0600-\u06FF]/;
+
+/** True when the string contains at least one Arabic letter. */
+export const hasArabic = (text: string): boolean => ARABIC_RE.test(text);
+
+// One Latin token: optional leading dot (".NET"), then letters/digits with
+// inner separators ("TCP/IP", "192.168.1.10", "FF:FF:FF", "Wi-Fi", "C#", "C++", "75°C").
+const LATIN_TOKEN = String.raw`\.?[A-Za-z0-9][A-Za-z0-9+#°%]*(?:[-_/.:][A-Za-z0-9+#°%]+)*`;
+// Tokens joined by spaces or by ", ", " & ", " / " form one phrase
+// ("Network Components, Classifications & Topologies") so they never reorder in RTL.
+const LATIN_JOINER = String.raw`(?:[ \t]+|[ \t]*[,&/][ \t]+)`;
+const LATIN_PHRASE = String.raw`${LATIN_TOKEN}(?:${LATIN_JOINER}${LATIN_TOKEN})*`;
+// A phrase wrapped in parentheses is captured together with its parentheses, and a
+// phrase followed by a parenthetical ("Edge (3ms)") stays one run, so brackets never
+// detach from the term or reorder in RTL.
+const LATIN_PAREN = String.raw`\([ \t]*${LATIN_PHRASE}[ \t]*\)`;
+const LATIN_RUN_RE = new RegExp(
+  String.raw`(?:${LATIN_PAREN}|${LATIN_PHRASE})(?:[ \t]*${LATIN_PAREN})*`,
+  'g'
+);
+
 /**
- * Reusable helper that isolates English terms, numbers, acronyms, and symbols
- * in <bdi dir="ltr"> within an Arabic sentence so that punctuation (such as parentheses,
- * full stops, commas, and hyphens) does not flip to the wrong side of the line in RTL mode.
+ * Isolates English terms, numbers, acronyms and symbols inside an Arabic sentence in
+ * <bdi dir="ltr"> so punctuation (parentheses, full stops, commas, hyphens) does not
+ * flip to the wrong side of the line in RTL mode.
  */
 export function formatArabicWithEnglish(text: string): React.ReactNode {
   if (!text) return '';
-
-  // Match sequences of Latin words, numbers, tech terms (e.g. "Intermediary Devices", "MAC", "IP", "Hub", "TCP/IP")
-  // Matches continuous Latin tokens and multi-word Latin phrases
-  const regex = /([A-Za-z0-9]+(?:[-_/.#:][A-Za-z0-9]+)*(?:\s+[A-Za-z0-9]+(?:[-_/.#:][A-Za-z0-9]+)*)*)/g;
-
-  if (!/[A-Za-z]/.test(text)) {
-    return text;
-  }
+  if (!/[A-Za-z]/.test(text)) return text;
 
   const parts: React.ReactNode[] = [];
   let lastIdx = 0;
   let match: RegExpExecArray | null;
+  LATIN_RUN_RE.lastIndex = 0;
 
-  while ((match = regex.exec(text)) !== null) {
-    if (/[A-Za-z]/.test(match[0])) {
-      if (match.index > lastIdx) {
-        parts.push(text.substring(lastIdx, match.index));
-      }
-      parts.push(
-        <bdi
-          key={match.index}
-          dir="ltr"
-          className="font-sans font-semibold text-stone-900 dark:text-stone-100 mx-0.5 inline-block"
-        >
-          {match[0]}
-        </bdi>
-      );
-      lastIdx = regex.lastIndex;
+  while ((match = LATIN_RUN_RE.exec(text)) !== null) {
+    // Bare numbers stay in the Arabic run; only wrap runs that contain Latin letters.
+    if (!/[A-Za-z]/.test(match[0])) continue;
+    if (match.index > lastIdx) {
+      parts.push(text.substring(lastIdx, match.index));
     }
+    // Color is inherited on purpose so terms stay readable on dark/inverted surfaces.
+    parts.push(
+      <bdi key={match.index} dir="ltr" className="font-sans font-semibold mx-0.5">
+        {match[0]}
+      </bdi>
+    );
+    lastIdx = LATIN_RUN_RE.lastIndex;
   }
 
   if (lastIdx < text.length) {
@@ -54,9 +66,8 @@ interface ArabicTextProps {
 
 /**
  * ArabicText Component
- * - Forces dir="rtl" and text-align: right
- * - Applies IBM Plex Sans Arabic / Cairo typography
- * - Applies generous 1.75 line-height
+ * - Forces dir="rtl" and text-align: right (override with text-center/text-left via className)
+ * - Applies IBM Plex Sans Arabic / Cairo typography with 1.75 line-height
  * - Automatically wraps embedded English terms in <bdi dir="ltr"> to prevent punctuation flips
  */
 export const ArabicText: React.FC<ArabicTextProps> = ({
@@ -72,11 +83,10 @@ export const ArabicText: React.FC<ArabicTextProps> = ({
     return node;
   };
 
+  // Default colour lives in the `arabic-text` component class (index.css) so that any
+  // text-* colour utility passed via className reliably overrides it.
   return (
-    <Component
-      dir={dir}
-      className={`font-arabic text-right leading-[1.75] text-[1.1em] text-stone-700 dark:text-zinc-300 ${className}`}
-    >
+    <Component dir={dir} className={`arabic-text font-arabic ${className}`}>
       {React.Children.map(children, processNode)}
     </Component>
   );
