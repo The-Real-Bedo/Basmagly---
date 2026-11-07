@@ -8,7 +8,7 @@ import { LectureSummary } from './components/LectureSummary';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
 import { BrandLogo } from './components/BrandLogo';
-import { Wrench, Clock, ArrowRight, Zap, Bot, Cpu, Network, Route, Calculator, Radio, Sliders, Layers } from 'lucide-react';
+import { Wrench, Clock, ArrowRight, Zap, Bot, Cpu, Network, Route, Calculator, Radio, Sliders, Layers, Search } from 'lucide-react';
 
 interface LabDirectoryItem {
   id: string;
@@ -106,7 +106,7 @@ const ALL_LABS: LabDirectoryItem[] = [
   {
     id: 'vacuum-world',
     courseId: 'ai',
-    lectureId: 'ai-lec-1',
+    lectureId: 'ai-lec-2',
     category: 'ai',
     categoryLabel: 'Artificial Intelligence',
     categoryLabelAr: 'ذكاء اصطناعي',
@@ -128,6 +128,19 @@ const ALL_LABS: LabDirectoryItem[] = [
     descriptionAr: 'شات تفاعلي بين إنسان وآلة والمحقق البشري، مع شرح قدرات الذكاء الاصطناعي الشاملة.',
     icon: Bot,
     badge: 'Turing Test'
+  },
+  {
+    id: 'search-visualizer',
+    courseId: 'ai',
+    lectureId: 'ai-lec-4',
+    category: 'ai',
+    categoryLabel: 'Artificial Intelligence',
+    categoryLabelAr: 'ذكاء اصطناعي',
+    title: 'Uninformed Search Simulator (BFS, DFS, UCS)',
+    subtitleAr: 'محاكي استراتيجيات البحث وشجرة الشيت',
+    descriptionAr: 'تتبع جبهة البحث (Frontier) ومقارنة ترتيب زيارة العقد في مسائل شيت المحاضرة 4.',
+    icon: Search,
+    badge: 'BFS • DFS • UCS'
   },
   {
     id: 'edge-vs-cloud',

@@ -14,6 +14,7 @@ import { NetworkDevicesCollisionLab } from './interactive/NetworkDevicesCollisio
 import { VacuumWorldAgentLab } from './interactive/VacuumWorldAgentLab';
 import { EdgeVsCloudLab } from './interactive/EdgeVsCloudLab';
 import { IotStackArchitectureLab } from './interactive/IotStackArchitectureLab';
+import { SearchAlgorithmLab } from './interactive/SearchAlgorithmLab';
 import { QuizSystem } from './QuizSystem';
 
 interface LectureSummaryProps {
@@ -158,6 +159,7 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
           {lecture.interactiveTools.includes('edge-vs-cloud') && <EdgeVsCloudLab />}
           {lecture.interactiveTools.includes('iot-simulator') && <IotPipelineSimulator />}
           {lecture.interactiveTools.includes('iot-stack-lab') && <IotStackArchitectureLab />}
+          {lecture.interactiveTools.includes('search-visualizer') && <SearchAlgorithmLab />}
         </div>
       )}
 
