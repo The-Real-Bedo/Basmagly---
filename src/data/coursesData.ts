@@ -713,7 +713,16 @@ export const COURSES_DATA: Course[] = [
               'خد بالك في الامتحان: قواعد البيانات (Databases) والسحابة (Cloud) مخازن خلفية، ومش من ضمن الأركان الثلاثة التأسيسية لمنظومة إنترنت الأشياء.'
             ],
             keyRule: 'Every IoT ecosystem is fundamentally constructed upon exactly three pillars: Devices, Sensors, and Networks.',
-            keyRuleAr: 'قاعدة امتحانية: منظومة إنترنت الأشياء قائمة علمياً على 3 أركان أساسية لا غير: (Devices, Sensors, Networks).'
+            keyRuleAr: 'قاعدة امتحانية: منظومة إنترنت الأشياء قائمة علمياً على 3 أركان أساسية لا غير: (Devices, Sensors, Networks).',
+            quickCheck: {
+              question: 'According to Lecture 1 Slide 5, which triad forms the indispensable foundational components of any IoT ecosystem?',
+              questionAr: 'وفقاً للسلايد 5 من المحاضرة، أي ثلاثي يمثل الأركان التأسيسية التي لا غنى عنها لأي منظومة إنترنت أشياء؟',
+              options: ['Devices, Sensors, Networks', 'Sensors, Cloud Storage, SQL Databases', 'Microcontrollers, Web Servers, Fiber Optics', 'Operating Systems, Edge Gateways, Mobile Apps'],
+              optionsAr: ['الأجهزة، الحساسات، والشبكات (Devices, Sensors, Networks)', 'الحساسات، التخزين السحابي، وقواعد بيانات SQL', 'المتحكمات الدقيقة، خوادم الويب، وكابلات الفايبر', 'أنظمة التشغيل، بوابات الحافة، وتطبيقات الموبايل'],
+              correctIndex: 0,
+              explanation: 'Slide 5 explicitly establishes Devices, Sensors, and Networks as the core triad. Databases and cloud servers are destinations in the telemetry pipeline, not one of the 3 foundational pillars.',
+              explanationAr: 'السلايد رقم 5 حددت نصاً إن الثلاثي الأساسي لمنظومة الـ IoT هو: الحساسات (Sensors)، الأجهزة (Devices)، والشبكات (Networks)؛ بينما السحابة وقواعد البيانات دي وسائط تخزين وتحليل.'
+            }
           },
           {
             title: '2. The 3-Stage Telemetry Pipeline: Collect → Transmit → Analyze',
@@ -733,7 +742,16 @@ export const COURSES_DATA: Course[] = [
               'اكتمال الدورة: المشغلات بتتحرك في الواقع (قفل محبس، تشغيل تبريد)، فتتغير قراءة الحساسات، وتتكرر الدورة المغلقة تلقائياً.'
             ],
             keyRule: 'Exact operational pipeline: Sensors Collect → Connectivity Transmits → Cloud Analyzes (never reverse or mix stages).',
-            keyRuleAr: 'ترتيب دورة الـ IoT في الامتحان ثابت لا يتغير: الحساسات تجمع ← الشبكة تنقل ← السحابة تحلل.'
+            keyRuleAr: 'ترتيب دورة الـ IoT في الامتحان ثابت لا يتغير: الحساسات تجمع ← الشبكة تنقل ← السحابة تحلل.',
+            quickCheck: {
+              question: 'What is the correct sequential order of the IoT telemetry data pipeline described in Slide 7 & 8?',
+              questionAr: 'ما هو الترتيب الزمني الصحيح لدورة حياة بيانات إنترنت الأشياء الموضحة في السلايد 7 و 8؟',
+              options: ['Collect → Transmit → Analyze', 'Transmit → Analyze → Collect', 'Analyze → Collect → Transmit', 'Collect → Analyze → Transmit'],
+              optionsAr: ['التجميع (Collect) ← النقل (Transmit) ← التحليل (Analyze)', 'النقل (Transmit) ← التحليل (Analyze) ← التجميع (Collect)', 'التحليل (Analyze) ← التجميع (Collect) ← النقل (Transmit)', 'التجميع (Collect) ← التحليل (Analyze) ← النقل (Transmit)'],
+              correctIndex: 0,
+              explanation: 'The fundamental pipeline follows a strict physical-to-digital chronological sequence: 1. Collect (via Sensors) → 2. Transmit (via Gateways/Protocols) → 3. Analyze (in the Cloud/Edge).',
+              explanationAr: 'الدورة بتمشي بترتيب زمني صارم: أولاً الحساسات بتجمع الداتا الفيزيائية (Collect)، ثانياً الشبكة بتنقلها (Transmit)، ثالثاً المنصة السحابية بتحللها وتتخذ القرار (Analyze).'
+            }
           },
           {
             title: '3. Real-World Applications: Smart Agriculture, Smart Homes & Industry 4.0',
@@ -753,7 +771,16 @@ export const COURSES_DATA: Course[] = [
               'الثورة الصناعية الرابعة (Industry 4.0): حساسات الاهتزاز والحرارة في الماكينات بتعمل صيانة تنبؤية (Predictive Maintenance) قبل ما الماكينة تتعطل فجأة وتوقف المصنع.'
             ],
             keyRule: 'Precision Agriculture deploys soil sensors and drones to directly increase crop yield sustainably by over 20%.',
-            keyRuleAr: 'الزراعة الذكية بتستخدم حساسات رطوبة التربة والدرونز لرفع إنتاجية المحاصيل بنسبة تتجاوز 20% مع توفير الموارد.'
+            keyRuleAr: 'الزراعة الذكية بتستخدم حساسات رطوبة التربة والدرونز لرفع إنتاجية المحاصيل بنسبة تتجاوز 20% مع توفير الموارد.',
+            quickCheck: {
+              question: 'In smart agriculture and precision farming, why are soil moisture sensors coupled with automated water valves?',
+              questionAr: 'في تطبيقات الزراعة الذكية، لماذا يتم ربط حساسات رطوبة التربة بمحابس الري التلقائية؟',
+              options: ['To replace human intervention and optimize water consumption based on real-time soil telemetry', 'To increase water wastage intentionally', 'Because sensors cannot function without water pipes', 'To format sensor data into CSV files only'],
+              optionsAr: ['لتحقيق أتمتة كاملة وترشيد استهلاك المياه بدقة اعتماداً على القياسات اللحظية للتربة', 'لزيادة استهلاك المياه عمداً', 'لأن الحساسات لا تعمل إلا داخل مواسير المياه', 'لتحويل قراءات الحساس إلى ملفات إكسيل فقط'],
+              correctIndex: 0,
+              explanation: 'Smart agriculture leverages closed-loop IoT control (Sense → Transmit → Analyze → Actuate) to conserve vital resources and maximize crop yields autonomously.',
+              explanationAr: 'الفكرة من دمج الحساس مع المحبس هي تحويل النظام لحلقة مغلقة ذاتية التحكم (Closed-Loop) تسقي الزرع في التوقيت والكمية المظبوطة بالمللي وتوفر المية بدون تدخل بشري.'
+            }
           },
           {
             title: '4. The 3 Grand Adoption Bottlenecks & Architectural Solutions',
@@ -771,7 +798,16 @@ export const COURSES_DATA: Course[] = [
               'تحدي 3: التوسع والأداء (Scalability & Performance) — نقل مليارات القراءات الخام للسحابة بيعمل اختناق للباندويث وتأخير زمني. الحل: معالجة الحافة (Edge Computing) لتصفية البيانات محلياً مع سحابة مرنة.'
             ],
             keyRule: 'Interoperability is resolved through standardized protocols; Scalability & latency bottlenecks are resolved through Edge Computing.',
-            keyRuleAr: 'حل مشكلة التوافقية هو البروتوكولات المعيارية (Standardized Protocols)، وحل مشكلة التوسع وزمن الاستجابة هو معالجة الحافة (Edge Computing).'
+            keyRuleAr: 'حل مشكلة التوافقية هو البروتوكولات المعيارية (Standardized Protocols)، وحل مشكلة التوسع وزمن الاستجابة هو معالجة الحافة (Edge Computing).',
+            quickCheck: {
+              question: 'How does Edge Computing resolve the Scalability & Latency bottleneck in mission-critical IoT systems?',
+              questionAr: 'كيف تنجح معالجة الحافة (Edge Computing) في حل عنق زجاجة بطء الاستجابة وقابلية التوسع في أنظمة الطوارئ؟',
+              options: ['By processing critical data locally right at the source, slashing response times from ~240ms to ~3ms', 'By moving all servers to a different country', 'By shutting down all sensors when traffic is high', 'By forcing all packets to traverse overseas cloud centers'],
+              optionsAr: ['بمعالجة البيانات الحرجة محلياً عند المصدر، مما يقلل زمن الاستجابة من ~240ms إلى ~3ms وينقذ الموقف', 'بنقل الخوادم المركزية إلى دولة أخرى', 'بإيقاف تشغيل الحساسات تلقائياً عند زيادة الضغط', 'بإجبار جميع الحزم على السفر إلى خوادم السحابة في الخارج'],
+              correctIndex: 0,
+              explanation: 'Lecture 1 Slide 12 directly presents Edge Computing for localized processing to eliminate WAN latency and preserve network bandwidth during emergencies.',
+              explanationAr: 'السلايد 12 وضحت إن معالجة البيانات محلياً على أجهزة الـ Edge بتنقذ الموقف في 3ms بس من غير ما تستنى النت يلف حولين العالم للـ Cloud، وبكده بنحل أزمة التأخير والباندويث.'
+            }
           }
         ],
         questions: [
@@ -1022,7 +1058,16 @@ export const COURSES_DATA: Course[] = [
               'التطوير المستقل بدون كسر النظام: تقدر تطور طبقة كاملة من غير ما تهدم الباقي (زي الانتقال من IPv4 لـ IPv6؛ تم تعديل طبقة الشبكة فقط بدون المساس بـ TCP أو البرامج أو الكابلات).'
             ],
             keyRule: 'Layering enables independent protocol evolution: transitioning from IPv4 to IPv6 only altered the Network layer, leaving all other layers intact.',
-            keyRuleAr: 'ميزة نموذج الطبقات الجوهرية: التطوير بدون انهيار النظام؛ الانتقال من IPv4 إلى IPv6 غيّر طبقة الشبكة فقط وظلت باقي الطبقات والتطبيقات تعمل بكفاءة.'
+            keyRuleAr: 'ميزة نموذج الطبقات الجوهرية: التطوير بدون انهيار النظام؛ الانتقال من IPv4 إلى IPv6 غيّر طبقة الشبكة فقط وظلت باقي الطبقات والتطبيقات تعمل بكفاءة.',
+            quickCheck: {
+              question: 'Why are open, standardized network protocols (like IP, TCP, and MQTT) universally required instead of proprietary protocols?',
+              questionAr: 'لماذا تُعد البروتوكولات القياسية المفتوحة متطلباً عالمياً إلزامياً بدلاً من البروتوكولات المغلقة الخاصة بكل شركة؟',
+              options: ['To prevent multi-vendor communication chaos and guarantee seamless device interoperability', 'To force everyone to buy from one single manufacturer', 'Because open protocols eliminate the need for routers', 'To make network cables unnecessary'],
+              optionsAr: ['لمنع فوضى الاتصال وضمان تفاهم وتوافق الأجهزة المصنعة من شركات مختلفة (Interoperability)', 'لإجبار الجميع على الشراء من مصنّع واحد فقط', 'لأن البروتوكولات المفتوحة تلغي الحاجة لأجهزة الراوتر', 'لجعل كابلات الشبكة غير ضرورية'],
+              correctIndex: 0,
+              explanation: 'Lecture 2 Slide 3 notes that without standardized protocol rules, devices from different companies speak mutually unintelligible languages, creating complete communication breakdown.',
+              explanationAr: 'السلايد رقم 3 أكدت إن بدون المعايير القياسية الموحدة، كل جهاز هيكون ليه لغته الخاصة ومحدش هيفهم التاني، وبالتالي شبكة الإنترنت العالمية كانت هتفشل تماماً.'
+            }
           },
           {
             title: '2. The OSI 7-Layer Reference Model vs The TCP/IP 4-Layer Reality',
@@ -1050,7 +1095,16 @@ export const COURSES_DATA: Course[] = [
               'دمج TCP/IP: نموذج TCP/IP دمج الطبقات (7 و 6 و 5) في طبقة Application واحدة، ودمج (1 و 2) في طبقة Network Access واحدة.'
             ],
             keyRule: 'OSI is a 7-layer theoretical conceptual model; TCP/IP is a 4-layer practical operational protocol suite.',
-            keyRuleAr: 'نموذج OSI إطار نظري من 7 طبقات طورته ISO؛ ونموذج TCP/IP معمارية تطبيقية واقعية من 4 طبقات تقوم عليها شبكة الإنترنت.'
+            keyRuleAr: 'نموذج OSI إطار نظري من 7 طبقات طورته ISO؛ ونموذج TCP/IP معمارية تطبيقية واقعية من 4 طبقات تقوم عليها شبكة الإنترنت.',
+            quickCheck: {
+              question: 'Which TCP/IP layer handles packet routing and logical IP addressing across interconnected networks?',
+              questionAr: 'أي طبقة في نموذج TCP/IP الرباعي تختص بتوجيه حزم البيانات والعنونة المنطقية (IP) عبر الشبكات المختلفة؟',
+              options: ['Internet Layer', 'Transport Layer', 'Network Access Layer', 'Application Layer'],
+              optionsAr: ['طبقة الإنترنت (Internet Layer)', 'طبقة النقل (Transport Layer)', 'طبقة الوصول للشبكة (Network Access Layer)', 'طبقة التطبيقات (Application Layer)'],
+              correctIndex: 0,
+              explanation: 'In the TCP/IP model (Slide 9 & 10), the Internet layer (corresponding to OSI Network Layer 3) is solely responsible for logical IP addressing and packet routing.',
+              explanationAr: 'السلايد 9 و 10 توضح صراحة أن طبقة الإنترنت (Internet Layer) هي المسؤولة عن الـ Routing وعناوين الـ IP المنطقية لتوصيل الحزم بين الشبكات.'
+            }
           },
           {
             title: '3. Transport Protocols Head-to-Head: TCP 3-Way Handshake vs UDP Datagrams',
@@ -1074,7 +1128,16 @@ export const COURSES_DATA: Course[] = [
               'استخدامات UDP: البث المباشر (Streaming)، ألعاب الأونلاين، مكالمات الفيديو، واستعلامات الـ DNS؛ لأن التأخير أسوأ من سقوط لقطة سريعة.'
             ],
             keyRule: 'TCP guarantees delivery via connection-oriented 3-way handshake; UDP is connectionless, prioritizing speed without delivery guarantee.',
-            keyRuleAr: 'بروتوكول TCP يعتمد على الاتصال ويضمن وصول الحزم بالمصافحة الثلاثية؛ بروتوكول UDP غير متصل وموجه للسرعة بدون ضمان للوصول.'
+            keyRuleAr: 'بروتوكول TCP يعتمد على الاتصال ويضمن وصول الحزم بالمصافحة الثلاثية؛ بروتوكول UDP غير متصل وموجه للسرعة بدون ضمان للوصول.',
+            quickCheck: {
+              question: 'What is the decisive trade-off when selecting UDP over TCP for an IoT sensor deployment?',
+              questionAr: 'ما هي المقايضة الأساسية (Trade-off) عند اختيار بروتوكول UDP بدلاً من TCP لنظام حساسات إنترنت الأشياء؟',
+              options: ['Sacrificing guaranteed delivery in exchange for ultra-low latency and zero connection-handshake overhead', 'Gaining 100% reliable retransmission with higher packet size', 'Encrypting data automatically with military-grade keys', 'Preventing packets from being routed across the internet'],
+              optionsAr: ['التضحية بضمان وصول الحزم مقابل سرعة استجابة فائقة وانعدام عبء المصافحة والـ Overhead', 'الحصول على ضمان وصول بنسبة 100% مع زيادة حجم الباكت', 'تشفير البيانات تلقائياً بمفاتيح عسكرية', 'منع الحزم من المرور عبر شبكة الإنترنت'],
+              correctIndex: 0,
+              explanation: 'Lecture 2 Slide 12 contrasts TCP (reliable, connection-oriented with 3-way handshake) vs UDP (connectionless, lightweight, fast, no delivery guarantee).',
+              explanationAr: 'السلايد 12 بتشرح المقايضة الشهيرة: الـ TCP بيضمن وصول كل باكت عبر المصافحة الثلاثية لكنه أثقل، بينما الـ UDP بيضحي بضمان الوصول عشان يبعت الداتا اللحظية بسرعة البرق وبأقل استهلاك طاقة.'
+            }
           },
           {
             title: '4. The 5-Layer IoT Theoretical Stack: From Perception to Cloud Applications',
@@ -1096,7 +1159,16 @@ export const COURSES_DATA: Course[] = [
               'الطبقة 5 (التطبيقات - Application): شاشات الموبايل ولوحات التحكم والداشبورد اللي بتعرض للمستخدم القراءات وتسمح له بالتحكم.'
             ],
             keyRule: 'The theoretical 5-layer IoT stack: 1. Perception → 2. Network → 3. Edge/Processing → 4. Middleware/Platform → 5. Application.',
-            keyRuleAr: 'المعمارية الخماسية لطبقات الـ IoT بالترتيب: الإدراك الحسي ← الشبكة ← معالجة الحافة ← المنصة والوسيط ← التطبيقات.'
+            keyRuleAr: 'المعمارية الخماسية لطبقات الـ IoT بالترتيب: الإدراك الحسي ← الشبكة ← معالجة الحافة ← المنصة والوسيط ← التطبيقات.',
+            quickCheck: {
+              question: 'At which layer of the IoT Stack do physical transducers (temperature sensors, gas detectors, and servo motors) reside?',
+              questionAr: 'في أي طبقة من معمارية طبقات إنترنت الأشياء الخماسية تتواجد المحولات الفيزيائية (حساسات الحرارة، كواشف الغاز، ومحركات السيرفو)؟',
+              options: ['Perception / Device Layer', 'Network Layer', 'Middleware / Processing Layer', 'Application Layer'],
+              optionsAr: ['طبقة الإدراك والاستشعار (Perception / Device Layer)', 'طبقة الشبكة (Network Layer)', 'طبقة البرمجيات الوسيطة والمعالجة (Middleware Layer)', 'طبقة التطبيقات وواجهة المستخدم (Application Layer)'],
+              correctIndex: 0,
+              explanation: 'The Perception layer (Layer 1 of the IoT stack, Slide 14 & 15) represents the physical edge interface containing sensors, actuators, and hardware interfaces.',
+              explanationAr: 'السلايد 14 و 15 تؤكدان أن طبقة الإدراك والاستشعار (Perception Layer) هي القاعدة التأسيسية التي تضم الحساسات والمحركات التي تتفاعل مع العالم الفيزيائي المحيط.'
+            }
           },
           {
             title: '5. IoT Stack vs Traditional TCP/IP: The Constrained-Device Paradigm Shift',
@@ -1116,7 +1188,16 @@ export const COURSES_DATA: Course[] = [
               'الشمولية: معمارية الـ IoT بتدمج العتاد الفيزيائي وإدارة الأجهزة وبوابات الحافة والسحابة كجزء أصيل من النموذج وليس مجرد برامج خارجية.'
             ],
             keyRule: 'The IoT stack extends beyond network communication: it covers the complete cycle from physical hardware to cloud platforms and mobile apps for constrained devices.',
-            keyRuleAr: 'الـ IoT Stack مش مجرد بروتوكول شبكة؛ ده إطار شامل بيغطي رحلة البيانات من الحساس الفيزيائي للمنصة السحابية وتطبيقات المستخدم ومصمم خصيصاً لشرائح محدودة الطاقة.'
+            keyRuleAr: 'الـ IoT Stack مش مجرد بروتوكول شبكة؛ ده إطار شامل بيغطي رحلة البيانات من الحساس الفيزيائي للمنصة السحابية وتطبيقات المستخدم ومصمم خصيصاً لشرائح محدودة الطاقة.',
+            quickCheck: {
+              question: 'Why do resource-constrained IoT nodes frequently adopt lightweight protocols like CoAP and MQTT instead of heavy HTTP/HTTPS?',
+              questionAr: 'لماذا تعتمد أجهزة الـ IoT محدودة الموارد على بروتوكولات خفيفة مثل CoAP و MQTT بدلاً من بروتوكول HTTP التقليدي؟',
+              options: ['Because microcontrollers have strictly limited RAM, processing power, and battery life that cannot afford heavy HTTP headers', 'Because HTTP was permanently banned for wireless devices', 'Because CoAP only works with satellite communication', 'Because MQTT cannot send numbers'],
+              optionsAr: ['لأن المتحكمات الدقيقة لها ذاكرة وبطارية وقدرات معالجة محدودة جداً لا تتحمل حجم ترويسة (Headers) بروتوكول HTTP الضخمة', 'لأن بروتوكول HTTP تم حظره نهائياً على الأجهزة اللاسلكية', 'لأن بروتوكول CoAP يعمل حصرياً عبر الأقمار الصناعية', 'لأن بروتوكول MQTT غير قادر على نقل الأرقام'],
+              correctIndex: 0,
+              explanation: 'Lecture 2 Slide 17 emphasizes that IoT edge devices are resource-constrained in battery and memory, requiring lightweight protocols with minimal header overhead.',
+              explanationAr: 'السلايد 17 توضح أن عتاد الـ IoT في الغالب شغال ببطارية متناهية الصغر وذاكرة RAM بالكيلوبايت، فترويسة HTTP الكبيرة تفرغ البطارية في ساعات؛ لذلك صُممت بروتوكولات خفيفة زي MQTT لتعيش البطارية سنين.'
+            }
           }
         ],
         questions: [
@@ -1316,78 +1397,148 @@ export const COURSES_DATA: Course[] = [
       }
     ],
     sheets: [
-      {
+            {
         id: 'iot-sheet-1',
         courseId: 'iot',
         sheetNumber: 1,
-        title: 'Lecture 1 Practice Sheet',
-        titleAr: 'شيت المحاضرة الأولى',
-        brief: 'Core practice exercises and problem sets for Lecture 1 with model solutions.',
-        briefAr: 'تمارين ومسائل المحاضرة الأولى مع الحلول النموذجية.',
+        title: 'IoT Quiz — Lecture 1',
+        titleAr: 'شيت كويز السكشن الرسمي — المحاضرة الأولى',
+        brief: 'Official faculty section quiz: 8 questions (4 True/False, 4 MCQ) with verbatim paper layout and model solutions.',
+        briefAr: 'شيت السكشن الرسمي مطابق لورقة الكويز (8 أسئلة: 4 صح وخطأ، 4 اختياري) مع الحل النموذجي ومراجع السلايدات.',
         problemsCount: 8,
         hasSolution: true,
         problems: [
           {
             id: 'p-iot1-1',
             problemNumber: 1,
+            partTitle: 'Part 1: True / False',
+            partTitleAr: 'الجزء الأول: صح أو خطأ',
+            type: 'true_false',
             question: 'A sensor is a device that detects physical input from the environment and converts physical phenomena into measurable signals.',
-            questionAr: 'الحساس هو جهاز يكتشف المدخلات الفيزيائية من البيئة ويحول الظواهر الفيزيائية إلى إشارات قابلة للقياس.',
+            questionAr: 'الحساس هو جهاز يكتشف المدخلات الفيزيائية من البيئة المحيطة ويحول الظواهر الفيزيائية إلى إشارات قابلة للقياس.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Lecture 1, Slide 3 defines a sensor verbatim as: "A sensor is a device that detects and responds to physical input from the environment, converting physical phenomena into measurable signals." Examples include thermometers, smoke detectors, and camera sensors.',
             solutionAr: 'الإجابة: صح (TRUE). السلايد رقم 3 من المحاضرة الأولى تعرّف الحساس نصاً بأنه: جهاز يكتشف ويستجيب للمدخلات الفيزيائية من البيئة المحيطة ويحول الظواهر الطبيعية لإشارات قابلة للقياس (زي قياس الحرارة والدخان والحركة).'
           },
           {
             id: 'p-iot1-2',
             problemNumber: 2,
+            partTitle: 'Part 1: True / False',
+            partTitleAr: 'الجزء الأول: صح أو خطأ',
+            type: 'true_false',
             question: 'According to the lecture, every IoT system is built upon four essential components.',
             questionAr: 'وفقاً للمحاضرة، كل نظام إنترنت أشياء مبني على أربعة مكونات أساسية.',
+            correctAnswer: 'False',
             solution: 'Answer: FALSE. Lecture 1, Slide 5 explicitly states: "Every Internet of Things (IoT) system is fundamentally built upon THREE essential components: Devices, Sensors, and Networks." Databases/Cloud platforms are backend storage/analytics destinations, not one of the foundational three.',
             solutionAr: 'الإجابة: غلط (FALSE). السلايد رقم 5 توضح نصاً أن أي نظام إنترنت أشياء مبني أساساً على ثلاثة مكونات أساسية فقط (Devices, Sensors, Networks) مش أربعة؛ وقواعد البيانات والسحابة ليست من هذا الثلاثي التأسيسي.'
           },
           {
             id: 'p-iot1-3',
             problemNumber: 3,
+            partTitle: 'Part 1: True / False',
+            partTitleAr: 'الجزء الأول: صح أو خطأ',
+            type: 'true_false',
             question: 'IoT devices connect and exchange data over the internet, and this always requires human intervention.',
             questionAr: 'تتصل أجهزة إنترنت الأشياء وتتبادل البيانات عبر الإنترنت، وهذا يتطلب دائماً تدخلاً بشرياً.',
+            correctAnswer: 'False',
             solution: 'Answer: FALSE. Lecture 1, Slide 6 states that IoT devices "connect and exchange data over the internet, often WITHOUT human intervention." Machine-to-Machine (M2M) autonomous operation is the core defining characteristic of IoT.',
-            solutionAr: 'الإجابة: غلط (FALSE). السلايد رقم 6 تؤكد أن أجهزة الـ IoT تتصل وتتبادل البيانات عبر الإنترنت دون اشتراط تدخل بشري (often without human intervention)؛ والتشغيل الآلي الذاتي هو جوهر إنترنت الأشياء.'
+            solutionAr: 'الإجابة: غلط (FALSE). السلايد رقم 6 تؤكد أن أجهزة الـ IoT تتصل وتتبادل البيانات عبر الإنترنت دون اشتراط تدخل بشري (often without human intervention)؛ والتشغيل الآلي الذاتي (M2M) هو جوهر إنترنت الأشياء.'
           },
           {
             id: 'p-iot1-4',
             problemNumber: 4,
+            partTitle: 'Part 1: True / False',
+            partTitleAr: 'الجزء الأول: صح أو خطأ',
+            type: 'true_false',
             question: 'Edge computing is presented as a solution to the scalability and performance challenge in IoT adoption.',
             questionAr: 'تم تقديم معالجة الحافة (Edge Computing) كحل لتحدي قابلية التوسع والأداء في تبني إنترنت الأشياء.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Lecture 1, Slide 12 addresses the "Scalability & Performance" challenge and directly presents the architectural solution: "Solution: Edge computing for localized processing and cloud-based scalable architectures."',
             solutionAr: 'الإجابة: صح (TRUE). السلايد رقم 12 توضح نصاً تحت بند تحدي التوسع والأداء (Scalability & Performance) أن الحل الهندسي المعتمد هو: معالجة الحافة للمعالجة المحلية (Edge computing for localized processing) مع بنية سحابية مرنة.'
           },
           {
             id: 'p-iot1-5',
             problemNumber: 5,
-            question: 'Which of the following is NOT one of the three main components of an IoT system? A) Sensors  B) Devices  C) Networks  D) Databases',
-            questionAr: 'أي مما يلي لا يعتبر واحداً من المكونات الثلاثة الرئيسية لنظام إنترنت الأشياء؟ أ) الحساسات  ب) الأجهزة  ج) الشبكات  د) قواعد البيانات',
+            partTitle: 'Part 2: Multiple Choice',
+            partTitleAr: 'الجزء الثاني: اختيار من متعدد',
+            type: 'mcq',
+            question: 'Which of the following is NOT one of the three main components of an IoT system?',
+            questionAr: 'أي مما يلي لا يعتبر واحداً من المكونات الثلاثة الرئيسية لنظام إنترنت الأشياء؟',
+            options: ['Sensors', 'Devices', 'Networks', 'Databases'],
+            optionsAr: ['الحساسات (Sensors)', 'الأجهزة (Devices)', 'الشبكات (Networks)', 'قواعد البيانات (Databases)'],
+            correctAnswer: 3,
             solution: 'Answer: D) Databases. Slide 5 defines the primary triad as Devices, Sensors, and Networks. Databases store data at the cloud tier, but are not one of the 3 primary architectural pillars.',
             solutionAr: 'الإجابة النموذجية: د) قواعد البيانات (Databases). السلايد رقم 5 حددت نصاً الثلاثي الأساسي لمنظومة الـ IoT: (Sensors, Devices, Networks)؛ بينما قواعد البيانات مخازن في السحابة وليست من الأركان التأسيسية الثلاثة.'
           },
           {
             id: 'p-iot1-6',
             problemNumber: 6,
-            question: 'What is the proposed solution to the "Interoperability" challenge? A) Edge computing for localized processing  B) Standardized communication protocols and open-source ecosystems  C) Robust encryption and strict access controls  D) Cloud-based scalable architectures',
-            questionAr: 'ما هو الحل المقترح لتحدي "التوافقية" (Interoperability)؟ أ) معالجة الحافة  ب) بروتوكولات الاتصال المعيارية والمنظومات مفتوحة المصدر  ج) التشفير المتين وإدارة الصلاحيات  د) البنى السحابية القابلة للتوسع',
+            partTitle: 'Part 2: Multiple Choice',
+            partTitleAr: 'الجزء الثاني: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What is the proposed solution to the "Interoperability" challenge?',
+            questionAr: 'ما هو الحل المقترح لتحدي "التوافقية والتشغيل البيني" (Interoperability)؟',
+            options: [
+              'Edge computing for localized processing',
+              'Standardized communication protocols and open-source ecosystems',
+              'Robust encryption and strict access controls',
+              'Cloud-based scalable architectures'
+            ],
+            optionsAr: [
+              'الحوسبة الطرفية للمعالجة المحلية',
+              'بروتوكولات اتصال قياسية موحدة ومنظومات مفتوحة المصدر',
+              'تشفير قوي وضوابط وصول صارمة',
+              'بنى تحتية سحابية قابلة للتوسع'
+            ],
+            correctAnswer: 1,
             solution: 'Answer: B) Standardized communication protocols and open-source ecosystems. Slide 12 explicitly links Interoperability (communication between diverse vendor platforms) to standardized protocols and open standards.',
             solutionAr: 'الإجابة النموذجية: ب) بروتوكولات الاتصال المعيارية والمنظومات مفتوحة المصدر (Standardized communication protocols). السلايد رقم 12 تؤكد أن تفاهم أجهزة من مصنعين مختلفين يتطلب معايير اتصال موحدة ومفتوحة.'
           },
           {
             id: 'p-iot1-7',
             problemNumber: 7,
-            question: 'What is the correct sequence of how IoT works? A) Cloud analyzes → Sensors collect → Connectivity transmits  B) Connectivity transmits → Cloud analyzes → Sensors collect  C) Sensors collect → Connectivity transmits → Cloud analyzes  D) Cloud analyzes → Connectivity transmits → Sensors collect',
-            questionAr: 'ما هو التسلسل الصحيح لآلية عمل إنترنت الأشياء؟ أ) السحابة تحلل ← الحساسات تجمع ← الشبكة تنقل  ب) الشبكة تنقل ← السحابة تحلل ← الحساسات تجمع  ج) الحساسات تجمع ← الاتصال ينقل ← السحابة تحلل  د) السحابة تحلل ← الاتصال ينقل ← الحساسات تجمع',
+            partTitle: 'Part 2: Multiple Choice',
+            partTitleAr: 'الجزء الثاني: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What is the correct sequence of how IoT works?',
+            questionAr: 'ما هو التسلسل الصحيح لآلية عمل إنترنت الأشياء؟',
+            options: [
+              'Cloud analyzes → Sensors collect → Connectivity transmits',
+              'Connectivity transmits → Cloud analyzes → Sensors collect',
+              'Sensors collect → Connectivity transmits → Cloud analyzes',
+              'Cloud analyzes → Connectivity transmits → Sensors collect'
+            ],
+            optionsAr: [
+              'السحابة تحلل ← الحساسات تجمع ← الاتصال ينقل',
+              'الاتصال ينقل ← السحابة تحلل ← الحساسات تجمع',
+              'الحساسات تجمع ← الاتصال ينقل ← السحابة تحلل',
+              'السحابة تحلل ← الاتصال ينقل ← الحساسات تجمع'
+            ],
+            correctAnswer: 2,
             solution: 'Answer: C) Sensors collect → Connectivity transmits → Cloud analyzes. Slide 8 diagrams this exact chronological horizontal flow pipeline.',
             solutionAr: 'الإجابة النموذجية: ج) الحساسات تجمع ← الاتصال ينقل ← السحابة تحلل (Sensors collect → Connectivity transmits → Cloud analyzes). السلايد رقم 8 تشرح هذا التدفق الثلاثي المتسلسل بالتفصيل.'
           },
           {
             id: 'p-iot1-8',
             problemNumber: 8,
-            question: 'Which of the following best defines a "network"? A) Any piece of hardware designed to perform a specific task  B) A device that converts physical phenomena into measurable signals  C) A collection of interconnected devices that can communicate and share resources  D) A cloud platform that analyzes IoT data',
-            questionAr: 'أي مما يلي يمثل أفضل تعريف لـ "الشبكة" (Network)؟ أ) أي قطعة عتاد مصممة لمهمة معينة  ب) جهاز يحول الظواهر الفيزيائية لإشارات قابلة للقياس  ج) مجموعة من الأجهزة المترابطة القادرة على الاتصال ومشاركة الموارد  د) منصة سحابية لتحليل بيانات إنترنت الأشياء',
+            partTitle: 'Part 2: Multiple Choice',
+            partTitleAr: 'الجزء الثاني: اختيار من متعدد',
+            type: 'mcq',
+            question: 'Which of the following best defines a "network"?',
+            questionAr: 'أي مما يلي يمثل أفضل تعريف لـ "الشبكة" (Network)؟',
+            options: [
+              'Any piece of hardware designed to perform a specific task',
+              'A device that converts physical phenomena into measurable signals',
+              'A collection of interconnected devices that can communicate and share resources',
+              'A cloud platform that analyzes IoT data'
+            ],
+            optionsAr: [
+              'أي قطعة عتاد مصممة لأداء مهمة محددة',
+              'جهاز يحول الظواهر الفيزيائية إلى إشارات قابلة للقياس',
+              'مجموعة من الأجهزة المترابطة التي يمكنها التواصل ومشاركة الموارد',
+              'منصة سحابية لتحليل بيانات إنترنت الأشياء'
+            ],
+            correctAnswer: 2,
             solution: 'Answer: C) A collection of interconnected devices that can communicate and share resources. Slide 4 defines a network as: "A collection of interconnected devices that can communicate and share resources with each other."',
             solutionAr: 'الإجابة النموذجية: ج) مجموعة من الأجهزة المترابطة القادرة على الاتصال ومشاركة الموارد مع بعضها. السلايد رقم 4 تعرف الشبكة نصاً بهذا التعريف الدقيق.'
           }
@@ -1397,170 +1548,330 @@ export const COURSES_DATA: Course[] = [
         id: 'iot-sheet-2',
         courseId: 'iot',
         sheetNumber: 2,
-        title: 'Lecture 2 Practice Sheet',
-        titleAr: 'شيت المحاضرة الثانية',
-        brief: 'Core practice exercises and problem sets for Lecture 2 with model solutions.',
-        briefAr: 'تمارين ومسائل المحاضرة الثانية مع الحلول النموذجية.',
+        title: 'LECTURE 2 • IoT • Networking Models & Protocols',
+        titleAr: 'شيت كويز السكشن الرسمي — نماذج وبروتوكولات الشبكات',
+        brief: 'Official faculty section sheet: 20 questions (10 MCQ, 10 True/False) with verbatim paper layout and model solutions.',
+        briefAr: 'ورقة شيت وكويز السكشن الرسمي (20 سؤال: 10 اختياري، 10 صح وخطأ) بالترتيب والتنسيق المطابق لورقة الامتحان.',
         problemsCount: 20,
         hasSolution: true,
         problems: [
           {
             id: 'p-iot2-1',
             problemNumber: 1,
-            question: 'What is one major challenge when sending data across a network? A. Making every device use the same screen size  B. Breaking messages into manageable packets  C. Removing all communication protocols  D. Preventing devices from using addresses',
-            questionAr: 'ما هو أحد التحديات الرئيسية عند إرسال البيانات عبر الشبكة؟ أ. جعل كل جهاز يستخدم نفس حجم الشاشة  ب. تقطيع الرسائل إلى حزم صغيرة يمكن إدارتها  ج. إزالة جميع بروتوكولات الاتصال  د. منع الأجهزة من استخدام العناوين',
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What is one major challenge when sending data across a network?',
+            questionAr: 'ما هو أحد التحديات الرئيسية عند إرسال البيانات عبر الشبكة؟',
+            options: [
+              'Making every device use the same screen size',
+              'Breaking messages into manageable packets',
+              'Removing all communication protocols',
+              'Preventing devices from using addresses'
+            ],
+            optionsAr: [
+              'جعل كل جهاز يستخدم نفس حجم الشاشة',
+              'تقطيع الرسائل الكبيرة إلى حزم صغيرة يمكن إدارتها وتوجيهها (Packetization)',
+              'إلغاء جميع بروتوكولات الاتصال',
+              'منع الأجهزة من استخدام العناوين'
+            ],
+            correctAnswer: 1,
             solution: 'Answer: B. Breaking messages into manageable packets. Lecture 2, Slide 2 lists the core communication challenges: packetization (breaking messages into small packets), routing packets across continents, data integrity, and translating electrical signals back to text.',
             solutionAr: 'الإجابة النموذجية: ب. تقطيع الرسائل إلى حزم صغيرة يمكن إدارتها (Breaking messages into manageable packets). السلايد 2 توضح تحديات الاتصال ومن أبرزها تقطيع البيانات لحزم ونقلها عبر القارات والتأكد من سلامتها.'
           },
           {
             id: 'p-iot2-2',
             problemNumber: 2,
-            question: 'What can happen when companies create network protocols independently without common standards? A. All devices automatically become compatible  B. Communication always becomes faster  C. Devices may not understand one another  D. The network no longer needs layers',
-            questionAr: 'ماذا يحدث عندما تقوم الشركات بإنشاء بروتوكولات شبكات بشكل مستقل ودون معايير موحدة؟ أ. تصبح جميع الأجهزة متوافقة تلقائياً  ب. يصبح الاتصال أسرع دائماً  ج. قد لا تفهم الأجهزة بعضها البعض  د. لا تعود الشبكة بحاجة إلى طبقات',
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What can happen when companies create network protocols independently without common standards?',
+            questionAr: 'ماذا يمكن أن يحدث عندما تنشئ الشركات بروتوكولات شبكات خاصة بها بشكل مستقل دون معايير مشتركة؟',
+            options: [
+              'All devices automatically become compatible',
+              'Communication always becomes faster',
+              'Devices may not understand one another',
+              'The network no longer needs layers'
+            ],
+            optionsAr: [
+              'تصبح جميع الأجهزة متوافقة تلقائياً',
+              'يصبح الاتصال أسرع دائماً',
+              'قد تعجز الأجهزة عن فهم بعضها البعض (انعدام التوافقية)',
+              'لا تعود الشبكة بحاجة إلى طبقات'
+            ],
+            correctAnswer: 2,
             solution: 'Answer: C. Devices may not understand one another. Lecture 2, Slide 3 ("Without Standards = Chaos") highlights that proprietary protocols lead to devices being unable to understand each other, making communication impossible.',
             solutionAr: 'الإجابة النموذجية: ج. قد لا تفهم الأجهزة بعضها البعض (Devices may not understand one another). السلايد 3 تؤكد أن غياب المعايير الموحدة ينتج عنه فوضى وعجز أجهزة الشركات المختلفة عن التفاهم.'
           },
           {
             id: 'p-iot2-3',
             problemNumber: 3,
-            question: 'What is the main idea behind a layered stack model? A. One layer performs every communication task  B. Each layer has a clear function and cooperates with other layers  C. Layers must all use the same protocol  D. It removes the need for standards',
-            questionAr: 'ما هي الفكرة الأساسية وراء نموذج الطبقات المكدسة (Stack Model)؟ أ. طبقة واحدة تنفذ كل مهام الاتصال  ب. كل طبقة لها وظيفة محددة وتتعاون مع باقي الطبقات  ج. يجب أن تستخدم جميع الطبقات نفس البروتوكول  د. يلغي الحاجة إلى المعايير',
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What is the main idea behind a layered stack model?',
+            questionAr: 'ما هي الفكرة الأساسية وراء نموذج الطبقات المكدسة (Stack Model)؟',
+            options: [
+              'One layer performs every communication task',
+              'Each layer has a clear function and cooperates with other layers',
+              'Layers must all use the same protocol',
+              'It removes the need for standards'
+            ],
+            optionsAr: [
+              'طبقة واحدة تقوم بجميع مهام الاتصال',
+              'كل طبقة لها وظيفة محددة وتتعاون مع باقي الطبقات عبر واجهات واضحة',
+              'يجب أن تستخدم جميع الطبقات نفس البروتوكول',
+              'يلغي الحاجة إلى المعايير القياسية'
+            ],
+            correctAnswer: 1,
             solution: 'Answer: B. Each layer has a clear function and cooperates with other layers. Slide 4 explains that the stack model creates a unified system where each layer specializes in its area and passes work to adjacent layers without interference.',
             solutionAr: 'الإجابة النموذجية: ب. كل طبقة لها وظيفة واضحة وتتعاون مع باقي الطبقات. السلايد 4 توضح أن نموذج الطبقات يقسم المهام لفريق متخصص كل طبقة تقوم بدورها وتسلمه للطبقة التالية بسلاسة.'
           },
           {
             id: 'p-iot2-4',
             problemNumber: 4,
-            question: 'What is one benefit of using layers? A. Changes in one layer can be made without necessarily changing the whole system  B. Devices become unable to communicate across vendors  C. Every layer must duplicate the work of the others  D. Scalability is reduced',
-            questionAr: 'ما هي إحدى فوائد استخدام الطبقات؟ أ. إمكانية إجراء التعديلات في طبقة معينة دون الحاجة لتغيير النظام بأكمله  ب. عجز الأجهزة عن الاتصال بين المصنعين  ج. وجوب قيام كل طبقة بتكرار عمل باقي الطبقات  د. انخفاض قابلية التوسع',
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What is one benefit of using layers?',
+            questionAr: 'ما هي إحدى فوائد استخدام الطبقات؟',
+            options: [
+              'Changes in one layer can be made without necessarily changing the whole system',
+              'Devices become unable to communicate across vendors',
+              'Every layer must duplicate the work of the others',
+              'Scalability is reduced'
+            ],
+            optionsAr: [
+              'إمكانية إجراء التعديلات في طبقة معينة دون الحاجة لتغيير النظام بأكمله (Flexibility)',
+              'عجز الأجهزة عن الاتصال بين المصنعين',
+              'وجوب قيام كل طبقة بتكرار عمل باقي الطبقات',
+              'انخفاض قابلية التوسع'
+            ],
+            correctAnswer: 0,
             solution: 'Answer: A. Changes in one layer can be made without necessarily changing the whole system. Slide 5 ("Why Layers Are Important - Flexibility") and Slide 6 explain that modularity allows one layer to evolve (e.g. IPv4 to IPv6) without breaking applications.',
             solutionAr: 'الإجابة النموذجية: أ. إمكانية إجراء التعديلات في طبقة معينة دون الحاجة لتغيير النظام بأكمله (Flexibility). السلايد 5 و 6 توضح أن ميزة المرونة تسمح بتطوير بروتوكول طبقة دون كسر باقي طبقات الشبكة.'
           },
           {
             id: 'p-iot2-5',
             problemNumber: 5,
-            question: 'How many layers are in the OSI model? A. 4  B. 5  C. 6  D. 7',
-            questionAr: 'كم عدد الطبقات في نموذج OSI؟ أ. 4  ب. 5  ج. 6  د. 7',
-            solution: 'Answer: D. 7. Slide 7 ("The OSI Model: 7-Layer Framework") lists all seven distinct layers from Physical up to Application.',
-            solutionAr: 'الإجابة النموذجية: د. 7 طبقات. السلايد 7 تؤكد أن نموذج OSI المرجعي الدولي يتكون من سبع طبقات متمايزة.'
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'How many layers are in the OSI model?',
+            questionAr: 'كم عدد الطبقات في نموذج الـ OSI المرجعي؟',
+            options: ['4', '5', '6', '7'],
+            optionsAr: ['4 طبقات', '5 طبقات', '6 طبقات', '7 طبقات'],
+            correctAnswer: 3,
+            solution: 'Answer: D. 7. Slide 7 explicitly lists the 7 OSI layers: 1. Physical, 2. Data Link, 3. Network, 4. Transport, 5. Session, 6. Presentation, 7. Application.',
+            solutionAr: 'الإجابة النموذجية: د. 7 طبقات. السلايد 7 توضح نموذج الـ OSI المكون من 7 طبقات محددة بالترتيب من الفيزيائية إلى التطبيقات.'
           },
           {
             id: 'p-iot2-6',
             problemNumber: 6,
-            question: 'Which OSI layer is associated with routing and addressing (IP)? A. Physical  B. Network  C. Session  D. Presentation',
-            questionAr: 'ما هي طبقة نموذج OSI المرتبطة بالتوجيه (Routing) والعنونة المنطقية (IP)؟ أ. الفيزيائية  ب. الشبكة (Network)  ج. الجلسة  د. العرض',
-            solution: 'Answer: B. Network. Slide 8 states explicitly: "Network Layer: Routing and addressing (IP)".',
-            solutionAr: 'الإجابة النموذجية: ب. طبقة الشبكة (Network Layer). السلايد 8 توضح نصاً أن وظيفة طبقة الشبكة هي التوجيه والعنونة المنطقية (IP).'
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'Which OSI layer is associated with routing and addressing (IP)?',
+            questionAr: 'أي طبقة في نموذج الـ OSI ترتبط بالتوجيه والعنونة المنطقية (IP)؟',
+            options: ['Physical', 'Network', 'Session', 'Presentation'],
+            optionsAr: ['الطبقة الفيزيائية (Physical)', 'طبقة الشبكة (Network)', 'طبقة الجلسة (Session)', 'طبقة العرض والتقديم (Presentation)'],
+            correctAnswer: 1,
+            solution: 'Answer: B. Network. Slide 8 ("OSI Model - Quick Overview") lists for Network: "Packet routing, addressing (IP)".',
+            solutionAr: 'الإجابة النموذجية: ب. طبقة الشبكة (Network). السلايد 8 تحدد صراحة أن وظيفة طبقة الشبكة هي توجيه الحزم (Routing) وإدارة العناوين (IP).'
           },
           {
             id: 'p-iot2-7',
             problemNumber: 7,
-            question: 'Which OSI layer is associated with framing and error detection? A. Data Link  B. Application  C. Transport  D. Session',
-            questionAr: 'ما هي طبقة نموذج OSI المرتبطة بتكوين الإطارات (Framing) واكتشاف الأخطاء؟ أ. ربط البيانات (Data Link)  ب. التطبيقات  ج. النقل  د. الجلسة',
-            solution: 'Answer: A. Data Link. Slide 8 states explicitly: "Data Link Layer: Frame formatting, error detection".',
-            solutionAr: 'الإجابة النموذجية: أ. طبقة ربط البيانات (Data Link Layer). السلايد 8 تحدد وظيفة هذه الطبقة في تجميع الإطارات (Frames) واكتشاف أخطاء النقل الفيزيائية.'
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'Which OSI layer is associated with framing and error detection?',
+            questionAr: 'أي طبقة في نموذج الـ OSI ترتبط بتقسيم الإطارات (Framing) واكتشاف الأخطاء؟',
+            options: ['Data Link', 'Application', 'Transport', 'Session'],
+            optionsAr: ['طبقة ربط البيانات (Data Link)', 'طبقة التطبيقات (Application)', 'طبقة النقل (Transport)', 'طبقة الجلسة (Session)'],
+            correctAnswer: 0,
+            solution: 'Answer: A. Data Link. Slide 8 lists for Data Link: "Framing, physical addressing (MAC), error detection."',
+            solutionAr: 'الإجابة النموذجية: أ. طبقة ربط البيانات (Data Link). السلايد 8 توضح أن Data Link هي المسؤولة عن تحويل البتات إلى إطارات (Framing) وعناوين الماك واكتشاف أخطاء النقل.'
           },
           {
             id: 'p-iot2-8',
             problemNumber: 8,
-            question: 'Which pair contains transport-layer protocols mentioned in the lecture? A. HTTP and FTP  B. IP and ICMP  C. TCP and UDP  D. Ethernet and Wi-Fi',
-            questionAr: 'أي زوج من البروتوكولات التالية يعمل في طبقة النقل (Transport Layer) وذكر في المحاضرة؟ أ. HTTP و FTP  ب. IP و ICMP  ج. TCP و UDP  د. Ethernet و Wi-Fi',
-            solution: 'Answer: C. TCP and UDP. Slide 8, Slide 10, and Slide 12 all identify TCP and UDP as the two fundamental protocols operating at the Transport layer.',
-            solutionAr: 'الإجابة النموذجية: ج. TCP و UDP. السلايدات 8 و 10 و 12 توضح أن TCP و UDP هما البروتوكولان الأساسيان لطبقة النقل.'
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'Which pair contains transport-layer protocols mentioned in the lecture?',
+            questionAr: 'أي زوج مما يلي يحتوي على بروتوكولات طبقة النقل المذكورة في المحاضرة؟',
+            options: ['HTTP and FTP', 'IP and ICMP', 'TCP and UDP', 'Ethernet and Wi-Fi'],
+            optionsAr: ['HTTP و FTP', 'IP و ICMP', 'TCP و UDP', 'Ethernet و Wi-Fi'],
+            correctAnswer: 2,
+            solution: 'Answer: C. TCP and UDP. Slide 10 and Slide 12 detail TCP and UDP under the Transport Layer.',
+            solutionAr: 'الإجابة النموذجية: ج. TCP و UDP. السلايد 10 و 12 تفردان شرحاً مقارناً كاملاً لبروتوكولي النقل الأساسيين TCP و UDP.'
           },
           {
             id: 'p-iot2-9',
             problemNumber: 9,
-            question: 'Which statement best describes UDP? A. It guarantees delivery and performs extensive error correction  B. It is connectionless and offers no delivery guarantee  C. It is used only for physical cabling  D. It is always slower than TCP',
-            questionAr: 'أي عبارة تصف بروتوكول UDP بأفضل شكل؟ أ. يضمن وصول البيانات ويقوم بتصحيح شامل للأخطاء  ب. بروتوكول غير متصل ولا يقدم ضماناً لوصول البيانات  ج. يستخدم فقط لكابلات التوصيل الفيزيائي  د. أبطأ دائماً من TCP',
-            solution: 'Answer: B. It is connectionless and offers no delivery guarantee. Slide 12 characterizes UDP as "Fast, connectionless, No delivery guarantee, Minimal error checking".',
-            solutionAr: 'الإجابة النموذجية: ب. بروتوكول غير متصل ولا يقدم ضماناً لوصول البيانات. السلايد 12 توضح أن UDP مصمم للسرعة بدون إجراء مصافحة وبدون ضمان لتسليم الحزم.'
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'Which statement best describes UDP?',
+            questionAr: 'أي عبارة تصف بروتوكول UDP بأفضل شكل؟',
+            options: [
+              'It guarantees delivery and performs extensive error correction',
+              'It is connectionless and offers no delivery guarantee',
+              'It is used only for physical cabling',
+              'It is always slower than TCP'
+            ],
+            optionsAr: [
+              'يضمن وصول البيانات ويقوم بتصحيح شامل للأخطاء',
+              'غير متصل (Connectionless) ولا يقدم أي ضمانات لوصول البيانات',
+              'يستخدم فقط في كابلات التوصيل الفيزيائية',
+              'أبطأ دائماً من بروتوكول TCP'
+            ],
+            correctAnswer: 1,
+            solution: 'Answer: B. It is connectionless and offers no delivery guarantee. Slide 12 explicitly defines UDP as: "Connectionless, Fast, lightweight, No delivery guarantee, No error correction."',
+            solutionAr: 'الإجابة النموذجية: ب. غير متصل (Connectionless) ولا يضمن وصول البيانات. السلايد 12 تعرف UDP صراحة بأنه سريع وخفيف وبدون ضمان لوصول الحزم أو تصحيح الأخطاء.'
           },
           {
             id: 'p-iot2-10',
             problemNumber: 10,
-            question: 'What is a key focus of the IoT stack compared with OSI/TCP-IP models? A. It focuses only on desktop computers  B. It excludes sensors and hardware  C. It includes device hardware, communication, platforms, and applications  D. It eliminates the need for cloud services',
-            questionAr: 'ما هو التركيز الأساسي لمعمارية طبقات إنترنت الأشياء مقارنة بنماذج OSI و TCP/IP؟ أ. تركز فقط على أجهزة الكمبيوتر المكتبية  ب. تستبعد الحساسات والعتاد الفيزيائي  ج. تشمل عتاد الأجهزة، الاتصالات، المنصات، والتطبيقات  د. تلغي الحاجة للخدمات السحابية',
-            solution: 'Answer: C. It includes device hardware, communication, platforms, and applications. Slide 17 ("IoT Stack vs OSI/TCP-IP: Key Differences") explains that IoT stack expands the scope from physical hardware (Sensors) all the way to cloud platforms and user applications for constrained devices.',
-            solutionAr: 'الإجابة النموذجية: ج. تشمل عتاد الأجهزة، الاتصالات، المنصات، والتطبيقات. السلايد 17 توضح أن معمارية الـ IoT توسع النطاق من أول الحساس والعتاد حتى منصات السحابة وتطبيقات المستخدم.'
+            partTitle: 'PART A / MULTIPLE CHOICE',
+            partTitleAr: 'الجزء أ: اختيار من متعدد',
+            type: 'mcq',
+            question: 'What is a key focus of the IoT stack compared with OSI/TCP-IP models?',
+            questionAr: 'ما هو التركيز الأساسي لنموذج طبقات إنترنت الأشياء مقارنة بنماذج OSI و TCP/IP التقليدية؟',
+            options: [
+              'It focuses only on desktop computers',
+              'It excludes sensors and hardware',
+              'It includes device hardware, communication, platforms, and applications',
+              'It eliminates the need for cloud services'
+            ],
+            optionsAr: [
+              'يركز فقط على أجهزة الكمبيوتر المكتبية',
+              'يستبعد الحساسات والعتاد المادي',
+              'يشمل عتاد الأجهزة، الاتصالات، المنصات البرمجية، والتطبيقات من النهاية للنهاية',
+              'يلغي الحاجة إلى الخدمات السحابية'
+            ],
+            correctAnswer: 2,
+            solution: 'Answer: C. It includes device hardware, communication, platforms, and applications. Slide 14, 15, and 17 emphasize that the IoT stack explicitly spans device hardware (Sensors/Actuators) through cloud platforms and business applications.',
+            solutionAr: 'الإجابة النموذجية: ج. يشمل عتاد الأجهزة والاتصالات والمنصات السحابية والتطبيقات. السلايدات 14 و 15 و 17 تؤكد أن معمارية الـ IoT لا تقتصر على نقل البيانات الشبكية بل تبدأ من العتاد والحساسات وتنتهي بتطبيقات المستخدم.'
           },
           {
             id: 'p-iot2-11',
             problemNumber: 11,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'Network standards help devices from different manufacturers communicate with one another.',
-            questionAr: 'تساعد المعايير القياسية للشبكات الأجهزة المصنوعة من مصنعين مختلفين على التواصل مع بعضها البعض.',
-            solution: 'Answer: TRUE. Slide 3 and Slide 5 ("Universal Standards") explicitly state that standards ensure any device can communicate with any other device regardless of brand.',
-            solutionAr: 'الإجابة: صح (TRUE). السلايد 3 و 5 تؤكد أن المعايير الموحدة تضمن إمكانية تفاهم الأجهزة من مصنعين مختلفين بدون عوائق.'
+            questionAr: 'تساعد معايير الشبكات الأجهزة المصنعة من شركات مختلفة على التواصل والتفاهم مع بعضها البعض.',
+            correctAnswer: 'True',
+            solution: 'Answer: TRUE. Slide 3 states: "Standards solve this problem... Allow different companies to create devices that work together."',
+            solutionAr: 'الإجابة: صح (TRUE). السلايد 3 تؤكد نصاً أن المعايير القياسية تحل مشكلة اختلاف الشركات وتسمح للأجهزة بالعمل سوياً بتوافق تام.'
           },
           {
             id: 'p-iot2-12',
             problemNumber: 12,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'In a layered model, every layer must know and manage all the internal details of every other layer.',
-            questionAr: 'في نموذج الطبقات، يجب على كل طبقة معرفة وإدارة كافة التفاصيل الداخلية لجميع الطبقات الأخرى.',
+            questionAr: 'في نموذج الطبقات، يجب على كل طبقة معرفة وإدارة جميع التفاصيل الداخلية لجميع الطبقات الأخرى.',
+            correctAnswer: 'False',
             solution: 'Answer: FALSE. Slide 4 states: "Pass work to the next layer without interfering." Modularity and encapsulation ensure layers do NOT manage the internal details of other layers.',
-            solutionAr: 'الإجابة: غلط (FALSE). السلايد 4 تؤكد أن كل طبقة متخصصة وتسلم البيانات للطبقة المجاورة دون التدخل في تفاصيل عملها الداخلية.'
+            solutionAr: 'الإجابة: غلط (FALSE). السلايد 4 تؤكد أن كل طبقة متخصصة وتسلم البيانات للطبقة المجاورة دون التدخل في تفاصيل عملها الداخلية (تجريد وفصل المهام).'
           },
           {
             id: 'p-iot2-13',
             problemNumber: 13,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'The OSI model contains Application, Presentation, Session, Transport, Network, Data Link, and Physical layers.',
             questionAr: 'يتكون نموذج OSI من طبقات التطبيقات، العرض، الجلسة، النقل، الشبكة، ربط البيانات، والفيزيائية.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Slide 7 explicitly lists all 7 of these exact layers in order.',
-            solutionAr: 'الإجابة: صح (TRUE). السلايد 7 تسرد نصاً هذه الطبقات السبع الدقيقة لنموذج OSI.'
+            solutionAr: 'الإجابة: صح (TRUE). السلايد 7 تسرد نصاً هذه الطبقات السبع الدقيقة لنموذج OSI بالترتيب.'
           },
           {
             id: 'p-iot2-14',
             problemNumber: 14,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'The TCP/IP model is presented in the lecture as a four-layer model.',
             questionAr: 'تم تقديم نموذج TCP/IP في المحاضرة كنموذج مكون من أربع طبقات.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Slide 9 presents TCP/IP with exactly four distinct layers: 01 Application, 02 Transport, 03 Internet, 04 Network Access.',
             solutionAr: 'الإجابة: صح (TRUE). السلايد 9 تعرف نموذج TCP/IP صراحة بنموذج من أربع طبقات (Application, Transport, Internet, Network Access).'
           },
           {
             id: 'p-iot2-15',
             problemNumber: 15,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'The TCP/IP Internet layer is associated with packet routing across networks and protocols such as IP and ICMP.',
             questionAr: 'ترتبط طبقة الإنترنت في نموذج TCP/IP بتوجيه الحزم عبر الشبكات وبروتوكولات مثل IP و ICMP.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Slide 10 and Slide 11 state explicitly: "03 Internet Layer: Packet routing across networks (IP, ICMP)".',
             solutionAr: 'الإجابة: صح (TRUE). السلايدات 10 و 11 تحدد صراحة وظيفة طبقة الإنترنت في توجيه الحزم ببروتوكولات IP و ICMP.'
           },
           {
             id: 'p-iot2-16',
             problemNumber: 16,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'TCP is described as reliable and connection-oriented.',
             questionAr: 'يوصف بروتوكول TCP بأنه بروتوكول موثوق ويعتمد على الاتصال المسبق.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Slide 12 explicitly defines TCP as: "Reliable, connection-oriented, Guarantees data delivery, Error checking and correction".',
             solutionAr: 'الإجابة: صح (TRUE). السلايد 12 تصف TCP نصاً بأنه: موثوق ويعتمد على الاتصال ويضمن تسليم البيانات وتصحيح الأخطاء.'
           },
           {
             id: 'p-iot2-17',
             problemNumber: 17,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'UDP guarantees that every transmitted data packet will be delivered successfully.',
             questionAr: 'يضمن بروتوكول UDP وصول كل حزمة بيانات مرسلة بنجاح.',
+            correctAnswer: 'False',
             solution: 'Answer: FALSE. Slide 12 highlights under UDP: "No delivery guarantee... Faster but less reliable". Lost datagrams are never retransmitted.',
             solutionAr: 'الإجابة: غلط (FALSE). السلايد 12 توضح نصاً أن UDP لا يضمن وصول البيانات (No delivery guarantee)؛ ولا يعيد إرسال الحزم المفقودة.'
           },
           {
             id: 'p-iot2-18',
             problemNumber: 18,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'In the IPv4-to-IPv6 example, the lecture states that the network layer changed while the other layers remained the same.',
             questionAr: 'في مثال التحول من IPv4 إلى IPv6، أوضحت المحاضرة أن طبقة الشبكة هي التي تغيرت بينما ظلت الطبقات الأخرى دون تغيير.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Slide 6 ("Real-World Example: Evolution Without Breaking") states: "Only the Network layer changed; All other layers remained the same; Applications still work normally; Transport, Physical layers unaffected."',
             solutionAr: 'الإجابة: صح (TRUE). السلايد 6 توضح نصاً أن التحول لـ IPv6 اقتصر على طبقة الشبكة فقط وظلت باقي الطبقات والتطبيقات تعمل دون أي تغيير.'
           },
           {
             id: 'p-iot2-19',
             problemNumber: 19,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'IoT systems may use lightweight protocols and emphasize power efficiency for resource-constrained devices.',
             questionAr: 'قد تستخدم أنظمة إنترنت الأشياء بروتوكولات خفيفة الوزن وتركز على كفاءة استهلاك الطاقة للأجهزة محدودة الموارد.',
+            correctAnswer: 'True',
             solution: 'Answer: TRUE. Slide 14 and Slide 17 highlight that IoT devices have limited memory and battery, requiring lightweight protocols and power efficiency.',
             solutionAr: 'الإجابة: صح (TRUE). السلايد 14 و 17 تؤكدان أن طبيعة أجهزة الـ IoT محدودة المعالجات والبطارية تفرض استخدام بروتوكولات خفيفة موفرة للطاقة.'
           },
           {
             id: 'p-iot2-20',
             problemNumber: 20,
+            partTitle: 'PART B / TRUE OR FALSE',
+            partTitleAr: 'الجزء ب: صح أو خطأ',
+            type: 'true_false',
             question: 'The IoT stack is concerned only with network communication protocols and does not include device hardware or applications.',
             questionAr: 'تهتم معمارية طبقات إنترنت الأشياء ببروتوكولات الاتصال الشبكي فقط ولا تشمل عتاد الأجهزة أو التطبيقات.',
+            correctAnswer: 'False',
             solution: 'Answer: FALSE. Slide 17 explicitly highlights that unlike OSI/TCP-IP, the IoT stack "Starts from hardware itself (Sensors) to end user application... Includes device management, cloud platforms, and user interfaces."',
             solutionAr: 'الإجابة: غلط (FALSE). السلايد 17 توضح نصاً أن معمارية الـ IoT تبدأ من العتاد الفيزيائي نفسه وتصل لتطبيقات المستخدم وإدارة المنصات السحابية.'
           }

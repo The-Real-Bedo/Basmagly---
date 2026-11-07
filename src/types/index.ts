@@ -19,6 +19,16 @@ export interface Question {
   difficulty?: Difficulty;
 }
 
+export interface QuickCheck {
+  question: string;
+  questionAr: string;
+  options: string[];
+  optionsAr: string[];
+  correctIndex: number;
+  explanation: string;
+  explanationAr: string;
+}
+
 export interface SummarySection {
   title: string;
   titleAr: string;
@@ -28,6 +38,7 @@ export interface SummarySection {
   bulletPointsAr?: string[];
   keyRule?: string;
   keyRuleAr?: string;
+  quickCheck?: QuickCheck;
 }
 
 export interface TermDefinition {
@@ -61,8 +72,14 @@ export interface Lecture {
 export interface SheetProblem {
   id: string;
   problemNumber: number;
+  partTitle?: string;
+  partTitleAr?: string;
+  type?: 'mcq' | 'true_false' | 'problem';
   question: string;
   questionAr: string;
+  options?: string[];
+  optionsAr?: string[];
+  correctAnswer?: number | boolean | string;
   solution?: string;
   solutionAr?: string;
 }

@@ -19,11 +19,23 @@ import { QuizSystem } from './QuizSystem';
 interface LectureSummaryProps {
   lecture: Lecture;
   initialTab?: 'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz';
+  onTabChange?: (tab: 'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz') => void;
   onBackToCourse: () => void;
 }
 
-export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', onBackToCourse }) => {
+export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', onTabChange, onBackToCourse }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz'>(initialTab);
+
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
+  const handleTabChange = (tab: 'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz') => {
+    setActiveTab(tab);
+    onTabChange?.(tab);
+  };
 
   return (
     <div className="space-y-6">
@@ -82,7 +94,7 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => handleTabChange(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
                   isActive
                     ? 'bg-amber-600 text-white dark:bg-amber-500 dark:text-stone-950 shadow-md ring-2 ring-amber-400/50 scale-[1.02]'

@@ -1,27 +1,66 @@
-import React, { useState } from 'react';
-import { Course, Lecture } from '../types';
-import { BookOpen, User, ChevronLeft, ArrowRight, Clock, Wrench, FileText, CheckCircle2, ChevronDown, ChevronUp, Check } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Course, Lecture, SheetProblem } from '../types';
+import {
+  BookOpen,
+  User,
+  ChevronLeft,
+  ArrowRight,
+  Clock,
+  Wrench,
+  FileText,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Check,
+  Eye,
+  EyeOff,
+  Sparkles
+} from 'lucide-react';
 import { ArabicText, hasArabic } from './ArabicText';
 
 interface CourseDetailProps {
   course: Course;
+  initialSheetId?: string | null;
+  onSheetChange?: (sheetId: string | null) => void;
   onSelectLecture: (lecture: Lecture) => void;
   onBack: () => void;
 }
 
-export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLecture, onBack }) => {
-  const [expandedSheetId, setExpandedSheetId] = useState<string | null>(null);
+export const CourseDetail: React.FC<CourseDetailProps> = ({
+  course,
+  initialSheetId,
+  onSheetChange,
+  onSelectLecture,
+  onBack
+}) => {
+  const [expandedSheetId, setExpandedSheetId] = useState<string | null>(initialSheetId || null);
+  const [userSelections, setUserSelections] = useState<Record<string, string | number>>({});
   const [revealedSolutions, setRevealedSolutions] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (initialSheetId !== undefined) {
+      setExpandedSheetId(initialSheetId);
+    }
+  }, [initialSheetId]);
+
+  const toggleSheet = (sheetId: string) => {
+    const next = expandedSheetId === sheetId ? null : sheetId;
+    setExpandedSheetId(next);
+    onSheetChange?.(next);
+  };
 
   const toggleSolution = (problemId: string) => {
     setRevealedSolutions((prev) => ({
       ...prev,
-      [problemId]: !prev[problemId],
+      [problemId]: prev[problemId] === false ? true : false,
     }));
   };
 
-  const toggleSheet = (sheetId: string) => {
-    setExpandedSheetId((prev) => (prev === sheetId ? null : sheetId));
+  const handleSelectAnswer = (problemId: string, answer: string | number) => {
+    setUserSelections((prev) => ({
+      ...prev,
+      [problemId]: answer,
+    }));
   };
 
   const totalQuestions = course.lectures.reduce((acc, l) => acc + l.questions.length, 0);
@@ -56,7 +95,6 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
               {course.title}
             </h1>
 
-            {/* Requirement 2 & 3: Arabic typography, RTL, high contrast */}
             <ArabicText className="text-base font-semibold text-stone-700 dark:text-zinc-200">
               {course.titleAr}
             </ArabicText>
@@ -136,7 +174,6 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
                     )}
                   </div>
 
-                  {/* Requirement 8: Calm titles on hover */}
                   <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 group-hover:text-stone-900 dark:group-hover:text-white transition-colors">
                     {lec.title}
                   </h3>
@@ -181,57 +218,72 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
         )}
       </div>
 
-      {/* Course Sheets Section (شيتات المادة والتمارين) */}
+      {/* Course Sheets Section (شيتات المادة والتمارين - تصميم ورقة الامتحان الأصلية) */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-stone-700 dark:text-zinc-300" />
-            <span>Practice Sheets & Problem Sets ({totalSheets})</span>
+            <span>Official Problem Sheets & Quizzes ({totalSheets})</span>
           </div>
           <ArabicText as="span" className="text-sm font-normal text-stone-600 dark:text-zinc-400">
-            شيتات وتمارين المادة
+            شيتات وكويزات السكشن الرسمية
           </ArabicText>
         </h2>
 
         {course.sheets && course.sheets.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {course.sheets.map((sheet) => {
               const isExpanded = expandedSheetId === sheet.id;
+
+              // Group problems by partTitle
+              const parts = (() => {
+                const grouped: { title?: string; titleAr?: string; problems: SheetProblem[] }[] = [];
+                sheet.problems?.forEach((p) => {
+                  let part = grouped.find((pt) => pt.title === p.partTitle);
+                  if (!part) {
+                    part = { title: p.partTitle, titleAr: p.partTitleAr, problems: [] };
+                    grouped.push(part);
+                  }
+                  part.problems.push(p);
+                });
+                return grouped;
+              })();
 
               return (
                 <div
                   key={sheet.id}
-                  className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-2xl p-6 shadow-sm transition-all space-y-5"
+                  className="bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm transition-all space-y-6"
                 >
+                  {/* Sheet Card Header */}
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div className="space-y-2 max-w-3xl">
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <span className="px-3 py-1 rounded-md text-[13px] font-bold font-mono bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800/60">
-                          شيت {sheet.sheetNumber} (Sheet {sheet.sheetNumber})
+                          ورقة شيت {sheet.sheetNumber} (Sheet {sheet.sheetNumber})
                         </span>
 
                         <span className="px-2.5 py-1 rounded-md text-[13px] font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-200 dark:border-stone-700 font-mono">
-                          {sheet.problemsCount} {sheet.problemsCount === 1 ? 'Exercise' : 'Exercises'}
+                          {sheet.problemsCount} Questions
                         </span>
 
                         {sheet.hasSolution && (
                           <span className="px-2.5 py-1 rounded-md text-[13px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1.5">
                             <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span className="font-arabic">الحلول متوفرة</span>
-                            <span className="font-mono text-[11px] opacity-80">(Solutions Ready)</span>
+                            <span className="font-arabic">الحل النموذجي مدرج بالكامل</span>
+                            <span className="font-mono text-[11px] opacity-80">(Full Model Solutions)</span>
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+                      <h3 className="text-xl font-black text-stone-900 dark:text-stone-100 font-mono">
                         {sheet.title}
                       </h3>
 
-                      <ArabicText className="text-sm font-semibold text-stone-600 dark:text-zinc-300">
+                      <ArabicText className="text-base font-bold text-stone-700 dark:text-zinc-200">
                         {sheet.titleAr}
                       </ArabicText>
 
-                      <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed">
+                      <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed font-mono">
                         {sheet.brief}
                       </p>
 
@@ -242,102 +294,224 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({ course, onSelectLect
 
                     <button
                       onClick={() => toggleSheet(sheet.id)}
-                      className="px-4 py-2.5 rounded-xl border border-stone-300 dark:border-stone-700 hover:bg-beige-100 dark:hover:bg-stone-800 text-stone-800 dark:text-zinc-200 font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95"
+                      className="px-5 py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60 font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95"
                     >
                       <span className="font-arabic">
-                        {isExpanded ? 'إخفاء التمارين' : 'عرض التمارين والحلول'}
+                        {isExpanded ? 'طي ورقة الشيت' : 'فتح ورقة الشيت وحل المسائل'}
                       </span>
                       <span className="font-mono font-medium text-[13px] opacity-80">
-                        {isExpanded ? '(Hide)' : '(View)'}
+                        {isExpanded ? '(Fold)' : '(Open Paper)'}
                       </span>
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
                   </div>
 
-                  {/* Expanded Problems List */}
+                  {/* Authentic Paper Document Rendering */}
                   {isExpanded && (
-                    <div className="pt-4 border-t border-beige-200 dark:border-stone-800 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[13px] font-bold font-mono uppercase tracking-wider text-stone-600 dark:text-zinc-400">
-                          Problem Set & Solutions
-                        </span>
-                        <ArabicText as="span" className="text-sm text-stone-600 dark:text-zinc-400">
-                          مسائل الشيت والحلول النموذجية
-                        </ArabicText>
-                      </div>
+                    <div className="pt-6 border-t-2 border-dashed border-stone-200 dark:border-stone-800 space-y-6">
+                      {/* Paper Document Container */}
+                      <div className="bg-[#FAF8F5] dark:bg-[#151518] border-2 border-stone-300 dark:border-stone-700 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+                        {/* Authentic Paper Heading Bar */}
+                        <div className="border-b-2 border-stone-300 dark:border-stone-700 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="space-y-1">
+                            <span className="text-[12px] font-mono font-bold uppercase tracking-wider text-stone-500 dark:text-zinc-400 block">
+                              Faculty of Computer Science & Engineering · Term 1 Quiz
+                            </span>
+                            <h4 className="text-2xl font-black text-stone-900 dark:text-white font-mono">
+                              {sheet.title}
+                            </h4>
+                            <ArabicText className="text-sm font-semibold text-stone-600 dark:text-zinc-400">
+                              ورقة الأسئلة الرسمية للسكشن · دكتورة سارة شهاب
+                            </ArabicText>
+                          </div>
 
-                      {sheet.problems && sheet.problems.length > 0 ? (
-                        <div className="space-y-4">
-                          {sheet.problems.map((problem) => {
-                            const isSolutionRevealed = !!revealedSolutions[problem.id];
+                          <div className="flex items-center gap-2">
+                            <span className="px-3 py-1.5 rounded-xl bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs font-mono font-bold text-stone-700 dark:text-zinc-300 flex items-center gap-1.5">
+                              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                              <span>{sheet.problemsCount} Questions</span>
+                            </span>
+                          </div>
+                        </div>
 
-                            return (
-                              <div
-                                key={problem.id}
-                                className="bg-[#FAF7F2] dark:bg-stone-950 border border-beige-200 dark:border-stone-800 rounded-xl p-5 space-y-3.5"
-                              >
-                                <div className="flex items-center justify-between flex-wrap gap-2">
-                                  <span className="px-2.5 py-0.5 rounded-md text-[13px] font-bold font-mono bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-zinc-200">
-                                    Problem #{problem.problemNumber}
+                        {/* Parts & Questions */}
+                        {parts.map((part, partIdx) => (
+                          <div key={partIdx} className="space-y-5">
+                            {/* Part Header */}
+                            {part.title && (
+                              <div className="bg-[#F0ECE1] dark:bg-stone-800/90 border border-stone-300 dark:border-stone-700 rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs">
+                                <div className="flex items-center gap-2.5">
+                                  <span className="w-2.5 h-2.5 rounded-full bg-amber-600 dark:bg-amber-400" />
+                                  <span className="text-sm font-black font-mono uppercase tracking-wider text-stone-900 dark:text-white">
+                                    {part.title}
                                   </span>
-
-                                  {problem.solution && (
-                                    <button
-                                      onClick={() => toggleSolution(problem.id)}
-                                      className="inline-flex items-center gap-1.5 text-[13px] font-bold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
-                                    >
-                                      <span className="font-arabic">
-                                        {isSolutionRevealed ? 'إخفاء الحل' : 'عرض الحل النموذجي'}
-                                      </span>
-                                      <span className="font-mono font-medium text-[12px] opacity-80">
-                                        {isSolutionRevealed ? '(Hide Solution)' : '(Show Solution)'}
-                                      </span>
-                                      {isSolutionRevealed ? (
-                                        <ChevronUp className="w-3.5 h-3.5" />
-                                      ) : (
-                                        <ChevronDown className="w-3.5 h-3.5" />
-                                      )}
-                                    </button>
-                                  )}
                                 </div>
-
-                                <div className="space-y-1.5">
-                                  <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 leading-relaxed">
-                                    {problem.question}
-                                  </p>
-                                  <ArabicText className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed">
-                                    {problem.questionAr}
+                                {part.titleAr && (
+                                  <ArabicText className="text-sm font-bold text-stone-700 dark:text-zinc-300">
+                                    {part.titleAr}
                                   </ArabicText>
-                                </div>
-
-                                {isSolutionRevealed && problem.solution && (
-                                  <div className="mt-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 space-y-2">
-                                    <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 text-[13px] font-bold">
-                                      <Check className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                                      <span className="font-arabic">الحل والشرح النموذجي:</span>
-                                      <span className="font-mono text-[12px] opacity-80">(Model Solution)</span>
-                                    </div>
-
-                                    {problem.solutionAr && (
-                                      <ArabicText className="text-sm text-emerald-950 dark:text-emerald-200 leading-relaxed">
-                                        {problem.solutionAr}
-                                      </ArabicText>
-                                    )}
-
-                                    <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-1 border-t border-emerald-200/50 dark:border-emerald-800/40">
-                                      {problem.solution}
-                                    </p>
-                                  </div>
                                 )}
                               </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="p-4 text-center text-sm text-stone-600 dark:text-zinc-400">
-                          <ArabicText>سيتم إرفاق تفاصيل المسائل قريباً.</ArabicText>
-                        </div>
-                      )}
+                            )}
+
+                            {/* Questions in this part */}
+                            <div className="space-y-5">
+                              {part.problems.map((problem) => {
+                                const isSolutionRevealed = revealedSolutions[problem.id] !== false; // revealed by default
+                                const userChoice = userSelections[problem.id];
+
+                                return (
+                                  <div
+                                    key={problem.id}
+                                    className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs"
+                                  >
+                                    {/* Question Header & Prompt */}
+                                    <div className="flex items-start justify-between gap-4">
+                                      <div className="space-y-2 flex-1">
+                                        <div className="flex items-center gap-2">
+                                          <span className="px-2.5 py-0.5 rounded-md text-[13px] font-black font-mono bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-300 dark:border-stone-700">
+                                            Question {problem.problemNumber}
+                                          </span>
+                                          <span className="text-[12px] font-mono uppercase tracking-wider text-stone-500 dark:text-zinc-400">
+                                            {problem.type === 'true_false' ? 'True / False' : 'Multiple Choice'}
+                                          </span>
+                                        </div>
+
+                                        <p className="text-[15px] font-bold text-stone-900 dark:text-stone-100 leading-relaxed font-sans">
+                                          {problem.question}
+                                        </p>
+
+                                        <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 leading-relaxed font-medium">
+                                          {problem.questionAr}
+                                        </ArabicText>
+                                      </div>
+
+                                      <button
+                                        onClick={() => toggleSolution(problem.id)}
+                                        className="text-xs font-mono font-medium text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-200 flex items-center gap-1.5 shrink-0 px-2.5 py-1.5 rounded-xl border border-beige-300 dark:border-stone-800 hover:bg-beige-100 dark:hover:bg-stone-800 transition-colors"
+                                        title="Toggle solution visibility"
+                                      >
+                                        {isSolutionRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                        <span className="font-arabic text-[11px]">
+                                          {isSolutionRevealed ? 'إخفاء الحل' : 'عرض الحل'}
+                                        </span>
+                                      </button>
+                                    </div>
+
+                                    {/* Interactive Options as printed in the sheet */}
+                                    {problem.type === 'true_false' ? (
+                                      <div className="flex items-center gap-3 pt-1 flex-wrap">
+                                        {['True', 'False'].map((val) => {
+                                          const isSelected = userChoice === val;
+                                          const isTargetCorrect = problem.correctAnswer === val;
+
+                                          let choiceStyle =
+                                            'bg-[#FAF7F2] dark:bg-stone-950 border-stone-300 dark:border-stone-700 text-stone-800 dark:text-zinc-200 hover:border-amber-400';
+
+                                          if (isSelected) {
+                                            choiceStyle = isTargetCorrect
+                                              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-200 ring-2 ring-emerald-400/40'
+                                              : 'bg-rose-50 dark:bg-rose-950/40 border-rose-400 text-rose-900 dark:text-rose-200 ring-2 ring-rose-400/40';
+                                          }
+
+                                          return (
+                                            <button
+                                              key={val}
+                                              onClick={() => handleSelectAnswer(problem.id, val)}
+                                              className={`px-4 py-2 rounded-xl border font-mono font-bold text-sm flex items-center gap-2.5 transition-all active:scale-95 ${choiceStyle}`}
+                                            >
+                                              <span
+                                                className={`w-4 h-4 rounded border flex items-center justify-center ${
+                                                  isSelected
+                                                    ? isTargetCorrect
+                                                      ? 'bg-emerald-600 border-emerald-600 text-white'
+                                                      : 'bg-rose-500 border-rose-500 text-white'
+                                                    : 'border-stone-400 dark:border-stone-600'
+                                                }`}
+                                              >
+                                                {isSelected ? <Check className="w-3 h-3 stroke-[3]" /> : null}
+                                              </span>
+                                              <span>{val === 'True' ? '☐ True (صح)' : '☐ False (غلط)'}</span>
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    ) : problem.options && problem.options.length > 0 ? (
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                                        {problem.options.map((opt, optIdx) => {
+                                          const isSelected = userChoice === optIdx;
+                                          const isTargetCorrect = problem.correctAnswer === optIdx;
+                                          const letter = String.fromCharCode(65 + optIdx);
+
+                                          let optStyle =
+                                            'bg-[#FAF7F2] dark:bg-stone-950 border-stone-200 dark:border-stone-800 text-stone-800 dark:text-zinc-200 hover:border-amber-400';
+
+                                          if (isSelected) {
+                                            optStyle = isTargetCorrect
+                                              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-200 ring-2 ring-emerald-400/40'
+                                              : 'bg-rose-50 dark:bg-rose-950/40 border-rose-400 text-rose-900 dark:text-rose-200 ring-2 ring-rose-400/40';
+                                          }
+
+                                          return (
+                                            <button
+                                              key={optIdx}
+                                              onClick={() => handleSelectAnswer(problem.id, optIdx)}
+                                              className={`p-3 rounded-xl border text-left flex items-start gap-3 transition-all active:scale-[0.98] ${optStyle}`}
+                                            >
+                                              <span className="w-6 h-6 rounded-md bg-stone-200 dark:bg-stone-800 text-[12px] font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
+                                                {letter}
+                                              </span>
+                                              <div className="space-y-0.5 min-w-0 flex-1">
+                                                <span className="text-sm font-semibold block leading-tight font-sans">
+                                                  {opt}
+                                                </span>
+                                                {problem.optionsAr?.[optIdx] && (
+                                                  <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400 block pt-0.5">
+                                                    {problem.optionsAr[optIdx]}
+                                                  </ArabicText>
+                                                )}
+                                              </div>
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    ) : null}
+
+                                    {/* Model Solution Box ("وحط الحل النموذجي تحت كل سؤال") */}
+                                    {isSolutionRevealed && problem.solution && (
+                                      <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/60 space-y-2.5">
+                                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                                          <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-300 text-sm font-bold">
+                                            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                                            <span className="font-arabic">الحل النموذجي المعتمد والشرح الأكاديمي:</span>
+                                            <span className="font-mono text-[12px] opacity-80">(Model Solution)</span>
+                                          </div>
+                                          {problem.correctAnswer !== undefined && (
+                                            <span className="px-3 py-1 rounded-full text-[12px] font-mono font-bold bg-emerald-600 text-white dark:bg-emerald-500 dark:text-stone-950 shadow-xs">
+                                              {problem.type === 'true_false'
+                                                ? `Official: ${problem.correctAnswer}`
+                                                : `Option ${String.fromCharCode(65 + Number(problem.correctAnswer))}`}
+                                            </span>
+                                          )}
+                                        </div>
+
+                                        {problem.solutionAr && (
+                                          <ArabicText className="text-sm text-emerald-950 dark:text-emerald-200 leading-relaxed font-semibold">
+                                            {problem.solutionAr}
+                                          </ArabicText>
+                                        )}
+
+                                        <p className="text-[13px] font-mono text-stone-700 dark:text-zinc-300 leading-relaxed pt-2 border-t border-emerald-200/70 dark:border-emerald-800/40">
+                                          {problem.solution}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

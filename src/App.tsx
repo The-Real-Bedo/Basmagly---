@@ -170,11 +170,45 @@ const ALL_LABS: LabDirectoryItem[] = [
   }
 ];
 
+// Helper to parse location state from URL hash
+const parseLocationState = () => {
+  if (typeof window === 'undefined') return null;
+  const raw = window.location.hash.replace(/^#\/?/, '');
+  if (!raw) return null;
+
+  if (raw.includes('=')) {
+    const params = new URLSearchParams(raw);
+    return {
+      courseId: params.get('course'),
+      lectureId: params.get('lecture'),
+      tab: params.get('tab') as 'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz' | null,
+      sheetId: params.get('sheet') || null,
+      term: params.get('term') ? (parseInt(params.get('term')!) as 1 | 2) : null,
+    };
+  }
+
+  const [courseId, lectureId, tab] = raw.split('/');
+  return {
+    courseId: courseId || null,
+    lectureId: lectureId || null,
+    tab: (tab as any) || null,
+    sheetId: null,
+    term: null,
+  };
+};
+
 export const App: React.FC = () => {
-  const [currentTerm, setCurrentTerm] = useState<1 | 2>(1);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedLecture, setSelectedLecture] = useState<Lecture | null>(null);
-  const [lectureInitialTab, setLectureInitialTab] = useState<'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz'>('summary');
+  const initialNav = parseLocationState();
+  const initialCourse = initialNav?.courseId ? COURSES_DATA.find((c) => c.id === initialNav.courseId) || null : null;
+  const initialLecture = initialCourse && initialNav?.lectureId ? initialCourse.lectures.find((l) => l.id === initialNav.lectureId) || null : null;
+
+  const [currentTerm, setCurrentTerm] = useState<1 | 2>(initialNav?.term || (initialCourse ? initialCourse.term : 1));
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(initialCourse);
+  const [selectedLecture, setSelectedLecture] = useState<Lecture | null>(initialLecture);
+  const [selectedSheetId, setSelectedSheetId] = useState<string | null>(initialNav?.sheetId || null);
+  const [lectureInitialTab, setLectureInitialTab] = useState<'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz'>(
+    initialNav?.tab || 'summary'
+  );
   const [labFilter, setLabFilter] = useState<'all' | 'networks' | 'ai' | 'iot'>('all');
 
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -191,18 +225,85 @@ export const App: React.FC = () => {
 
   const toggleDarkMode = () => setIsDark(prev => !prev);
 
+  // Listen to browser Back/Forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const state = parseLocationState();
+      if (!state?.courseId) {
+        setSelectedCourse(null);
+        setSelectedLecture(null);
+        setSelectedSheetId(null);
+        if (state?.term) {
+          setCurrentTerm(state.term);
+        }
+        return;
+      }
+
+      const course = COURSES_DATA.find((c) => c.id === state.courseId);
+      if (!course) return;
+
+      setSelectedCourse(course);
+      setCurrentTerm(course.term);
+      setSelectedSheetId(state.sheetId || null);
+
+      if (state.lectureId) {
+        const lecture = course.lectures.find((l) => l.id === state.lectureId);
+        setSelectedLecture(lecture || null);
+        if (state.tab) {
+          setLectureInitialTab(state.tab);
+        }
+      } else {
+        setSelectedLecture(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, []);
+
+  // Synchronize URL hash when navigation state changes
+  useEffect(() => {
+    if (selectedLecture && selectedCourse) {
+      const newHash = `#course=${selectedCourse.id}&lecture=${selectedLecture.id}&tab=${lectureInitialTab}`;
+      if (window.location.hash !== newHash) {
+        window.history.replaceState(null, '', newHash);
+      }
+    } else if (selectedCourse) {
+      const newHash = selectedSheetId ? `#course=${selectedCourse.id}&sheet=${selectedSheetId}` : `#course=${selectedCourse.id}`;
+      if (window.location.hash !== newHash) {
+        window.history.replaceState(null, '', newHash);
+      }
+    } else if (currentTerm === 2) {
+      const newHash = `#term=2`;
+      if (window.location.hash !== newHash) {
+        window.history.replaceState(null, '', newHash);
+      }
+    } else {
+      if (window.location.hash && window.location.hash !== '#') {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  }, [selectedCourse, selectedLecture, lectureInitialTab, selectedSheetId, currentTerm]);
+
   const termCourses = COURSES_DATA.filter(c => c.term === currentTerm);
   const totalLecturesCount = COURSES_DATA.reduce((acc, c) => acc + c.lectures.length, 0);
 
   const handleHomeClick = () => {
     setSelectedCourse(null);
     setSelectedLecture(null);
+    setSelectedSheetId(null);
     setLectureInitialTab('summary');
   };
 
   const handleOpenLecture = (course: Course, lecture: Lecture, tab: 'summary' | 'interactive' = 'summary') => {
     setSelectedCourse(course);
     setSelectedLecture(lecture);
+    setSelectedSheetId(null);
     setLectureInitialTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -238,6 +339,7 @@ export const App: React.FC = () => {
           <LectureSummary
             lecture={selectedLecture}
             initialTab={lectureInitialTab}
+            onTabChange={(tab) => setLectureInitialTab(tab)}
             onBackToCourse={() => {
               setSelectedLecture(null);
               setLectureInitialTab('summary');
@@ -247,8 +349,13 @@ export const App: React.FC = () => {
           /* View 2: Course Outline & Lectures */
           <CourseDetail
             course={selectedCourse}
+            initialSheetId={selectedSheetId}
+            onSheetChange={(sheetId) => setSelectedSheetId(sheetId)}
             onSelectLecture={(lec) => handleOpenLecture(selectedCourse, lec, 'summary')}
-            onBack={() => setSelectedCourse(null)}
+            onBack={() => {
+              setSelectedCourse(null);
+              setSelectedSheetId(null);
+            }}
           />
         ) : currentTerm === 2 ? (
           /* Term 2: Clean, simple placeholder */

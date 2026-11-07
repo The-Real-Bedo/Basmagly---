@@ -1,6 +1,6 @@
 import React from 'react';
-import { BookOpen, Lightbulb, Star } from 'lucide-react';
-import { SummarySection } from '../types';
+import { BookOpen, Lightbulb, Star, Sparkles, RotateCcw, CheckCircle2, XCircle, HelpCircle } from 'lucide-react';
+import { SummarySection, QuickCheck } from '../types';
 import { ArabicText, formatArabicWithEnglish } from './ArabicText';
 
 /** Splits "Term: explanation" into a bold lead + rest when the colon comes early. */
@@ -14,6 +14,143 @@ const splitLead = (text: string): [string | null, string] => {
 export const stripLeadingNumber = (title: string) => title.replace(/^\s*\d+[.)]\s*/, '');
 
 export const sectionAnchorId = (index: number) => `lecture-section-${index + 1}`;
+
+interface QuickConceptCheckProps {
+  check: QuickCheck;
+  sectionIndex: number;
+}
+
+export const QuickConceptCheck: React.FC<QuickConceptCheckProps> = ({ check }) => {
+  const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
+  const [hasInteracted, setHasInteracted] = React.useState(false);
+
+  const isCorrect = selectedOption !== null && selectedOption === check.correctIndex;
+
+  const handleSelect = (idx: number) => {
+    setSelectedOption(idx);
+    setHasInteracted(true);
+  };
+
+  const handleReset = () => {
+    setSelectedOption(null);
+    setHasInteracted(false);
+  };
+
+  return (
+    <div className="mt-6 border-t border-beige-200 dark:border-stone-800 p-6 sm:p-7 bg-[#FAF7F2]/50 dark:bg-stone-950/40">
+      <div className="bg-white dark:bg-stone-900 border-2 border-dashed border-amber-300/80 dark:border-amber-800/80 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
+              <Sparkles className="w-4 h-4" />
+            </span>
+            <span className="text-[13px] font-mono font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+              Micro-Check · جرب فهمك في ثواني
+            </span>
+          </div>
+          {hasInteracted && (
+            <button
+              onClick={handleReset}
+              className="text-[12px] font-mono font-medium text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-200 flex items-center gap-1 transition-colors"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>إعادة التجربة (Reset)</span>
+            </button>
+          )}
+        </div>
+
+        {/* Question Prompt */}
+        <div className="space-y-1">
+          <ArabicText className="text-base font-bold text-stone-900 dark:text-stone-100">
+            {check.questionAr}
+          </ArabicText>
+          <p className="text-sm text-stone-600 dark:text-zinc-400 font-mono">
+            {check.question}
+          </p>
+        </div>
+
+        {/* Options */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          {check.options.map((option, idx) => {
+            const isSelected = selectedOption === idx;
+            
+            let btnStyle = 'bg-stone-50 dark:bg-stone-800/60 border-stone-200 dark:border-stone-700 text-stone-800 dark:text-zinc-200 hover:border-amber-400 dark:hover:border-amber-600';
+            
+            if (hasInteracted) {
+              if (isSelected) {
+                if (isCorrect) {
+                  btnStyle = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-200 ring-2 ring-emerald-400/30';
+                } else {
+                  btnStyle = 'bg-rose-50 dark:bg-rose-950/40 border-rose-400 text-rose-900 dark:text-rose-200 ring-2 ring-rose-400/30';
+                }
+              }
+            }
+
+            return (
+              <button
+                key={idx}
+                onClick={() => handleSelect(idx)}
+                className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all active:scale-[0.98] ${btnStyle}`}
+              >
+                <span className="w-6 h-6 rounded-md bg-stone-200 dark:bg-stone-700 text-[12px] font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  {String.fromCharCode(65 + idx)}
+                </span>
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <ArabicText className="text-sm font-semibold block">
+                    {check.optionsAr[idx] || option}
+                  </ArabicText>
+                  <span className="text-[12px] font-mono text-stone-500 dark:text-zinc-400 block truncate">
+                    {option}
+                  </span>
+                </div>
+                {hasInteracted && isSelected && (
+                  <span className="shrink-0 mt-0.5">
+                    {isCorrect ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-rose-500 dark:text-rose-400" />
+                    )}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Feedback Alert */}
+        {hasInteracted && (
+          <div
+            className={`p-4 rounded-xl border transition-all ${
+              isCorrect
+                ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-200'
+                : 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800/60 text-amber-900 dark:text-amber-200'
+            }`}
+          >
+            <div className="flex items-start gap-2.5">
+              {isCorrect ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+              ) : (
+                <HelpCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              )}
+              <div className="space-y-1 text-sm">
+                <ArabicText className="font-bold">
+                  {isCorrect ? 'الله ينور عليك يا هندسة! إجابة صحيحة 100%' : 'فكر تاني يا باشمهندس! ركز في تفصيلة المفهوم وجرب تاني'}
+                </ArabicText>
+                <ArabicText className="text-[13px] leading-relaxed">
+                  {check.explanationAr}
+                </ArabicText>
+                <p className="text-[12px] font-mono text-stone-600 dark:text-zinc-400 pt-1 border-t border-emerald-200/40 dark:border-emerald-800/30">
+                  {check.explanation}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 interface LectureSectionProps {
   section: SummarySection;
@@ -143,6 +280,11 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
               )}
             </div>
           </div>
+        )}
+
+        {/* Micro-interactive Quick Concept Check */}
+        {section.quickCheck && (
+          <QuickConceptCheck check={section.quickCheck} sectionIndex={index} />
         )}
       </div>
     </section>
