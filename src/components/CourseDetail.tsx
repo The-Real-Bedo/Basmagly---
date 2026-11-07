@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Course, Lecture, SheetProblem } from '../types';
 import {
   BookOpen,
@@ -13,8 +13,7 @@ import {
   ChevronUp,
   Check,
   Eye,
-  EyeOff,
-  Sparkles
+  EyeOff
 } from 'lucide-react';
 import { ArabicText, hasArabic } from './ArabicText';
 
@@ -52,7 +51,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
   const toggleSolution = (problemId: string) => {
     setRevealedSolutions((prev) => ({
       ...prev,
-      [problemId]: prev[problemId] === false ? true : false,
+      [problemId]: !prev[problemId],
     }));
   };
 
@@ -218,15 +217,15 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
         )}
       </div>
 
-      {/* Course Sheets Section (شيتات المادة والتمارين - تصميم ورقة الامتحان الأصلية) */}
+      {/* Course Sheets Section (شيتات المادة والتمارين) */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-stone-700 dark:text-zinc-300" />
-            <span>Official Problem Sheets & Quizzes ({totalSheets})</span>
+            <span>Practice Sheets ({totalSheets})</span>
           </div>
           <ArabicText as="span" className="text-sm font-normal text-stone-600 dark:text-zinc-400">
-            شيتات وكويزات السكشن الرسمية
+            شيتات وتمارين المادة
           </ArabicText>
         </h2>
 
@@ -252,55 +251,45 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
               return (
                 <div
                   key={sheet.id}
-                  className="bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm transition-all space-y-6"
+                  className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm transition-all space-y-6"
                 >
-                  {/* Sheet Card Header */}
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                    <div className="space-y-2 max-w-3xl">
+                  {/* Clean Sheet Card Header ("خليه شيت المحاضرة الاولى، بس كده") */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1.5 max-w-3xl">
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <span className="px-3 py-1 rounded-md text-[13px] font-bold font-mono bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800/60">
-                          ورقة شيت {sheet.sheetNumber} (Sheet {sheet.sheetNumber})
+                          شيت {sheet.sheetNumber} (Sheet {sheet.sheetNumber})
                         </span>
 
                         <span className="px-2.5 py-1 rounded-md text-[13px] font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-200 dark:border-stone-700 font-mono">
-                          {sheet.problemsCount} Questions
+                          {sheet.problemsCount} مسألة ({sheet.problemsCount} Questions)
                         </span>
 
                         {sheet.hasSolution && (
                           <span className="px-2.5 py-1 rounded-md text-[13px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1.5">
                             <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span className="font-arabic">الحل النموذجي مدرج بالكامل</span>
-                            <span className="font-mono text-[11px] opacity-80">(Full Model Solutions)</span>
+                            <span className="font-arabic">الحلول النموذجية متوفرة</span>
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-xl font-black text-stone-900 dark:text-stone-100 font-mono">
-                        {sheet.title}
-                      </h3>
-
-                      <ArabicText className="text-base font-bold text-stone-700 dark:text-zinc-200">
+                      <h3 className="text-xl font-bold text-stone-900 dark:text-stone-100 font-arabic pt-0.5">
                         {sheet.titleAr}
-                      </ArabicText>
-
-                      <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed font-mono">
-                        {sheet.brief}
+                      </h3>
+                      <p className="text-sm text-stone-500 dark:text-zinc-400 font-mono">
+                        {sheet.title}
                       </p>
-
-                      <ArabicText className="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
-                        {sheet.briefAr}
-                      </ArabicText>
                     </div>
 
                     <button
                       onClick={() => toggleSheet(sheet.id)}
-                      className="px-5 py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60 font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95"
+                      className="px-5 py-3 rounded-2xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95"
                     >
                       <span className="font-arabic">
-                        {isExpanded ? 'طي ورقة الشيت' : 'فتح ورقة الشيت وحل المسائل'}
+                        {isExpanded ? 'إخفاء مسائل الشيت' : 'فتح الشيت وحل المسائل'}
                       </span>
                       <span className="font-mono font-medium text-[13px] opacity-80">
-                        {isExpanded ? '(Fold)' : '(Open Paper)'}
+                        {isExpanded ? '(Close)' : '(Open Sheet)'}
                       </span>
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
@@ -308,28 +297,47 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
 
                   {/* Authentic Paper Document Rendering */}
                   {isExpanded && (
-                    <div className="pt-6 border-t-2 border-dashed border-stone-200 dark:border-stone-800 space-y-6">
+                    <div className="pt-6 border-t border-beige-200 dark:border-stone-800 space-y-6">
                       {/* Paper Document Container */}
                       <div className="bg-[#FAF8F5] dark:bg-[#151518] border-2 border-stone-300 dark:border-stone-700 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
-                        {/* Authentic Paper Heading Bar */}
+                        {/* Heading Bar with Master Reveal Toggle */}
                         <div className="border-b-2 border-stone-300 dark:border-stone-700 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="space-y-1">
-                            <span className="text-[12px] font-mono font-bold uppercase tracking-wider text-stone-500 dark:text-zinc-400 block">
-                              Faculty of Computer Science & Engineering · Term 1 Quiz
-                            </span>
-                            <h4 className="text-2xl font-black text-stone-900 dark:text-white font-mono">
-                              {sheet.title}
+                            <h4 className="text-2xl font-bold text-stone-900 dark:text-white font-arabic">
+                              {sheet.titleAr}
                             </h4>
-                            <ArabicText className="text-sm font-semibold text-stone-600 dark:text-zinc-400">
-                              ورقة الأسئلة الرسمية للسكشن · دكتورة سارة شهاب
-                            </ArabicText>
+                            <span className="text-sm font-mono text-stone-500 dark:text-zinc-400 block">
+                              {sheet.title} · {sheet.problemsCount} Questions
+                            </span>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <span className="px-3 py-1.5 rounded-xl bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs font-mono font-bold text-stone-700 dark:text-zinc-300 flex items-center gap-1.5">
-                              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                              <span>{sheet.problemsCount} Questions</span>
-                            </span>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => {
+                                const problems = sheet.problems || [];
+                                const allRevealed = problems.length > 0 && problems.every((p) => revealedSolutions[p.id]);
+                                const nextState: Record<string, boolean> = { ...revealedSolutions };
+                                problems.forEach((p) => {
+                                  nextState[p.id] = !allRevealed;
+                                });
+                                setRevealedSolutions(nextState);
+                              }}
+                              className="px-4 py-2 rounded-xl bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs font-bold text-stone-800 dark:text-zinc-200 hover:bg-beige-100 dark:hover:bg-stone-700 transition-colors flex items-center gap-2 shadow-xs"
+                            >
+                              {(sheet.problems || []).length > 0 && (sheet.problems || []).every((p) => revealedSolutions[p.id]) ? (
+                                <>
+                                  <EyeOff className="w-3.5 h-3.5 text-stone-500" />
+                                  <span className="font-arabic">إخفاء جميع الحلول</span>
+                                  <span className="font-mono text-[11px] opacity-70">(Hide All)</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                  <span className="font-arabic">إظهار جميع الحلول</span>
+                                  <span className="font-mono text-[11px] opacity-70">(Show All)</span>
+                                </>
+                              )}
+                            </button>
                           </div>
                         </div>
 
@@ -356,7 +364,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                             {/* Questions in this part */}
                             <div className="space-y-5">
                               {part.problems.map((problem) => {
-                                const isSolutionRevealed = revealedSolutions[problem.id] !== false; // revealed by default
+                                // Default: hidden! Student clicks to reveal solution
+                                const isSolutionRevealed = Boolean(revealedSolutions[problem.id]);
                                 const userChoice = userSelections[problem.id];
 
                                 return (
@@ -385,14 +394,22 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                                         </ArabicText>
                                       </div>
 
+                                      {/* Show/Hide Solution Button */}
                                       <button
                                         onClick={() => toggleSolution(problem.id)}
-                                        className="text-xs font-mono font-medium text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-200 flex items-center gap-1.5 shrink-0 px-2.5 py-1.5 rounded-xl border border-beige-300 dark:border-stone-800 hover:bg-beige-100 dark:hover:bg-stone-800 transition-colors"
+                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 active:scale-95 ${
+                                          isSolutionRevealed
+                                            ? 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-zinc-300 border border-stone-300 dark:border-stone-700'
+                                            : 'bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white border border-emerald-600 shadow-sm'
+                                        }`}
                                         title="Toggle solution visibility"
                                       >
                                         {isSolutionRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                                        <span className="font-arabic text-[11px]">
-                                          {isSolutionRevealed ? 'إخفاء الحل' : 'عرض الحل'}
+                                        <span className="font-arabic text-[12px]">
+                                          {isSolutionRevealed ? 'إخفاء الحل' : 'عرض الحل النموذجي'}
+                                        </span>
+                                        <span className="font-mono text-[11px] opacity-80">
+                                          {isSolutionRevealed ? '(Hide)' : '(Show Solution)'}
                                         </span>
                                       </button>
                                     </div>
@@ -476,7 +493,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                                       </div>
                                     ) : null}
 
-                                    {/* Model Solution Box ("وحط الحل النموذجي تحت كل سؤال") */}
+                                    {/* Model Solution Box (Hidden by default, shown when user clicks "عرض الحل النموذجي") */}
                                     {isSolutionRevealed && problem.solution && (
                                       <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/60 space-y-2.5">
                                         <div className="flex items-center justify-between gap-2 flex-wrap">

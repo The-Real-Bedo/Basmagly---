@@ -1397,14 +1397,14 @@ export const COURSES_DATA: Course[] = [
       }
     ],
     sheets: [
-            {
+      {
         id: 'iot-sheet-1',
         courseId: 'iot',
         sheetNumber: 1,
-        title: 'IoT Quiz — Lecture 1',
-        titleAr: 'شيت كويز السكشن الرسمي — المحاضرة الأولى',
-        brief: 'Official faculty section quiz: 8 questions (4 True/False, 4 MCQ) with verbatim paper layout and model solutions.',
-        briefAr: 'شيت السكشن الرسمي مطابق لورقة الكويز (8 أسئلة: 4 صح وخطأ، 4 اختياري) مع الحل النموذجي ومراجع السلايدات.',
+        title: 'Lecture 1 Sheet',
+        titleAr: 'شيت المحاضرة الأولى',
+        brief: 'Lecture 1 practice exercises and problem sets.',
+        briefAr: 'تمارين ومسائل المحاضرة الأولى.',
         problemsCount: 8,
         hasSolution: true,
         problems: [
@@ -1548,10 +1548,10 @@ export const COURSES_DATA: Course[] = [
         id: 'iot-sheet-2',
         courseId: 'iot',
         sheetNumber: 2,
-        title: 'LECTURE 2 • IoT • Networking Models & Protocols',
-        titleAr: 'شيت كويز السكشن الرسمي — نماذج وبروتوكولات الشبكات',
-        brief: 'Official faculty section sheet: 20 questions (10 MCQ, 10 True/False) with verbatim paper layout and model solutions.',
-        briefAr: 'ورقة شيت وكويز السكشن الرسمي (20 سؤال: 10 اختياري، 10 صح وخطأ) بالترتيب والتنسيق المطابق لورقة الامتحان.',
+        title: 'Lecture 2 Sheet',
+        titleAr: 'شيت المحاضرة الثانية',
+        brief: 'Lecture 2 practice exercises and problem sets.',
+        briefAr: 'تمارين ومسائل المحاضرة الثانية.',
         problemsCount: 20,
         hasSolution: true,
         problems: [
