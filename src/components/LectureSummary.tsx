@@ -13,6 +13,7 @@ import { IotPipelineSimulator } from './interactive/IotPipelineSimulator';
 import { NetworkDevicesCollisionLab } from './interactive/NetworkDevicesCollisionLab';
 import { VacuumWorldAgentLab } from './interactive/VacuumWorldAgentLab';
 import { EdgeVsCloudLab } from './interactive/EdgeVsCloudLab';
+import { IotStackArchitectureLab } from './interactive/IotStackArchitectureLab';
 import { QuizSystem } from './QuizSystem';
 
 interface LectureSummaryProps {
@@ -144,6 +145,7 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
           {lecture.interactiveTools.includes('turing-test') && <TuringTestPlayground />}
           {lecture.interactiveTools.includes('edge-vs-cloud') && <EdgeVsCloudLab />}
           {lecture.interactiveTools.includes('iot-simulator') && <IotPipelineSimulator />}
+          {lecture.interactiveTools.includes('iot-stack-lab') && <IotStackArchitectureLab />}
         </div>
       )}
 

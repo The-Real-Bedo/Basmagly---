@@ -154,6 +154,19 @@ const ALL_LABS: LabDirectoryItem[] = [
     descriptionAr: 'سلايدرات تحكم حية لسنسور الحرارة، نقل الداتا عبر MQTT، التحليل على الـ Cloud، وتشغيل المحابس أوتوماتيك.',
     icon: Sliders,
     badge: 'IoT Pipeline'
+  },
+  {
+    id: 'iot-stack-lab',
+    courseId: 'iot',
+    lectureId: 'iot-lec-2',
+    category: 'iot',
+    categoryLabel: 'Internet of Things',
+    categoryLabelAr: 'إنترنت الأشياء',
+    title: 'IoT 5-Layer Stack & Transport Flow Lab',
+    subtitleAr: 'معمل المعمارية الخماسية لإنترنت الأشياء ومحاكاة بروتوكولات النقل',
+    descriptionAr: 'تتبع حزم الحساسات عبر طبقات الـ IoT الخمس، مع محاكاة بصرية لمصافحة TCP الثلاثية مقابل إرسال UDP الموفر للطاقة.',
+    icon: Layers,
+    badge: 'IoT Stack & Protocols'
   }
 ];
 

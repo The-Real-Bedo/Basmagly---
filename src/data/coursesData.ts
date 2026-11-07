@@ -934,7 +934,7 @@ export const COURSES_DATA: Course[] = [
         brief: 'The network communication dilemma, why layered architectures prevent proprietary vendor chaos, OSI 7-layer reference vs TCP/IP 4-layer reality, TCP 3-way handshake vs UDP datagrams, and the complete 5-layer IoT stack designed for constrained hardware.',
         briefAr: 'معضلة الاتصال الشبكي، كيف تمنع النماذج الطبقية فوضى احتكار الشركات، مقارنة نموذج OSI المرجعي السباعي مع نموذج TCP/IP الواقعي، صراع بروتوكولات النقل TCP و UDP، والمعمارية الخماسية لطبقات إنترنت الأشياء المصممة للأجهزة محدودة الموارد.',
         durationMinutes: 45,
-        interactiveTools: ['osi-visualizer', 'transmission-lab', 'iot-simulator'],
+        interactiveTools: ['iot-stack-lab'],
         cheatSheet: [
           {
             en: 'Without Standards = Chaos: Proprietary protocols from HP, Cisco, IBM, Microsoft cannot communicate with each other, destroying interoperability.',
