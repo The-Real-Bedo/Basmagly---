@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Lecture } from '../types';
 import { BookOpen, Sparkles, BookA, Wrench, HelpCircle, ChevronLeft, Clock } from 'lucide-react';
 import { ArabicText } from './ArabicText';
+import { LectureSection, sectionAnchorId, stripLeadingNumber } from './LectureSection';
 import { OsiTcpVisualizer } from './interactive/OsiTcpVisualizer';
 import { SubnetCalculatorVisualizer } from './interactive/SubnetCalculatorVisualizer';
 import { PacketJourneyLab } from './interactive/PacketJourneyLab';
@@ -107,77 +108,25 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
 
       {/* Tab 1: Summary */}
       {activeTab === 'summary' && (
-        <div className="space-y-5">
+        <div className="space-y-6">
+          {/* Section jump list */}
+          {lecture.sections.length > 1 && (
+            <nav aria-label="Sections" className="flex items-center gap-2 overflow-x-auto pb-1">
+              {lecture.sections.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => document.getElementById(sectionAnchorId(i))?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 text-sm font-semibold text-stone-800 dark:text-zinc-200 transition-colors shadow-sm"
+                >
+                  <span className="font-mono text-[13px] font-bold text-amber-700 dark:text-amber-400">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{stripLeadingNumber(s.title)}</span>
+                </button>
+              ))}
+            </nav>
+          )}
+
           {lecture.sections.map((section, idx) => (
-            <div
-              key={idx}
-              className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm space-y-4"
-            >
-              <div className="border-b border-beige-200 dark:border-stone-800 pb-3">
-                <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-                  {section.title}
-                </h3>
-                <ArabicText className="text-sm font-semibold text-stone-600 dark:text-zinc-300 pt-1">
-                  {section.titleAr}
-                </ArabicText>
-              </div>
-
-              {/* English Academic Content */}
-              <p className="text-sm font-medium text-stone-800 dark:text-stone-200 leading-relaxed font-sans">
-                {section.content}
-              </p>
-
-              {/* Simplified Explanation Box */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-2">
-                <ArabicText as="span" className="text-sm font-bold text-stone-800 dark:text-zinc-200 block">
-                  💡 الفكرة ببساطة:
-                </ArabicText>
-                <ArabicText className="text-sm font-medium text-stone-700 dark:text-zinc-300 leading-[1.75]">
-                  {section.contentAr}
-                </ArabicText>
-              </div>
-
-              {/* Bullet Points */}
-              {section.bulletPoints && section.bulletPoints.length > 0 && (
-                <div className="space-y-3 pt-1">
-                  <span className="text-[13px] font-bold text-stone-600 dark:text-zinc-400 uppercase tracking-wider block font-mono">
-                    Core Academic Highlights:
-                  </span>
-                  {section.bulletPoints.map((point, pIdx) => (
-                    <div key={pIdx} className="space-y-1 text-sm bg-white dark:bg-stone-900/50 p-2 rounded-xl">
-                      <div className="flex items-start gap-2.5 text-stone-800 dark:text-stone-200 font-medium font-sans">
-                        <span className="w-2 h-2 rounded-full bg-stone-700 dark:bg-stone-300 shrink-0 mt-2" />
-                        <span className="leading-relaxed">{point}</span>
-                      </div>
-                      {section.bulletPointsAr?.[pIdx] && (
-                        <div className="pr-5">
-                          <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 leading-[1.75]">
-                            {section.bulletPointsAr[pIdx]}
-                          </ArabicText>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Requirement 8: Key Exam Rule Callout (Gold Accent Preserved) */}
-              {section.keyRule && (
-                <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700/60 text-sm space-y-2 shadow-sm">
-                  <div className="flex items-start gap-2 text-amber-900 dark:text-amber-300 font-bold">
-                    <span className="shrink-0">⭐</span>
-                    <span className="font-mono shrink-0">High-Yield Rule:</span>
-                    <span className="font-semibold text-stone-900 dark:text-stone-100 font-sans">{section.keyRule}</span>
-                  </div>
-                  {section.keyRuleAr && (
-                    <ArabicText className="text-sm text-stone-800 dark:text-zinc-200 font-medium pr-5">
-                      <strong>خد بالك في الامتحان: </strong>
-                      {section.keyRuleAr}
-                    </ArabicText>
-                  )}
-                </div>
-              )}
-            </div>
+            <LectureSection key={idx} section={section} index={idx} total={lecture.sections.length} />
           ))}
         </div>
       )}

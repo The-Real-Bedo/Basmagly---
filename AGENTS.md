@@ -9,7 +9,7 @@ existing pattern from the files named below instead of inventing a new one.
 
 - Stack: React 19 + TypeScript + Vite 6 + Tailwind 3.4. No router, no backend, no tests framework.
 - `src/App.tsx` — home dashboard, term switch, lab directory (`ALL_LABS`), navigation state.
-- `src/components/` — `Navbar`, `Footer`, `CourseCard`, `CourseDetail`, `LectureSummary` (tabs: summary / labs / quiz / cheat sheet / glossary), `QuizSystem`.
+- `src/components/` — `Navbar`, `Footer`, `BrandLogo`, `CourseCard`, `CourseDetail`, `LectureSummary` (tabs: summary / labs / quiz / cheat sheet / glossary), `LectureSection` (one explanation section card), `QuizSystem`.
 - `src/components/ArabicText.tsx` — **the** bilingual text primitive. Read it before touching any Arabic string.
 - `src/components/interactive/*.tsx` — the 10 simulators ("labs"). Reference implementation for structure: `EdgeVsCloudLab.tsx`.
 - `src/data/coursesData.ts` — all course/lecture/quiz content. `src/types/index.ts` — its schema.
@@ -42,7 +42,7 @@ existing pattern from the files named below instead of inventing a new one.
 ### 3.2 Label pattern
 - Bilingual labels are **Arabic first, English in parentheses**: `الراسل (Sender)`, `عنوان الشبكة (Network ID)`, `ابدأ المذاكرة (Open Lecture)`. Keep this pattern consistent inside a file; don't mix with `English (عربي)`.
 - When the two halves need different fonts (e.g. a button), split them: `<span className="font-arabic">ابدأ المذاكرة</span><span className="font-mono text-[13px] opacity-80">(Open Lecture)</span>`.
-- Lab header (copy exactly from `EdgeVsCloudLab.tsx`): icon badge + `<h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">English title</h3>` + `<ArabicText className="text-sm text-stone-600 dark:text-zinc-400">Arabic subtitle</ArabicText>`.
+- Lab header (copy exactly from `EdgeVsCloudLab.tsx`; explanation sections follow §4 instead): icon badge + `<h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">English title</h3>` + `<ArabicText className="text-sm text-stone-600 dark:text-zinc-400">Arabic subtitle</ArabicText>`.
 
 ### 3.3 Writing style
 - Tone for explanations is **Egyptian colloquial** ("شوف", "جرب", "خد بالك", "يا هندسة"). Each sentence must be *fully* colloquial or *fully* MSA — never `وماذا يحدث` inside a colloquial sentence (→ `وإيه اللي بيحصل`).
@@ -52,7 +52,47 @@ existing pattern from the files named below instead of inventing a new one.
 - English: consistent capitalisation of OSI, TCP/IP, IPv4, MAC, Wi-Fi, IoT; `&` in titles, `and` in prose.
 - Every Arabic field must be a faithful translation of its English sibling (same meaning, same level of detail) — not a paraphrase with extra/missing claims.
 
-## 4. Simulators (`src/components/interactive/`)
+## 4. Explanation section layout (`src/components/LectureSection.tsx`)
+
+This is the approved reading layout for every lecture's **summary** tab. Reuse the same
+shape for any new "explain a topic" block (cheat sheets, glossary groups, lab theory
+cards) instead of inventing a new one. Anatomy, top to bottom:
+
+1. **Jump list** (in `LectureSummary`): one pill per section — `01` amber mono number +
+   English title — horizontally scrollable, `scrollIntoView` to `#lecture-section-N`.
+   Only rendered when there is more than one section.
+2. **Header strip** on a tinted band (`bg-[#FAF7F2]/70 dark:bg-stone-950/50` + bottom
+   border): a 48px square badge `bg-stone-900 dark:bg-stone-100 text-amber-400
+   dark:text-amber-600 font-mono` showing the zero-padded number (`01`), then
+   `Section N of M` (13px mono, muted), `<h3 className="text-xl font-bold">` English
+   title, `<ArabicText className="text-base font-semibold">` Arabic title.
+   Titles in data start with `1.`/`٢.`; strip it with `stripLeadingNumber()` — the
+   badge already shows the number.
+3. **Bilingual intro** — two cards side by side (`grid lg:grid-cols-2`, stacked below
+   `lg`): left = *Academic Definition* (plain bordered card, `BookOpen` icon label,
+   15px English); right = *الفكرة ببساطة* (inner surface card, `Lightbulb` amber icon,
+   15px Arabic).
+4. **Core Highlights** — an `<ol>` inside a bordered rounded container with
+   `divide-y`; each row is a 3-column grid `[auto,1fr,1fr]` on `lg` (number chip,
+   English, Arabic with a left border divider) and `[auto,1fr]` below `lg` (Arabic
+   wraps under English). Rows alternate `odd:bg-white even:bg-[#FAF7F2]/70`
+   (`dark:odd:bg-stone-900 dark:even:bg-stone-950/60`). The lead term before the first
+   colon (`Hub: …`, `الـ Hub: …`) is rendered **bold** automatically via `splitLead()`
+   — keep writing bullet copy as `Term: explanation` so this keeps working.
+5. **High-Yield Rule** (only when `keyRule` exists) — amber box with its own header
+   row (`Star` icon + `High-Yield Rule` mono label on the left, `خد بالك في الامتحان`
+   on the right), then English | Arabic in two columns like the intro.
+
+Rules that keep it readable:
+- Body copy in these cards is **15px** (`text-[15px]`), labels 13px mono uppercase
+  (English only — Arabic labels use `ArabicText`), titles `text-xl`.
+- Every section card gets `id={sectionAnchorId(index)}` and `scroll-mt-28` so the
+  sticky navbar doesn't cover the header after a jump.
+- Never put English and Arabic for the same point in one paragraph; always two
+  columns (desktop) or two stacked blocks (mobile), English first.
+- No new colours: neutrals for structure, amber only for numbers/icons/high-yield.
+
+## 5. Simulators (`src/components/interactive/`)
 
 - Structure: outer card → header (3.2) → controls (inner surface) → visual canvas → narrative/status box (`aria-live="polite"`) → theory/comparison cards.
 - Timers: keep every `setTimeout`/`setInterval` id in a `useRef` array, clear them on reset, on mode/topology change and in a `useEffect` cleanup on unmount. Never `setState` after unmount. Prefer a pure `buildSteps()` that returns timed steps, then schedule them.
@@ -61,13 +101,13 @@ existing pattern from the files named below instead of inventing a new one.
 - Correctness beats prettiness. The simulation must match the textbook: hub = one collision domain, floods all ports; switch = per-port collision domains, forwards by MAC table, floods unknown unicast/broadcast; router = separates broadcast domains, rewrites MAC per hop, IP constant; subnet math exact for /0–/32 (incl. /31 and /32); vacuum world = simple reflex agent with Russell & Norvig scoring; Turing test = interrogator/human/machine + 6 disciplines.
 - Lab ids are referenced in three places and must stay in sync: `ALL_LABS` in `App.tsx`, the `includes('…')` switch in `LectureSummary.tsx`, and `interactiveTools` in `coursesData.ts`. Allowed ids: `network-devices, packet-journey, osi-visualizer, subnet-calculator, transmission-lab, topology-simulator, vacuum-world, turing-test, edge-vs-cloud, iot-simulator`.
 
-## 5. Content data (`src/data/coursesData.ts`)
+## 6. Content data (`src/data/coursesData.ts`)
 
 - Never change ids, structure, or remove items unless explicitly asked.
 - Invariants: `options.length === optionsAr.length`; MCQ `correctAnswer` is a valid index of the truly correct option; true/false `correctAnswer` is a boolean; `bulletPoints.length === bulletPointsAr.length`; every non-essay question has `explanationAr`; essays have `modelAnswer` + `modelAnswerAr`; question `courseId`/`lectureId` match the parent.
 - Facts must be right (OSI layer numbers/PDU names, device layers, IPv4 classes with 127 = loopback, port numbers at Transport layer, throughput ≤ bandwidth, etc.). If you fix a fact that changes a question's answer, update `correctAnswer`, `explanation` and `explanationAr` together.
 
-## 6. Workflow for every change
+## 7. Workflow for every change
 
 1. Read the file(s) you will touch in full, plus `ArabicText.tsx` and one reference lab, before the first edit.
 2. Make the smallest change that fits the existing pattern. Don't refactor unrelated code or rename things.
@@ -75,7 +115,7 @@ existing pattern from the files named below instead of inventing a new one.
 4. Open the app (`npm run dev`, port 3000) and check the changed screen in **light and dark** mode and at **375px** width (no horizontal scroll: `document.documentElement.scrollWidth === clientWidth`). For simulators, actually click through the interaction (run, reset, change mode mid-run) and watch the console for errors.
 5. Commit with a message that says *what* and *why*; keep PRs scoped to one topic.
 
-## 7. Don'ts (things that have already been fixed once — don't reintroduce)
+## 8. Don'ts (things that have already been fixed once — don't reintroduce)
 
 - Arabic inside `font-mono`/`uppercase`/`tracking-wider`.
 - `display: inline-block` on `bdi` (breaks line wrapping of long English phrases).
