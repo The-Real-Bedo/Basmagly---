@@ -225,6 +225,24 @@ export function AiFuelLab() {
         </ArabicText>
       </div>
 
+      <figure className="mt-5 rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-3 sm:p-5">
+        <svg viewBox="0 0 600 210" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="Three adjustable resource towers feed an AI system; the lowest tower constrains this teaching model">
+          <path d="M100 165 H500 M100 165 V182 H300 V165 M300 182 H500 V165" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.3" />
+          {FUEL_PILLARS.map((pillar, index) => {
+            const x = 45 + index * 205;
+            const level = values[pillar.key];
+            const highlighted = completedSteps > index;
+            return <g key={pillar.key}>
+              <rect x={x} y="25" width="100" height="125" rx="12" fill="currentColor" opacity="0.07" />
+              {[1, 2, 3, 4, 5].map(block => <rect key={block} x={x + 10} y={150 - block * 24} width="80" height="18" rx="5" fill={block <= level ? '#b45309' : 'currentColor'} opacity={block <= level ? (highlighted ? 0.95 : 0.55) : 0.08} className="transition-all duration-300" />)}
+              <circle cx={x + 50} cy="165" r="5" fill={highlighted ? '#b45309' : 'currentColor'} className={highlighted ? 'motion-safe:animate-pulse' : ''} />
+              <text x={x + 50} y="205" textAnchor="middle" fill="currentColor" fontSize="26">{pillar.key === 'data' ? 'Data' : pillar.key === 'algorithm' ? 'Algorithm' : 'Compute'}</text>
+            </g>;
+          })}
+        </svg>
+        <figcaption className="mt-2 text-[13px] text-stone-600 dark:text-zinc-400">Move a slider to reshape a pillar. Step through the flow to locate a relative constraint, not an accuracy score.</figcaption>
+        <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400 mt-1">حرّك السلايدر عشان تغيّر شكل الركن. الخطوات بتوضح القيد النسبي، مش درجة دقة للنموذج.</ArabicText>
+      </figure>
       <div className="mt-4 flex flex-wrap gap-2" aria-label="Choose a preset">
         {PRESETS.map((preset) => (
           <button

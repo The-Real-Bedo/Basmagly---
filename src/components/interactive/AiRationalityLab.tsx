@@ -47,6 +47,17 @@ export const AiRationalityLab: React.FC = () => {
         </div>
       </div>
 
+      <figure className="rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
+        <svg viewBox="0 0 600 190" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="Two routes from start to goal: a safe route taking eight minutes and a shortcut taking two or twenty minutes">
+          <path d="M45 95 Q150 -25 300 40 T555 95" fill="none" stroke="currentColor" strokeWidth={choice === 'safe' ? 5 : 2} opacity={choice === 'shortcut' ? 0.25 : 0.7} />
+          <path d="M45 95 Q280 220 555 95" fill="none" stroke={outcome === 'blocked' ? '#be123c' : '#b45309'} strokeWidth={choice === 'shortcut' ? 5 : 2} strokeDasharray={outcome === 'blocked' ? '10 7' : undefined} opacity={choice === 'safe' ? 0.25 : 0.8} />
+          <circle cx="45" cy="95" r="16" fill="currentColor" /><circle cx="555" cy="95" r="16" fill="currentColor" />
+          {choice && <circle cx={outcome ? 555 : 290} cy={outcome ? 95 : choice === 'safe' ? 40 : 157} r="9" fill="#b45309" className="motion-safe:animate-pulse" />}
+          <text x="300" y="22" fontSize="26" textAnchor="middle" fill="currentColor">Safe · 8 min</text>
+          <text x="300" y="189" fontSize="26" textAnchor="middle" fill="currentColor">Shortcut · 2 or 20 min</text>
+          <text x="45" y="135" fontSize="26" textAnchor="middle" fill="currentColor">Start</text><text x="555" y="135" fontSize="26" textAnchor="middle" fill="currentColor">Goal</text>
+        </svg>
+      </figure>
       <div className="grid gap-3 sm:grid-cols-2">
         {(['safe', 'shortcut'] as const).map(route => (
           <button key={route} onClick={() => { setChoice(route); setOutcome(null); }} aria-pressed={choice === route}

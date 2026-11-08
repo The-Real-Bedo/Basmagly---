@@ -609,6 +609,24 @@ export function AiFoundationsLab() {
         subtitle="اختار مهمة وتخصصات مساندة، وشوف كل مجال بيساهم فين في خط سير المساعد."
       />
 
+      <figure className="mt-5 rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
+        <svg viewBox="0 0 600 260" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="Eight contributing disciplines connect to an AI system; selected disciplines light up their connections">
+          {foundations.map((foundation, index) => {
+            const x = 75 + (index % 4) * 150;
+            const y = index < 4 ? 42 : 218;
+            const active = selectedIds.includes(foundation.id);
+            return <g key={foundation.id}>
+              <path d={`M${x} ${y} L300 130`} stroke={active ? '#b45309' : 'currentColor'} opacity={active ? 0.65 : 0.1} strokeWidth={active ? 3 : 1} className="transition-all duration-300" />
+              <circle cx={x} cy={y} r="25" fill={active ? '#b45309' : 'currentColor'} opacity={active ? 0.85 : 0.12} />
+              <text x={x} y={y + 8} textAnchor="middle" fill={active ? 'white' : 'currentColor'} fontSize="24">{['Phi', 'Math', 'Neuro', 'Psych', 'Econ', 'Eng', 'Ctrl', 'Lang'][index]}</text>
+            </g>;
+          })}
+          <rect x="235" y="98" width="130" height="64" rx="20" fill="currentColor" />
+          <text x="300" y="140" textAnchor="middle" fill="white" fontSize="32" className="dark:fill-stone-950">AI</text>
+        </svg>
+        <figcaption className="text-[13px] text-stone-600 dark:text-zinc-400">Toggle a discipline below to trace its contribution. This is a conceptual map, not a dependency checklist.</figcaption>
+        <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400 mt-1">فعّل تخصص تحت وشوف مساهمته. دي خريطة مفاهيم، مش قائمة لازم كل نظام يحقّقها.</ArabicText>
+      </figure>
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <label htmlFor="ai-foundation-task" className="mb-2 block text-sm font-semibold text-stone-800 dark:text-stone-200">

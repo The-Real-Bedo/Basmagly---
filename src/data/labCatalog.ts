@@ -1,0 +1,40 @@
+import { Activity, Bot, Brain, CalendarDays, Compass, Cpu, Layers, MessageSquare, Monitor, Network, Radio, Route, Search, Sliders, Waves, Wrench } from 'lucide-react';
+
+export type LabCategory = 'networks' | 'ai' | 'iot' | 'windows' | 'signals';
+const categoryNames: Record<LabCategory, [string, string]> = {
+  networks: ['Networks', 'شبكات الحاسب'], ai: ['Artificial Intelligence', 'ذكاء اصطناعي'],
+  iot: ['Internet of Things', 'إنترنت الأشياء'], windows: ['Windows Programming', 'برمجة النوافذ'],
+  signals: ['Signal Processing', 'معالجة الإشارات'],
+};
+
+const entries = [
+  ['ai-fuel', 'ai', 'ai-lec-1', 'ai', 'Data, Algorithms & Compute', 'محرّكات تقدّم الذكاء الاصطناعي', 'Change three resources and inspect the bottleneck.', Sliders],
+  ['ai-history', 'ai', 'ai-lec-1', 'ai', 'AI History Explorer', 'رحلة الاكتشاف والانتكاس', 'Explore the milestones and the constraints behind them.', CalendarDays],
+  ['ai-foundations', 'ai', 'ai-lec-1', 'ai', 'The Sciences Behind AI', 'ركّب منظومة من العلوم', 'Connect contributing disciplines to a working pipeline.', Layers],
+  ['ai-approaches', 'ai', 'ai-lec-1', 'ai', 'Four Approaches Studio', 'أربع عدسات لنفس المشكلة', 'Compare thinking and acting against human and rational criteria.', Brain],
+  ['turing-test', 'ai', 'ai-lec-1', 'ai', 'Turing Test & Its Limits', 'اختبار التقليد وحدوده', 'Compare scripted responses, then separate text from physical capabilities.', MessageSquare],
+  ['ai-rationality', 'ai', 'ai-lec-1', 'ai', 'Rationality Under Uncertainty', 'قرار عقلاني ولا حظ؟', 'Choose a route before you know the outcome.', Compass],
+  ['vacuum-world', 'ai', 'ai-lec-2', 'ai', 'Vacuum World & PEAS', 'المكنسة وإطار PEAS', 'Observe perception, action and performance in a small world.', Bot],
+  ['agent-architecture', 'ai', 'ai-lec-2', 'ai', 'Agent Architecture', 'من الإدراك للفعل', 'Step through the agent loop and compare architectures.', Brain],
+  ['search-visualizer', 'ai', 'ai-lec-4', 'ai', 'BFS, DFS & Uniform-Cost Search', 'خطوات البحث وجبهة الانتظار', 'Expand nodes and compare frontier order and path cost.', Search],
+  ['network-devices', 'networks', 'net-lec-1', 'networks', 'Network Devices & Collision Domains', 'الأجهزة ونطاقات التصادم', 'Send frames through a hub, switch or router.', Network],
+  ['topology-simulator', 'networks', 'net-lec-1', 'networks', 'Topology & Link Failure', 'الشبكات وقطع الوصلات', 'Break a link and watch the delivery path change.', Network],
+  ['transmission-lab', 'networks', 'net-lec-1', 'networks', 'Unicast, Broadcast & Multicast', 'لواحد ولا للكل ولا لمجموعة؟', 'Choose recipients and trace a frame across the LAN.', Radio],
+  ['packet-journey', 'networks', 'net-lec-2', 'networks', 'Hop-by-Hop Packet Journey', 'رحلة الحزمة وتغيير الـ MAC', 'Follow the frame across a routed network.', Route],
+  ['osi-visualizer', 'networks', 'net-lec-2', 'networks', 'OSI & TCP/IP Encapsulation', 'الطبقات وتغليف البيانات', 'Build the PDU one layer at a time.', Layers],
+  ['subnet-calculator', 'networks', 'net-lec-3', 'networks', 'IPv4 Subnet Workbench', 'حساب الشبكات خطوة بخطوة', 'Move the prefix and inspect the network and host bits.', Sliders],
+  ['edge-vs-cloud', 'iot', 'iot-lec-1', 'iot', 'Edge vs Cloud', 'قرار محلي ولا على الـ Cloud؟', 'Compare a local response with a remote decision.', Cpu],
+  ['iot-simulator', 'iot', 'iot-lec-1', 'iot', 'IoT Sensor-to-Action Pipeline', 'من الحساس للتنفيذ', 'Change a sensor and trace data to an actuator.', Sliders],
+  ['iot-stack-lab', 'iot', 'iot-lec-2', 'iot', 'IoT Stack & Transport', 'طبقات المنظومة والنقل', 'Follow telemetry through the layers and compare TCP with UDP.', Layers],
+  ['windows-message-loop', 'windows-programming', 'win-lec-2', 'windows', 'Windows Message Loop', 'طابور الرسائل وتحديث النافذة', 'Post events, dispatch messages and update a mock window.', Monitor],
+  ['event-driven-lab', 'windows-programming', 'win-lec-1', 'windows', 'Sequential vs Event-Driven', 'تنفيذ متسلسل ولا استجابة للأحداث؟', 'Compare how two programs respond to the same events.', Wrench],
+  ['signal-sampling', 'signal-processing', 'signal-lec-1', 'signals', 'Sampling & Quantization', 'من موجة مستمرة لعينات', 'Control sample rate and bit depth on a real computed waveform.', Waves],
+  ['discrete-signals', 'signal-processing', 'signal-lec-2', 'signals', 'Discrete-Time Signal Explorer', 'الإشارات المتقطعة وتحويلاتها', 'Shift and inspect impulse, step and exponential sequences.', Activity],
+] as const;
+
+export const LAB_CATALOG = entries.map(([id, courseId, lectureId, category, title, subtitleAr, description, icon]) => ({
+  id, courseId, lectureId, category, title, subtitleAr, description, icon,
+  categoryLabel: categoryNames[category][0], categoryLabelAr: categoryNames[category][1],
+  badge: categoryNames[category][0], descriptionAr: subtitleAr,
+}));
+export type LabId = typeof entries[number][0];

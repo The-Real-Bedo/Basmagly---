@@ -58,7 +58,7 @@ const JOURNEY_STEPS: HopStep[] = [
     explanationEn:
       'KEY HOP: the router strips the old Layer 2 header and builds a new one. Its egress interface MAC becomes the source and the server\'s MAC becomes the destination. The IP addresses stay CONSTANT.',
     explanationAr:
-      'هنا بقى اللقطة اللي بتيجي في كل الامتحانات! 💥 الراوتر شال الـ Layer 2 Header القديم وكتب واحد جديد: Source MAC بتاعه هو، وDestination MAC بتاع السيرفر. لكن الـ IP فضل ثابت زي ما هو! (الـ IP ثابت، والـ MAC بيتغير عند كل Router).',
+      'في الخطوة دي، الراوتر شال الـ Layer 2 Header القديم وكتب واحد جديد: Source MAC بتاعه هو، وDestination MAC بتاع السيرفر. لكن الـ IP فضل ثابت زي ما هو! (الـ IP ثابت، والـ MAC بيتغير عند كل Router).',
   },
   {
     currentDevice: 'Web Server',
@@ -298,14 +298,13 @@ export const PacketJourneyLab: React.FC = () => {
         >
           <div className="flex items-center gap-2 text-sm font-bold text-amber-900 dark:text-amber-200">
             <span>💡</span>
-            <span dir="rtl" className="font-arabic">الفكرة ببساطة للامتحان</span>
+            <span>What this hop does</span>
+            <ArabicText as="span" className="font-normal">شرح الخطوة ببساطة</ArabicText>
           </div>
+          <p dir="ltr" className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed">{activeHop.explanationEn}</p>
           <ArabicText className="text-sm text-stone-800 dark:text-zinc-200 font-medium">
             {activeHop.explanationAr}
           </ArabicText>
-          <p dir="ltr" className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-2 border-t border-amber-200 dark:border-amber-900/60">
-            <strong>English concept:</strong> {activeHop.explanationEn}
-          </p>
         </div>
       </div>
     </div>

@@ -183,6 +183,20 @@ export const TuringTestPlayground: React.FC = () => {
         <ArabicText className="text-sm text-stone-700 dark:text-zinc-300">دي ردود مكتوبة مسبقًا للتوضيح، مش محادثة مع إنسان أو نموذج حي. الأسلوب العاطفي أو الرسمي لوحده مش دليل على الهوية، وجولة واحدة مش إثبات لاجتياز اختبار تورنج.</ArabicText>
         <p className="text-sm text-stone-700 dark:text-zinc-300">These are scripted teaching examples, not a live human–AI conversation. Emotional or formal wording alone cannot identify a speaker, and one guess cannot establish a Turing Test pass.</p>
       </div>
+      <figure className="rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
+        <svg viewBox="0 0 600 170" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="A human interrogator exchanges written questions with two hidden participants, one human and one machine">
+          <path d="M115 85 H245 M355 85 H485" stroke="currentColor" strokeWidth="2" strokeDasharray="6 6" opacity="0.5" />
+          {[80, 300, 520].map((x, index) => <g key={x}>
+            <circle cx={x} cy="70" r="42" fill="currentColor" opacity="0.08" />
+            <circle cx={x} cy="58" r="11" fill={revealed && index !== 1 ? (index === 0 ? humanTerminal === 'A' : humanTerminal === 'B') ? '#047857' : '#b45309' : 'currentColor'} />
+            <path d={`M${x-20} 92 Q${x} 66 ${x+20} 92`} fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+            <text x={x} y="137" fontSize="25" textAnchor="middle" fill="currentColor">{index === 1 ? 'Interrogator' : index === 0 ? 'Terminal A' : 'Terminal B'}</text>
+          </g>)}
+          <circle cx={revealed ? 465 : 175} cy="85" r="5" fill="#b45309" className="motion-safe:animate-pulse" />
+        </svg>
+        <figcaption className="text-[13px] text-stone-600 dark:text-zinc-400">Judge the observable exchange, not a hidden mind. Text alone does not test physical interaction.</figcaption>
+        <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400 mt-1">قيّم الحوار اللي قدامك، مش عقل مخفي. المحادثة المكتوبة مش اختبار للتفاعل الجسدي.</ArabicText>
+      </figure>
       {/* Interrogation Terminal */}
       <div className="bg-[#FAF7F2] dark:bg-stone-950 rounded-2xl p-4 sm:p-6 border border-beige-300 dark:border-stone-800 space-y-5">
         {/* Interrogator Prompt */}
@@ -352,8 +366,8 @@ export const TuringTestPlayground: React.FC = () => {
                     {`${cap.ar} (${cap.en})`}
                   </ArabicText>
                 </div>
-                <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">{cap.descAr}</ArabicText>
                 <p className="text-sm text-stone-700 dark:text-zinc-400">{cap.descEn}</p>
+                <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">{cap.descAr}</ArabicText>
                 {usedInExample && (
                   <ArabicText as="div" className="text-xs font-bold text-amber-800 dark:text-amber-300">
                     ⭐ ظاهرة في السؤال ده

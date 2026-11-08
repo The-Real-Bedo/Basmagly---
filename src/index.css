@@ -115,7 +115,7 @@
 /* Default colour for <ArabicText>; any text-* utility on the element overrides it. */
 @layer components {
   .arabic-text {
-    @apply text-stone-700 dark:text-zinc-300;
+    color: inherit;
   }
 }
 
@@ -245,4 +245,18 @@
 
 .suction-dust {
   animation: suctionParticles 0.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
+}
+
+@keyframes learningPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.94); }
 }

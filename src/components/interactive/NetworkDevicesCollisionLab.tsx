@@ -18,6 +18,7 @@ interface SimStep {
   nodes: NodeStates;
   lookup: string[];
   collision: boolean;
+  logEn: string;
   log: string;
   hold: number;
 }
@@ -26,6 +27,7 @@ interface SimView {
   nodes: NodeStates;
   lookup: string[];
   collision: boolean;
+  logEn: string;
   log: string;
 }
 
@@ -101,6 +103,7 @@ const IDLE_VIEW: SimView = {
   nodes: {},
   lookup: [],
   collision: false,
+  logEn: 'Choose a device, sender, and destination, then send a frame to see how each network device handles it.',
   log: 'اختار الجهاز والراسل، واضغط إرسال وشوف النتيجة لايف.',
 };
 
@@ -124,6 +127,7 @@ function buildSteps(
           lookup: [],
           collision: false,
           hold: 900,
+          logEn: `${s.name} and ${p.name} transmit at the same time on the Hub. Their signals meet on the shared medium.`,
           log: `⚠️ ${s.name} و${p.name} بعتوا في نفس اللحظة على الـ Hub، والإشارتين اتقابلوا على نفس الوسط!`,
         },
         {
@@ -131,6 +135,7 @@ function buildSteps(
           lookup: [],
           collision: true,
           hold: 3000,
+          logEn: 'Collision: all Hub ports share one medium, so both frames are corrupted. Devices send a jam signal, wait a random backoff period, then retry using CSMA/CD. The Hub is one collision domain.',
           log: '💥 تصادم (Collision)! كل بورتات الـ Hub على وسط واحد، فالإشارات اتداخلت والفريمين باظوا. الأجهزة بتبعت Jam Signal وكل واحد بيستنى وقت عشوائي (Backoff) ويعيد المحاولة (CSMA/CD). يعني الـ Hub كله Collision Domain واحد.',
         },
       ];
@@ -141,6 +146,7 @@ function buildSteps(
         lookup: [],
         collision: false,
         hold: 900,
+        logEn: `${s.name} sends a frame to ${t.name}; the Hub receives the signal on port ${s.port}.`,
         log: `📡 ${s.name} بعت فريم لـ ${t.name}، والـ Hub استلم الإشارة على البورت ${s.port}.`,
       },
       {
@@ -148,6 +154,7 @@ function buildSteps(
         lookup: [],
         collision: false,
         hold: 2000,
+        logEn: `The Layer 1 Hub does not read addresses; it repeats the signal out every other port. All devices see the frame, but only ${t.name} accepts it and the others drop it.`,
         log: `✅ الـ Hub بيشتغل على Layer 1 ومبيفهمش عناوين، فكرر الإشارة على كل البورتات التانية (Flooding). كل الأجهزة استلمت الفريم، بس ${t.name} لوحده اللي الـ MAC بتاعه مطابق فقبله، والباقي عمل Drop.`,
       },
     ];
@@ -161,6 +168,7 @@ function buildSteps(
           lookup: [],
           collision: false,
           hold: 1100,
+          logEn: `${s.name} and ${p.name} transmit at the same time on separate Switch ports, so the frames do not collide.`,
           log: `⚡ ${s.name} و${p.name} بعتوا في نفس اللحظة، بس كل واحد متوصل ببورت لوحده في الـ Switch فمفيش تصادم.`,
         },
         {
@@ -168,6 +176,7 @@ function buildSteps(
           lookup: [t.id, q.id],
           collision: false,
           hold: 2200,
+          logEn: `The Switch uses its MAC table to send ${s.name}’s frame to ${t.name} and ${p.name}’s frame to ${q.name} simultaneously. Each port is a separate collision domain.`,
           log: `🎯 الـ Switch بص في جدول الـ MAC وبعت فريم ${s.name} لـ ${t.name} وفريم ${p.name} لـ ${q.name} في نفس الوقت من غير أي تصادم. كل بورت Collision Domain مستقل (Micro-segmentation).`,
         },
       ];
@@ -178,6 +187,7 @@ function buildSteps(
         lookup: [t.id],
         collision: false,
         hold: 1100,
+        logEn: `The Switch receives ${s.name}’s frame on port ${s.port}, learns its source MAC, then checks its MAC table for the destination ${t.mac}.`,
         log: `🔍 الـ Switch استلم الفريم من ${s.name} على البورت ${s.port}، وسجّل الـ MAC بتاعه (Source Learning)، وبص في جدول الـ MAC على الـ Destination MAC (${t.mac}).`,
       },
       {
@@ -185,6 +195,7 @@ function buildSteps(
         lookup: [t.id],
         collision: false,
         hold: 1800,
+        logEn: `The Switch finds the destination MAC on port ${t.port} and forwards the unicast frame only through that port; the other links stay idle.`,
         log: `🎯 لقى الـ MAC ده على البورت ${t.port}، فبعت الفريم من البورت ده بس (Unicast Forwarding)، وباقي الأجهزة أسلاكها ساكتة.`,
       },
     ];
@@ -197,6 +208,7 @@ function buildSteps(
         lookup: [],
         collision: false,
         hold: 1100,
+        logEn: `${s.name} and ${p.name} transmit at the same time through separate Router interfaces, so they do not collide.`,
         log: `⚡ ${s.name} و${p.name} بعتوا في نفس اللحظة، لكن كل واحد على Interface منفصل في الـ Router فمفيش تصادم.`,
       },
       {
@@ -204,6 +216,7 @@ function buildSteps(
         lookup: [t.id, q.id],
         collision: false,
         hold: 2200,
+        logEn: `The Router forwards ${s.name}’s packet to ${t.name} and ${p.name}’s packet to ${q.name} using its routing table. Each interface has separate collision and broadcast domains.`,
         log: `🧭 الـ Router وجّه باكيت ${s.name} لـ ${t.name} وباكيت ${p.name} لـ ${q.name} حسب الـ Routing Table. كل Interface ليه Collision Domain وBroadcast Domain لوحده.`,
       },
     ];
@@ -214,6 +227,7 @@ function buildSteps(
       lookup: [],
       collision: false,
       hold: 1100,
+      logEn: `The Router receives ${s.name}’s frame on interface ${ifOf(s)}, removes the Layer 2 header, and checks the destination IP ${ipOf(t, 'router')}.`,
       log: `🌐 الـ Router استلم الفريم من ${s.name} على الـ Interface ${ifOf(s)}، فك الـ Layer 2 Header وبص على الـ Destination IP (${ipOf(t, 'router')}).`,
     },
     {
@@ -221,6 +235,7 @@ function buildSteps(
       lookup: [t.id],
       collision: false,
       hold: 2200,
+      logEn: `The routing table sends the packet for ${netOf(t)} through ${ifOf(t)}. The Router builds a new Layer 2 header; the IP stays the same, and broadcasts do not cross interfaces.`,
       log: `🧭 لقى الشبكة ${netOf(t)} في الـ Routing Table متوصلة بـ ${ifOf(t)}، فكتب Layer 2 Header جديد (MAC جديد) وبعت الباكيت لـ ${t.name}. الـ IP فضل زي ما هو، والـ Broadcast مبيعديش من Interface للتانية.`,
     },
   ];
@@ -253,7 +268,6 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
   const target = byId(targetId);
   const [peer, peerTarget] = NODES.filter(n => n.id !== sender.id && n.id !== target.id);
   const device = DEVICES.find(d => d.id === activeDevice) ?? DEVICES[0];
-
   const handleSend = (simultaneous: boolean) => {
     if (isSimulating) return;
     clearTimers();
@@ -539,10 +553,12 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
             : 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-stone-800 dark:text-stone-200'
         }`}
       >
-        <div className="flex items-center gap-1.5 font-bold">
+        <div className="flex flex-wrap items-center gap-1.5 font-bold">
           <span>⚡</span>
-          <span dir="rtl" className="font-arabic">تحليل مسار الإشارة لايف</span>
+          <span>Live signal-path analysis</span>
+          <ArabicText as="span" className="font-normal">تحليل مسار الإشارة لايف</ArabicText>
         </div>
+        <p dir="ltr" className="text-sm font-medium leading-relaxed">{view.logEn}</p>
         <ArabicText className="font-medium text-stone-800 dark:text-zinc-200">{view.log}</ArabicText>
       </div>
 

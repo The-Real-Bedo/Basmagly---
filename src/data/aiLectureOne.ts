@@ -557,7 +557,7 @@ export const AI_LECTURE_ONE: Lecture = {
       question: 'What three key components explain why AI has recently exploded into everyday lives?',
       questionAr: 'ما المكونات الثلاثة التي تفسر الطفرة والانفجار الأخير للذكاء الاصطناعي في حياتنا اليومية؟',
       options: [
-        'Advanced Algorithms, Big Data, and Massive Computing Power (الـ GPUs والـ TPUs)',
+        'Advanced Algorithms, Big Data, and Massive Computing Power (GPUs and TPUs)',
         'Relational Databases, Analog Sensors, and Desktop CPUs',
         'Expert Systems, Lisp Machines, and Dial-up Internet',
         'Robotics, Optical Discs, and Symbolic Logic',
@@ -639,8 +639,8 @@ export const AI_LECTURE_ONE: Lecture = {
       options: [
         'Acting Rationally (Rational Agents)',
         'Thinking Humanly (Cognitive Science)',
-        'Thinking Rationally (الـ Laws of Thought)',
-        'Acting Humanly (الـ Turing Test)',
+        'Thinking Rationally (Laws of Thought)',
+        'Acting Humanly (Turing Test)',
       ],
       optionsAr: [
         'التصرف بعقلانية (منهج الوكلاء العقلانيين)',
@@ -702,7 +702,7 @@ export const AI_LECTURE_ONE: Lecture = {
       courseId: 'ai',
       lectureId: 'ai-lec-1',
       type: 'mcq',
-      question: 'What is the purpose of Google TPUs (الـ Tensor Processing Units)?',
+      question: 'What is the purpose of Google TPUs (Tensor Processing Units)?',
       questionAr: 'ما الغرض الأساسي من ابتكار جوجل لرقاقات TPU (الـ Tensor Processing Units)؟',
       options: [
         'Custom ASIC hardware specifically designed to accelerate matrix multiplications in neural networks',

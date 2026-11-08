@@ -28,3 +28,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Private workspace inputs, previews and review artifacts
+.hoplite/
