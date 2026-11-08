@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
           <BrandLogo />
           <span className="text-stone-400 hidden sm:inline">•</span>
           <ArabicText as="span" className="text-sm font-medium text-stone-700 dark:text-zinc-300">
-            ابصم بالعشرة إنك داخل الامتحان فاهم
+            من صفحة لفكرة… ومن فكرة لتجربة
           </ArabicText>
         </div>
 

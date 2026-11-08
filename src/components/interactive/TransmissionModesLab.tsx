@@ -120,6 +120,12 @@ export const TransmissionModesLab: React.FC = () => {
   };
 
   const isMulticast = mode === 'multicast';
+  const activeStep = receivedNodes !== null ? 2 : isTransmitting ? 1 : 0;
+  const deliverySteps = [
+    { en: 'Build frame', ar: 'تجهيز الـFrame' },
+    { en: 'Switch forwards', ar: 'الـSwitch بيحوّل' },
+    { en: 'Recipients receive', ar: 'الأجهزة بتستقبل' },
+  ];
 
   return (
     <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
@@ -301,13 +307,55 @@ export const TransmissionModesLab: React.FC = () => {
           </div>
         </div>
 
+        <div className="rounded-2xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h4 className="text-sm font-bold text-stone-800 dark:text-stone-200">Frame delivery steps</h4>
+            <ArabicText as="span" className="text-sm text-stone-600 dark:text-zinc-400">خطوات توصيل الـFrame</ArabicText>
+          </div>
+          <ol className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {deliverySteps.map((step, index) => {
+              const complete = index < activeStep;
+              const active = index === activeStep;
+              return (
+                <li
+                  key={step.en}
+                  aria-current={active ? 'step' : undefined}
+                  className={`min-w-0 flex items-center gap-2 rounded-xl border p-2.5 ${
+                    complete
+                      ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30'
+                      : active
+                        ? 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30'
+                        : 'border-beige-300 bg-[#FAF7F2] dark:border-stone-800 dark:bg-stone-950'
+                  }`}
+                >
+                  <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${
+                    complete
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'
+                      : active
+                        ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-300'
+                        : 'bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-zinc-400'
+                  }`}>
+                    {active && isTransmitting
+                      ? <Send aria-hidden="true" className="h-3.5 w-3.5 motion-safe:animate-bounce" />
+                      : <span className="font-mono text-xs font-bold">{index + 1}</span>}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-xs font-bold text-stone-800 dark:text-stone-200">{step.en}</span>
+                    <ArabicText as="span" className="block text-xs text-stone-600 dark:text-zinc-400">{step.ar}</ArabicText>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
         {/* Live Output Console */}
         <div aria-live="polite" className="bg-stone-900 text-stone-100 p-4 rounded-2xl space-y-2 border border-stone-800">
-          <div dir="rtl" className="flex items-start gap-2">
-            <span className={`mt-2.5 w-2.5 h-2.5 shrink-0 rounded-full bg-amber-400 ${isTransmitting ? 'animate-pulse' : ''}`} />
-            <p className="font-arabic text-sm leading-[1.75] text-zinc-100">{logMessage.ar}</p>
+          <div dir="ltr" className="flex items-start gap-2">
+            <span className={`mt-2.5 w-2.5 h-2.5 shrink-0 rounded-full bg-amber-400 ${isTransmitting ? 'motion-safe:animate-pulse' : ''}`} />
+            <p className="text-sm leading-relaxed text-zinc-100">{logMessage.en}</p>
           </div>
-          <p dir="ltr" className="font-mono text-xs text-zinc-400 pt-2 border-t border-stone-800">{logMessage.en}</p>
+          <ArabicText className="border-t border-stone-800 pt-2 text-sm leading-relaxed text-zinc-300">{logMessage.ar}</ArabicText>
         </div>
       </div>
 

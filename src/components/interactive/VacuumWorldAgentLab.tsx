@@ -1,537 +1,230 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { Bot, RotateCcw } from 'lucide-react';
-import { ArabicText } from '../ArabicText';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, CheckCircle2, Pause, Play, RotateCcw, Sparkles, StepForward, Wind } from 'lucide-react';
+import ArabicText from '../ArabicText';
 
-type Room = 'A' | 'B';
-type PeasKey = 'performance' | 'environment' | 'actuators' | 'sensors';
-
-interface Bilingual {
-  en: string;
-  ar: string;
-}
-
-interface PeasScenario extends Record<PeasKey, Bilingual> {
-  title: string;
-  titleAr: string;
-}
-
-const PEAS_FIELDS: { key: PeasKey; letter: string; ar: string; en: string }[] = [
-  { key: 'performance', letter: 'P', ar: 'مقياس الأداء', en: 'Performance Measure' },
-  { key: 'environment', letter: 'E', ar: 'البيئة', en: 'Environment' },
-  { key: 'actuators', letter: 'A', ar: 'المحركات', en: 'Actuators' },
-  { key: 'sensors', letter: 'S', ar: 'الحساسات', en: 'Sensors' },
-];
-
-const PEAS_DATA: PeasScenario[] = [
-  {
-    title: 'Automated Vacuum Cleaner',
-    titleAr: 'المكنسة الآلية (Vacuum World)',
-    performance: {
-      en: 'Floor cleanliness, battery efficiency, time taken, minimal noise.',
-      ar: 'نظافة الأرضية، توفير شحن البطارية، الوقت المستغرق، وأقل ضجيج ممكن.',
-    },
-    environment: {
-      en: 'Room floors, carpets, dirt, furniture obstacles, stairs.',
-      ar: 'أرضية السيراميك والسجاد، التراب والزبالة، الكراسي والعفش (عوائق)، والسلالم (خطر السقوط).',
-    },
-    actuators: {
-      en: 'Drive wheels, suction motor, rotating brush, audio alarm.',
-      ar: 'عجلات الحركة (يمين وشمال)، موتور الشفط، الفرشاة الدوارة، وسرينة التنبيه.',
-    },
-    sensors: {
-      en: 'Dirt sensor, bump sensor, cliff sensor (IR), wheel encoder.',
-      ar: 'حساس التراب، حساس الاصطدام، حساس الحافة (Infrared) للسلالم، وحساس دوران العجلات (Wheel Encoder).',
-    },
-  },
-  {
-    title: 'Autonomous Self-Driving Taxi (Waymo/Tesla)',
-    titleAr: 'تاكسي بدون سائق (Self-Driving Taxi)',
-    performance: {
-      en: 'Passenger safety, reaching the destination, obeying traffic laws, smooth ride.',
-      ar: 'أمان الركاب أولاً، الوصول للوجهة بسرعة، احترام قوانين وإشارات المرور، وركوبة مريحة من غير فرملة مفاجئة.',
-    },
-    environment: {
-      en: 'City roads, pedestrians, other vehicles, rain/fog, traffic lights.',
-      ar: 'شوارع المدينة، المشاة اللي بيعدوا فجأة، العربيات التانية، المطر والشبورة، وإشارات المرور.',
-    },
-    actuators: {
-      en: 'Steering, accelerator, brakes, turn signals, horn.',
-      ar: 'الدركسيون (التوجيه)، دواسة البنزين، الفرامل، إشارات الانعطاف، والكلاكس.',
-    },
-    sensors: {
-      en: 'LiDAR, HD cameras, radar, GPS, sonar distance sensors, speedometer.',
-      ar: 'كاميرات عالية الدقة، رادار، LiDAR، حساسات سونار لقياس المسافات، GPS، وعداد السرعة.',
-    },
-  },
-  {
-    title: 'Medical Diagnosis AI System',
-    titleAr: 'نظام تشخيص طبي بالذكاء الاصطناعي',
-    performance: {
-      en: 'High diagnostic accuracy, reduced treatment costs, faster patient recovery.',
-      ar: 'دقة التشخيص وتجنب الأخطاء الخطيرة، تقليل تكلفة الفحوصات غير الضرورية، وسرعة تعافي المريض.',
-    },
-    environment: {
-      en: 'Hospital/clinic, patient symptoms and medical history, lab results, disease databases.',
-      ar: 'المستشفى أو العيادة، شكوى المريض وأعراضه وتاريخه الطبي، نتائج التحاليل والأشعة، وقواعد بيانات الأمراض.',
-    },
-    actuators: {
-      en: 'Screen display, prescription generation, test referral orders, dosage alerts.',
-      ar: 'شاشة عرض التشخيص للدكتور، طباعة الروشتة، طلب تحاليل إضافية لو فيه شك، وتنبيه بجرعات الدواء.',
-    },
-    sensors: {
-      en: 'Keyboard entry of symptoms, EHR (electronic health records), lab analyzer results.',
-      ar: 'إدخال الأعراض من لوحة المفاتيح، الربط مع السجلات الطبية الإلكترونية (EHR)، ونتائج أجهزة التحاليل.',
-    },
-  },
-];
-
-/* ---------- Simulation ---------- */
-
-const STEP_MS = 1000;
-const SUCK_MS = 500;
-
-const DIRT_EMOJI: Record<Room, string[]> = {
-  A: ['🍂', '🍪', '🌾', '🍂'],
-  B: ['🍂', '🍂', '🍞', '🍂'],
-};
-
-// Simple reflex agent (Russell & Norvig, Fig. 2.8): percept = [location, status].
-const AGENT_RULES = [
-  { percept: '[A or B, Dirty]', action: 'Suck' },
-  { percept: '[A, Clean]', action: 'Move to B' },
-  { percept: '[B, Clean]', action: 'Move to A' },
-];
-
-const otherRoom = (room: Room): Room => (room === 'A' ? 'B' : 'A');
-const cleanCount = (dirty: Record<Room, boolean>) => (dirty.A ? 0 : 1) + (dirty.B ? 0 : 1);
-const formatScore = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `\u2212${Math.abs(n)}` : '0');
-
-const LOG_INITIAL = 'الوكيل جاهز في الغرفة A. اضغط "خطوة واحدة" أو "تشغيل تلقائي" وشوف بيتصرف إزاي.';
-const LOG_RESET = 'تم ضبط المحاكي من الأول: الغرفتين فيهم تراب والوكيل في الغرفة A.';
-const LOG_DONE =
-  '🎉 الغرفتين بقوا نضاف والمحاكاة وقفت. الـ Simple Reflex Agent مش بيفتكر إن الغرفة التانية نضيفة، فكان هيفضل يتحرك ويخسر نقطة في كل خطوة.';
-
-interface World {
-  dirty: Record<Room, boolean>;
-  pos: Room;
+type Location = 'A' | 'B';
+type Room = 'clean' | 'dirty';
+type WorldState = {
+  rooms: Record<Location, Room>;
+  location: Location;
   score: number;
   steps: number;
-  sucking: boolean;
-  autoPlay: boolean;
-  log: string;
-}
-
-type WorldAction =
-  | { type: 'STEP'; auto?: boolean }
-  | { type: 'SUCK_DONE' }
-  | { type: 'TOGGLE_DIRT'; room: Room }
-  | { type: 'TOGGLE_AUTO' }
-  | { type: 'RESET' };
-
-const INITIAL_WORLD: World = {
-  dirty: { A: true, B: true },
-  pos: 'A',
-  score: 0,
-  steps: 0,
-  sucking: false,
-  autoPlay: false,
-  log: LOG_INITIAL,
+  done: boolean;
+  action: string;
 };
 
-function worldReducer(s: World, a: WorldAction): World {
-  switch (a.type) {
-    case 'STEP': {
-      if (s.sucking) return s;
-      if (a.auto && !s.dirty.A && !s.dirty.B) return { ...s, autoPlay: false, log: LOG_DONE };
+const initialState = (): WorldState => ({
+  rooms: { A: 'dirty', B: 'dirty' },
+  location: 'A',
+  score: 0,
+  steps: 0,
+  done: false,
+  action: 'Ready: observe the current room.',
+});
 
-      const steps = s.steps + 1;
-      if (s.dirty[s.pos]) {
-        // The room is removed from `dirty` on SUCK_DONE (after the animation),
-        // but this step's score already counts it as clean.
-        const score = s.score + cleanCount({ ...s.dirty, [s.pos]: false });
-        return {
-          ...s,
-          steps,
-          score,
-          sucking: true,
-          log: `🧹 الإجراء: Suck. الغرفة ${s.pos} كان فيها تراب، فالوكيل شفطه.`,
-        };
-      }
-
-      const next = otherRoom(s.pos);
-      return {
-        ...s,
-        pos: next,
-        steps,
-        score: s.score + cleanCount(s.dirty) - 1,
-        log: `➡️ الإجراء: Move to ${next}. الغرفة ${s.pos} نضيفة، فالوكيل انتقل للغرفة التانية.`,
-      };
-    }
-    case 'SUCK_DONE': {
-      if (!s.sucking) return s;
-      const dirty = { ...s.dirty, [s.pos]: false };
-      const finished = s.autoPlay && !dirty.A && !dirty.B;
-      return {
-        ...s,
-        dirty,
-        sucking: false,
-        autoPlay: finished ? false : s.autoPlay,
-        log: finished ? LOG_DONE : s.log,
-      };
-    }
-    case 'TOGGLE_DIRT':
-      return { ...s, dirty: { ...s.dirty, [a.room]: !s.dirty[a.room] } };
-    case 'TOGGLE_AUTO':
-      return { ...s, autoPlay: !s.autoPlay };
-    case 'RESET':
-      return { ...INITIAL_WORLD, log: LOG_RESET };
+const takeReflexAction = (state: WorldState): WorldState => {
+  if (state.done) return state;
+  const rooms = { ...state.rooms };
+  let location = state.location;
+  let action: string;
+  if (rooms[location] === 'dirty') {
+    rooms[location] = 'clean';
+    action = `Suck in room ${location}`;
+  } else {
+    location = location === 'A' ? 'B' : 'A';
+    action = `Move to room ${location}`;
   }
-}
+  const cleanRooms = Number(rooms.A === 'clean') + Number(rooms.B === 'clean');
+  const steps = state.steps + 1;
+  const done = rooms.A === 'clean' && rooms.B === 'clean';
+  return { rooms, location, score: state.score + cleanRooms, steps, done, action };
+};
 
-/* ---------- Shared styles ---------- */
+const examples = [
+  {
+    title: 'Vacuum cleaner', titleAr: 'مكنسة ذكية',
+    peas: ['Clean rooms; avoid unnecessary actions.', 'Two rooms with dirt that may change.', 'Suck, move left, move right.', 'Current location and dirt sensor.'],
+    peasAr: ['تنضيف الغرف وتجنب الأفعال غير الضرورية.', 'غرفتين ممكن يتغير فيهم التراب.', 'شفط، حركة شمال، حركة يمين.', 'الموقع الحالي ومستشعر التراب.'],
+  },
+  {
+    title: 'Autonomous taxi', titleAr: 'تاكسي ذاتي القيادة',
+    peas: ['Safe, timely, comfortable journeys.', 'Roads, traffic, passengers, weather.', 'Steer, accelerate, brake, signal.', 'Cameras, GPS, speed and engine sensors.'],
+    peasAr: ['رحلات آمنة وفي وقت مناسب ومريحة.', 'طرق ومرور وركاب وطقس.', 'توجيه وزيادة سرعة وفرامل وإشارات.', 'كاميرات وGPS ومستشعرات سرعة ومحرك.'],
+  },
+  {
+    title: 'Medical diagnosis system', titleAr: 'نظام تشخيص طبي',
+    peas: ['Accurate, timely diagnoses with patient safety.', 'Patients, clinics, and available tests.', 'Request tests, recommend or update a diagnosis.', 'Symptoms, history, examination and test results.'],
+    peasAr: ['تشخيص دقيق وفي وقته مع الحفاظ على سلامة المريض.', 'المرضى والعيادات والفحوص المتاحة.', 'طلب فحوص أو اقتراح التشخيص أو تحديثه.', 'الأعراض والتاريخ الطبي والفحص والنتائج.'],
+  },
+];
 
-const pillClass = (active: boolean) =>
-  `px-3 py-1.5 rounded-xl text-sm font-arabic transition-all ${
-    active
-      ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
-      : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-stone-100'
-  }`;
+const peasHeadings = [
+  ['Performance', 'مقياس الأداء'],
+  ['Environment', 'البيئة'],
+  ['Actuators', 'المشغّلات'],
+  ['Sensors', 'المستشعرات'],
+];
 
-const secondaryBtn =
-  'px-3.5 py-2 rounded-xl font-arabic text-sm font-bold bg-white dark:bg-stone-900 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700 hover:bg-beige-100 dark:hover:bg-stone-800 shadow-sm transition-colors';
+export function VacuumWorldAgentLab() {
+  const [state, setState] = useState<WorldState>(initialState);
+  const [playing, setPlaying] = useState(false);
+  const [view, setView] = useState<'world' | 'peas'>('world');
+  const timerRef = useRef<number | null>(null);
 
-const infoCard =
-  'p-4 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-2';
-
-export const VacuumWorldAgentLab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'simulation' | 'peas'>('simulation');
-  const [selectedPeasIndex, setSelectedPeasIndex] = useState<number>(0);
-  const [world, dispatch] = useReducer(worldReducer, INITIAL_WORLD);
-
-  // Suck animation: the room is cleaned when the timer fires.
   useEffect(() => {
-    if (!world.sucking) return;
-    const id = setTimeout(() => dispatch({ type: 'SUCK_DONE' }), SUCK_MS);
-    return () => clearTimeout(id);
-  }, [world.sucking]);
+    if (!playing || state.done || view !== 'world') return;
+    timerRef.current = window.setInterval(() => {
+      setState((current) => takeReflexAction(current));
+    }, 850);
+    return () => {
+      if (timerRef.current !== null) window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    };
+  }, [playing, state.done, view]);
+
+  useEffect(() => () => {
+    if (timerRef.current !== null) window.clearInterval(timerRef.current);
+  }, []);
 
   useEffect(() => {
-    if (!world.autoPlay) return;
-    const id = setInterval(() => dispatch({ type: 'STEP', auto: true }), STEP_MS);
-    return () => clearInterval(id);
-  }, [world.autoPlay]);
+    if (state.done) setPlaying(false);
+  }, [state.done]);
 
-  const currentPeas = PEAS_DATA[selectedPeasIndex];
-  const activeRule = world.dirty[world.pos] ? 0 : world.pos === 'A' ? 1 : 2;
+  const reset = () => {
+    setPlaying(false);
+    setState(initialState());
+  };
+
+  const editRoom = (room: Location) => {
+    if (playing) return;
+    setState((current) => ({
+      ...current,
+      rooms: { ...current.rooms, [room]: current.rooms[room] === 'dirty' ? 'clean' : 'dirty' },
+      done: false,
+      action: `Environment changed: room ${room} is ${current.rooms[room] === 'dirty' ? 'clean' : 'dirty'}.`,
+    }));
+  };
+
+  const moveAgent = (location: Location) => {
+    if (playing) return;
+    setState((current) => ({ ...current, location, done: false, action: `Agent repositioned to room ${location}.` }));
+  };
+
+  const changeView = (next: 'world' | 'peas') => {
+    setPlaying(false);
+    setView(next);
+  };
 
   return (
-    <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-beige-200 dark:border-stone-800">
+    <section className="rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
+      <header className="mb-5 flex items-start gap-3">
+        <span className="rounded-xl bg-amber-100 p-2 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"><Wind size={21} aria-hidden="true" /></span>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
-              <Bot className="w-5 h-5" />
-            </span>
-            <div>
-              <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-                Rational Agent & Vacuum World Lab
-              </h3>
-              <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">
-                جرب بنفسك إزاي الوكيل العقلاني (Rational Agent) بيتصرف في عالم المكنسة (Vacuum World)، وراجع جدول الـ PEAS للامتحان
-              </ArabicText>
-            </div>
-          </div>
+          <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">Vacuum World · Simple Reflex Agent</h3>
+          <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">عالم المكنسة · وكيل ردّ فعل بسيط</ArabicText>
         </div>
+      </header>
 
-        {/* Tab Toggle */}
-        <div className="self-start sm:self-auto bg-beige-100 dark:bg-stone-800/80 p-1.5 rounded-2xl flex flex-wrap items-center gap-1 font-bold border border-beige-300 dark:border-stone-700">
-          <button
-            dir="rtl"
-            aria-pressed={activeTab === 'simulation'}
-            onClick={() => setActiveTab('simulation')}
-            className={pillClass(activeTab === 'simulation')}
-          >
-            المحاكاة (Simulation) 🧹
-          </button>
-          <button
-            dir="rtl"
-            aria-pressed={activeTab === 'peas'}
-            onClick={() => setActiveTab('peas')}
-            className={pillClass(activeTab === 'peas')}
-          >
-            جدول PEAS 📋
-          </button>
-        </div>
+      <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Vacuum agent views">
+        <button type="button" aria-pressed={view === 'world'} onClick={() => changeView('world')}
+          className={`min-h-11 rounded-full px-4 text-sm font-semibold transition-colors ${view === 'world' ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900' : 'text-stone-600 hover:bg-beige-100 dark:text-zinc-400 dark:hover:bg-stone-800'}`}>
+          Simulator <span className="font-arabic">المحاكي</span>
+        </button>
+        <button type="button" aria-pressed={view === 'peas'} onClick={() => changeView('peas')}
+          className={`min-h-11 rounded-full px-4 text-sm font-semibold transition-colors ${view === 'peas' ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900' : 'text-stone-600 hover:bg-beige-100 dark:text-zinc-400 dark:hover:bg-stone-800'}`}>
+          PEAS examples <span className="font-arabic">أمثلة PEAS</span>
+        </button>
       </div>
 
-      {activeTab === 'simulation' ? (
-        <div className="space-y-6">
-          {/* Controls Bar */}
-          <div className="bg-[#FAF7F2] dark:bg-stone-950 p-4 rounded-2xl border border-beige-300 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4 text-sm">
-            {/* Score & Time Step */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="bg-white dark:bg-stone-900 px-3.5 py-2 rounded-xl border border-beige-300 dark:border-stone-700">
-                <ArabicText as="span" className="block text-xs text-stone-600 dark:text-zinc-400">
-                  النتيجة (Performance Score)
-                </ArabicText>
-                <span
-                  dir="ltr"
-                  className={`block text-lg font-bold font-mono ${
-                    world.score > 0
-                      ? 'text-emerald-700 dark:text-emerald-400'
-                      : world.score < 0
-                        ? 'text-rose-600 dark:text-rose-400'
-                        : 'text-stone-800 dark:text-stone-200'
-                  }`}
-                >
-                  {formatScore(world.score)}
-                </span>
-              </div>
-              <div className="bg-white dark:bg-stone-900 px-3.5 py-2 rounded-xl border border-beige-300 dark:border-stone-700">
-                <ArabicText as="span" className="block text-xs text-stone-600 dark:text-zinc-400">
-                  الخطوة (Time Step)
-                </ArabicText>
-                <span dir="ltr" className="block text-lg font-bold font-mono text-stone-800 dark:text-stone-200">
-                  {world.steps}
-                </span>
-              </div>
+      {view === 'world' ? (
+        <>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
+            <div>
+              <p className="font-semibold text-stone-900 dark:text-stone-100">Performance score: {state.score} · Actions: {state.steps}</p>
+              <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">النقاط: {state.score} · عدد الأفعال: {state.steps}</ArabicText>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {(['A', 'B'] as const).map((room) => (
-                <button
-                  key={room}
-                  dir="rtl"
-                  onClick={() => dispatch({ type: 'TOGGLE_DIRT', room })}
-                  className={secondaryBtn}
-                >
-                  {world.dirty[room] ? `نضّف ${room} يدوياً 🧽` : `ارمي تراب في ${room} 🍂`}
-                </button>
-              ))}
-
-              <button
-                dir="rtl"
-                onClick={() => dispatch({ type: 'STEP' })}
-                disabled={world.autoPlay || world.sucking}
-                className="px-4 py-2 rounded-xl font-arabic text-sm bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                خطوة واحدة ⏭️
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={() => setPlaying((value) => !value)} disabled={state.done}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-stone-900 px-3 text-sm font-semibold text-white hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white">
+                {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}{playing ? 'Pause' : 'Auto play'}
+                <span className="font-arabic">{playing ? 'إيقاف مؤقت' : 'تشغيل تلقائي'}</span>
               </button>
-
-              <button
-                dir="rtl"
-                onClick={() => dispatch({ type: 'TOGGLE_AUTO' })}
-                className={`px-4 py-2 rounded-xl font-arabic text-sm font-bold border transition-all shadow-sm ${
-                  world.autoPlay
-                    ? 'bg-amber-500 hover:bg-amber-400 border-amber-500 text-stone-900'
-                    : 'bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-900 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 dark:border-amber-700/60 dark:text-amber-200'
-                }`}
-              >
-                {world.autoPlay ? 'إيقاف مؤقت ⏸️' : 'تشغيل تلقائي ▶️'}
+              <button type="button" onClick={() => setState((current) => takeReflexAction(current))} disabled={playing || state.done}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 px-3 text-sm font-semibold text-stone-700 hover:bg-beige-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800">
+                <StepForward size={16} aria-hidden="true" /> Step <span className="font-arabic">خطوة</span>
               </button>
-
-              <button
-                onClick={() => dispatch({ type: 'RESET' })}
-                className="p-2.5 rounded-xl bg-beige-100 dark:bg-stone-800 hover:bg-beige-200 dark:hover:bg-stone-700 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700 shadow-sm transition-colors"
-                title="إعادة ضبط"
-                aria-label="إعادة ضبط"
-              >
-                <RotateCcw className="w-4 h-4" />
+              <button type="button" onClick={reset} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 px-3 text-sm font-semibold text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800">
+                <RotateCcw size={16} aria-hidden="true" /> Reset <span className="font-arabic">إعادة</span>
               </button>
             </div>
           </div>
 
-          {/* 2-Room Floor Environment */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#FAF7F2] dark:bg-stone-950 p-4 sm:p-6 rounded-2xl border border-beige-300 dark:border-stone-800">
-            {(['A', 'B'] as const).map((room) => {
-              const isDirty = world.dirty[room];
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto_1fr]" aria-label="Two-room vacuum world">
+            {(['A', 'B'] as Location[]).map((room, index) => {
+              const dirty = state.rooms[room] === 'dirty';
+              const occupied = state.location === room;
               return (
-                <div
-                  key={room}
-                  className={`p-4 sm:p-6 min-h-[240px] rounded-2xl border-2 transition-all flex flex-col justify-between gap-4 relative overflow-hidden ${
-                    isDirty
-                      ? 'border-amber-400/80 bg-amber-50/50 dark:border-amber-500/50 dark:bg-amber-950/20'
-                      : 'border-emerald-400/70 bg-emerald-50/30 dark:border-emerald-600/50 dark:bg-emerald-950/10'
-                  }`}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <ArabicText as="span" className="text-base font-extrabold text-stone-800 dark:text-stone-200">
-                      {`الغرفة ${room}`}
-                    </ArabicText>
-                    <ArabicText
-                      as="span"
-                      className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        isDirty
-                          ? 'bg-amber-200 text-amber-900 dark:bg-amber-900/70 dark:text-amber-200'
-                          : 'bg-emerald-200 text-emerald-900 dark:bg-emerald-900/70 dark:text-emerald-200'
-                      }`}
-                    >
-                      {isDirty ? '🍂 مليانة تراب (Dirty)' : '✨ نضيفة (Clean)'}
-                    </ArabicText>
+                <div key={room} className={`relative rounded-3xl border-2 p-5 transition-colors duration-300 motion-reduce:transition-none ${index === 1 ? 'md:col-start-3' : ''} ${dirty ? 'border-rose-300 bg-rose-50 dark:border-rose-900 dark:bg-rose-950/25' : 'border-emerald-300 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/25'}`}>
+                  <div className="mb-5 flex items-center justify-between gap-2">
+                    <div><p className="text-xl font-bold text-stone-900 dark:text-stone-100">Room {room}</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400">الغرفة {room}</ArabicText></div>
+                    <span className={`rounded-full px-3 py-1 text-sm font-semibold ${dirty ? 'bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200' : 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'}`}>
+                      {dirty ? 'Dirty · متّسخة' : 'Clean · نضيفة'}
+                    </span>
                   </div>
-
-                  {isDirty && (
-                    <div aria-hidden="true" className="flex justify-around opacity-80 animate-pulse text-2xl">
-                      {DIRT_EMOJI[room].map((emoji, i) => (
-                        <span key={i}>{emoji}</span>
-                      ))}
-                    </div>
-                  )}
-
-                  {world.pos === room && (
-                    <div
-                      className={`mt-auto mx-auto p-3 sm:p-4 rounded-2xl bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 border border-stone-700 dark:border-stone-300 shadow-xl flex items-center gap-3 transition-transform ${
-                        world.sucking ? 'vacuum-active scale-105' : ''
-                      }`}
-                    >
-                      <div className="w-9 h-9 shrink-0 rounded-xl bg-amber-500 text-stone-900 flex items-center justify-center">
-                        <Bot className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <span className="font-mono text-sm font-bold block">Vacuum Agent</span>
-                        <span
-                          dir="rtl"
-                          className="font-arabic text-xs font-semibold block text-amber-300 dark:text-amber-800"
-                        >
-                          {world.sucking ? 'بيشفط التراب…' : 'بيفحص الأرضية'}
-                        </span>
-                      </div>
-                    </div>
-                  )}
+                  <div className="mb-5 flex min-h-24 items-center justify-center rounded-2xl border border-beige-300 bg-white/80 dark:border-stone-700 dark:bg-stone-900/80">
+                    {dirty ? <div className="flex items-center gap-3 text-rose-800 dark:text-rose-300"><Sparkles size={30} className="rotate-180" aria-hidden="true" /><span className="text-sm font-medium">Dirt detected<br /><ArabicText>تراب ظاهر على الأرض</ArabicText></span></div> : <div className="flex items-center gap-3 text-emerald-800 dark:text-emerald-300"><CheckCircle2 size={30} aria-hidden="true" /><span className="text-sm font-medium">Clean floor<br /><ArabicText>الأرض نضيفة</ArabicText></span></div>}
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <button type="button" onClick={() => editRoom(room)} disabled={playing} aria-label={`Toggle room ${room} dirt`} className="min-h-11 rounded-xl border border-beige-300 bg-white px-3 text-sm font-medium text-stone-700 hover:bg-beige-100 disabled:opacity-50 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-300 dark:hover:bg-stone-800">
+                      Toggle dirt <span className="font-arabic">تغيير التراب</span>
+                    </button>
+                    <button type="button" onClick={() => moveAgent(room)} disabled={playing} aria-pressed={occupied} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold disabled:opacity-50 ${occupied ? 'bg-amber-100 text-amber-950 dark:bg-amber-950 dark:text-amber-200' : 'text-stone-600 hover:bg-beige-100 dark:text-zinc-400 dark:hover:bg-stone-800'}`}>
+                      {occupied && <Wind size={16} aria-hidden="true" />} {occupied ? 'Agent here' : 'Place agent'} <span className="font-arabic">{occupied ? 'الوكيل هنا' : 'حط الوكيل'}</span>
+                    </button>
+                  </div>
+                  {occupied && <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-bold text-amber-950 shadow-sm dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">Agent · الـ Agent</div>}
                 </div>
               );
             })}
+            <div aria-hidden="true" className="hidden items-center justify-center text-stone-400 dark:text-zinc-500 md:col-start-2 md:row-start-1 md:flex"><ArrowRight size={24} /></div>
           </div>
 
-          {/* Action Log Commentary */}
-          <div
-            aria-live="polite"
-            className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/25 border border-amber-300 dark:border-amber-700/60 text-sm space-y-1.5"
-          >
-            <ArabicText as="div" className="font-bold text-amber-900 dark:text-amber-300">
-              🤖 آخر إجراء للوكيل (Action Log)
+          <div aria-live="polite" className={`mt-4 rounded-2xl border p-4 ${state.done ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30' : 'border-beige-300 bg-[#FAF7F2] dark:border-stone-800 dark:bg-stone-950'}`}>
+            <p className="font-semibold text-stone-900 dark:text-stone-100">{state.done ? 'Task complete: both rooms are clean.' : `Agent rule: ${state.action}`}</p>
+            <ArabicText className="mt-1 text-sm text-stone-600 dark:text-zinc-400">
+              {state.done ? 'المهمة خلصت: الغرفتين بقوا نضاف.' : state.action.startsWith('Suck') ? `الإدراك الحالي: الغرفة ${state.location} متّسخة؛ قاعدة الشرط والفعل اختارت الشفط.` : state.action.startsWith('Move') ? `الإدراك الحالي: الغرفة ${state.location === 'A' ? 'B' : 'A'} نضيفة؛ قاعدة الشرط والفعل اختارت الحركة.` : 'الوكيل بيختار الفعل حسب الإدراك الحالي من غير ما يحتفظ بتاريخ سابق.'}
             </ArabicText>
-            <ArabicText className="text-sm text-stone-800 dark:text-stone-200 font-medium">{world.log}</ArabicText>
+            <p className="mt-2 text-sm text-stone-600 dark:text-zinc-400">Scoring: +1 for each clean room after every action. The agent uses only the current room percept.</p>
+            <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">التقييم: نقطة لكل غرفة نضيفة بعد كل فعل. الوكيل بيستخدم إدراك الغرفة الحالية بس.</ArabicText>
           </div>
 
-          {/* Agent Program, Performance Measure & Concept Notes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div className={infoCard}>
-              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
-                برنامج الوكيل (Simple Reflex Agent)
-              </ArabicText>
-              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
-                الوكيل بيشوف الـ Percept الحالي بس (مكانه وحالة الغرفة) من غير ذاكرة، وبيرد عليه بواحدة من القواعد دي:
-              </ArabicText>
-              <ul dir="ltr" className="space-y-1.5 font-mono text-xs">
-                {AGENT_RULES.map((rule, i) => (
-                  <li
-                    key={rule.percept}
-                    className={`flex flex-wrap items-center justify-between gap-x-3 px-3 py-1.5 rounded-lg border transition-colors ${
-                      i === activeRule
-                        ? 'bg-amber-100 border-amber-300 text-amber-900 dark:bg-amber-950/40 dark:border-amber-700/60 dark:text-amber-200'
-                        : 'bg-white border-beige-300 text-stone-700 dark:bg-stone-900 dark:border-stone-800 dark:text-zinc-300'
-                    }`}
-                  >
-                    <span>{rule.percept}</span>
-                    <span className="font-bold">→ {rule.action}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className={infoCard}>
-              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
-                مقياس الأداء (Performance Measure)
-              </ArabicText>
-              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
-                في آخر كل خطوة (Time Step) الوكيل بياخد{' '}
-                <span dir="ltr" className="font-mono font-bold">+1</span> عن كل غرفة نضيفة، ويخسر{' '}
-                <span dir="ltr" className="font-mono font-bold">{'\u2212'}1</span> لو اتحرك (استهلاك كهربا). عشان كده الحركة من غير داعي بتقلل النتيجة.
-              </ArabicText>
-            </div>
-
-            <div className={infoCard}>
-              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
-                مفهوم العقلانية (Rationality)
-              </ArabicText>
-              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
-                الوكيل العقلاني مش بيعمل "سحر"، هو بيختار الإجراء (Action) المتوقع إنه يحقق أعلى مقياس أداء (Performance Measure) بناءً على سلسلة الإدراكات (Percept Sequence) اللي شافها والمعرفة المدمجة عنده.
-              </ArabicText>
-            </div>
-
-            <div className={infoCard}>
-              <ArabicText as="div" className="font-bold text-stone-900 dark:text-stone-100">
-                العقلانية مش علم مطلق (Omniscience)
-              </ArabicText>
-              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
-                الدكتورة بتسأل في النقطة دي دايماً: الوكيل العقلاني بيعمل الصح بناءً على اللي يقدر يعرفه وقت القرار، أما الـ Omniscience فمعناها إنه يعرف النتيجة الفعلية لكل إجراء مسبقاً، وده مستحيل عملياً.
-              </ArabicText>
-            </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-beige-300 p-3 dark:border-stone-800"><p className="font-semibold text-stone-900 dark:text-stone-100">Condition–action rule</p><p className="mt-1 text-sm text-stone-700 dark:text-zinc-300">IF current room is dirty → SUCK; otherwise → move to the other room.</p><ArabicText className="mt-1 text-sm text-stone-600 dark:text-zinc-400">لو الغرفة الحالية متّسخة ← اشفط؛ غير كده ← اتحرك للغرفة التانية.</ArabicText></div>
+            <div className="rounded-2xl border border-beige-300 p-3 dark:border-stone-800"><p className="font-semibold text-stone-900 dark:text-stone-100">What this model shows</p><p className="mt-1 text-sm text-stone-700 dark:text-zinc-300">The reflex agent reacts to a percept; it has no explicit model of unseen room dirt.</p><ArabicText className="mt-1 text-sm text-stone-600 dark:text-zinc-400">وكيل رد الفعل بيستجيب للإدراك، ومبيحتفظش بنموذج صريح عن تراب الغرفة اللي مش شايفها.</ArabicText></div>
           </div>
-        </div>
+        </>
       ) : (
-        /* PEAS Framework Tab */
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            {PEAS_DATA.map((p, idx) => (
-              <button
-                key={p.title}
-                dir="rtl"
-                aria-pressed={selectedPeasIndex === idx}
-                onClick={() => setSelectedPeasIndex(idx)}
-                className={`px-4 py-2 rounded-xl font-arabic font-bold border transition-all ${
-                  selectedPeasIndex === idx
-                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 border-stone-900 dark:border-stone-100 shadow-sm'
-                    : 'bg-white dark:bg-stone-900 text-stone-700 dark:text-zinc-300 border-beige-300 dark:border-stone-800 hover:bg-beige-100 dark:hover:bg-stone-800'
-                }`}
-              >
-                {p.titleAr}
-              </button>
-            ))}
-          </div>
-
-          {/* PEAS 4-Quadrant Matrix */}
-          <div className="bg-[#FAF7F2] dark:bg-stone-950 p-4 sm:p-6 rounded-2xl border border-beige-300 dark:border-stone-800 space-y-5">
-            <div className="border-b border-beige-200 dark:border-stone-800 pb-3">
-              <h4 className="text-lg font-bold text-stone-900 dark:text-stone-100">{currentPeas.title}</h4>
-              <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
-                {`${currentPeas.titleAr}: عناصر الـ PEAS الأربعة للمثال ده`}
-              </ArabicText>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {PEAS_FIELDS.map((field) => (
-                <div
-                  key={field.key}
-                  className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 space-y-2"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 shrink-0 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold font-mono text-sm flex items-center justify-center">
-                      {field.letter}
-                    </span>
-                    <ArabicText as="div" className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                      {`${field.ar} (${field.en})`}
-                    </ArabicText>
+        <div className="grid gap-4 lg:grid-cols-3">
+          {examples.map((example) => (
+            <article key={example.title} className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
+              <h4 className="mb-1 font-bold text-stone-900 dark:text-stone-100">{example.title}</h4>
+              <ArabicText className="mb-3 text-sm font-semibold text-stone-600 dark:text-zinc-400">{example.titleAr}</ArabicText>
+              <div className="space-y-3">
+                {example.peas.map((description, index) => (
+                  <div key={peasHeadings[index][0]}>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-stone-700 dark:text-zinc-300">{peasHeadings[index][0]}</p>
+                    <ArabicText className="text-xs text-stone-600 dark:text-zinc-400">{peasHeadings[index][1]}</ArabicText>
+                    <p className="mt-1 text-sm text-stone-800 dark:text-zinc-200">{description}</p>
+                    <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{example.peasAr[index]}</ArabicText>
                   </div>
-                  <p dir="ltr" className="text-sm text-stone-800 dark:text-stone-200 font-sans">
-                    {currentPeas[field.key].en}
-                  </p>
-                  <div className="pt-2 border-t border-beige-200 dark:border-stone-800">
-                    <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
-                      {currentPeas[field.key].ar}
-                    </ArabicText>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>
+            </article>
+          ))}
         </div>
       )}
-    </div>
+    </section>
   );
-};
+}
 
 export default VacuumWorldAgentLab;

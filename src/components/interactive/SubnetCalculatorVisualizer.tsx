@@ -342,12 +342,18 @@ export const SubnetCalculatorVisualizer: React.FC = () => {
         </span>
       </div>
 
-      {/* Egyptian Explanation Box */}
+      {/* Step-by-step subnet explanation */}
       <div className="p-5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/25 border border-amber-300 dark:border-amber-700/60 space-y-2">
         <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
           <Lightbulb className="w-4 h-4 shrink-0" />
-          <span dir="rtl" className="font-arabic text-sm font-bold">إزاي تحسبها في ورقة الامتحان في دقيقة؟</span>
+          <span className="text-sm font-bold">Step-by-step subnet calculation</span>
+          <ArabicText as="span" className="text-sm font-normal">خطوات حساب الـSubnet</ArabicText>
         </div>
+        <p dir="ltr" className="text-sm text-stone-800 dark:text-zinc-200 font-medium leading-relaxed">
+          {addr
+            ? `Apply bitwise AND between ${ipInput.trim()} and ${data.maskStr} to get ${addr.netStr}. A mask octet of 255 keeps the matching IP octet; 0 clears it. In a traditional subnet, set every host bit to 1 for the broadcast address and calculate usable hosts as 2^${data.hostBits} − 2; /31 and /32 use the special cases shown below.`
+            : 'Enter a valid IPv4 address to apply the subnet mask and calculate the network address.'}
+        </p>
         <ArabicText className="text-sm text-stone-800 dark:text-zinc-200 font-medium">
           بص يا هندسة: لما تلاقي 255 في القناع، انزل الرقم بتاع الـ IP زي ما هو (يعني 192 تنزل 192، و168 تنزل 168). ولما تلاقي 0 في القناع، صفّر الخانة دي خالص. كده طلع معاك عنوان الشبكة (Network Address). وعشان تجيب عنوان البث (Broadcast)، حوّل كل الأصفار دي لـ 255. وعدد الأجهزة المتاحة هو عدد احتمالات خانات الأجهزة ناقص اتنين (واحد للشبكة وواحد للبث).
         </ArabicText>

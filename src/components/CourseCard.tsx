@@ -25,7 +25,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
   return (
     <div
       onClick={() => onSelect(course)}
-      className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 shadow-sm hover:shadow-md hover:border-stone-400 dark:hover:border-stone-700 transition-all duration-200 flex flex-col justify-between group cursor-pointer"
+      className="min-w-0 bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-stone-400 dark:hover:border-stone-700 transition-all duration-200 flex flex-col justify-between group cursor-pointer"
     >
       <div className="space-y-4">
         {/* Top: Icon & Status Badge */}
@@ -34,18 +34,17 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
             <IconComp className="w-6 h-6" />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="min-w-0 flex items-center gap-2">
             {course.isAvailable ? (
               <span className="text-[13px] font-bold px-2.5 py-1 rounded-full bg-emerald-100/80 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-                جاهزة للمذاكرة
+                Ready to study <ArabicText as="span" className="text-[13px] text-current">(جاهزة للمذاكرة)</ArabicText>
               </span>
             ) : (
               /* Requirement 5: High-contrast readable awaiting badge */
               <span
-                dir="rtl"
                 className="text-[13px] font-semibold px-2.5 py-1 rounded-full bg-stone-200/90 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-300 dark:border-stone-600 shadow-sm"
               >
-                مستنيين السلايدات
+                Slides pending <ArabicText as="span" className="text-[13px] text-current">(في انتظار السلايدات)</ArabicText>
               </span>
             )}
           </div>
@@ -74,14 +73,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
         </div>
 
         {/* Requirement 1: Secondary text contrast (>= 4.5:1, min 14px) */}
-        <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed line-clamp-2">
+        <div className="space-y-1">
+          <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed line-clamp-2">
           {course.description}
-        </p>
+          </p>
+          <ArabicText className="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed line-clamp-2">
+            {course.descriptionAr}
+          </ArabicText>
+        </div>
       </div>
 
       {/* Requirement 7: Increased icon size (18px) and text size (14px) */}
       <div className="pt-4 border-t border-beige-200 dark:border-stone-800 mt-5 flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm text-stone-700 dark:text-zinc-300 font-medium">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-stone-700 dark:text-zinc-300 font-medium">
           <span className="flex items-center gap-1.5">
             <BookOpen className="w-[18px] h-[18px] text-stone-500 dark:text-zinc-400 shrink-0" />
             <span>{course.lectures.length} Lectures</span>

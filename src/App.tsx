@@ -5,183 +5,14 @@ import { Navbar } from './components/Navbar';
 import { CourseCard } from './components/CourseCard';
 import { CourseDetail } from './components/CourseDetail';
 import { LectureSummary } from './components/LectureSummary';
+import { LAB_CATALOG, LabCategory } from './data/labCatalog';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
 import { BrandLogo } from './components/BrandLogo';
-import { Wrench, Clock, ArrowRight, Zap, Bot, Cpu, Network, Route, Calculator, Radio, Sliders, Layers, Search } from 'lucide-react';
+import { Wrench, Clock, ArrowRight } from 'lucide-react';
 
-interface LabDirectoryItem {
-  id: string;
-  courseId: string;
-  lectureId: string;
-  category: 'networks' | 'ai' | 'iot';
-  categoryLabel: string;
-  categoryLabelAr: string;
-  title: string;
-  subtitleAr: string;
-  descriptionAr: string;
-  icon: any;
-  badge: string;
-}
-
-const ALL_LABS: LabDirectoryItem[] = [
-  {
-    id: 'network-devices',
-    courseId: 'networks',
-    lectureId: 'net-lec-1',
-    category: 'networks',
-    categoryLabel: 'Networks',
-    categoryLabelAr: 'شبكات الحاسب',
-    title: 'Network Devices & Collision Domain',
-    subtitleAr: 'محاكي أجهزة الشبكة وتصادم الإشارات',
-    descriptionAr: 'شوف بعينك ليه الهب (Hub) غبي وبيعمل تصادم (Collision) والسويتش بيعزل البورتات والراوتر بيفصل البث.',
-    icon: Zap,
-    badge: 'Hardware & L1-L3'
-  },
-  {
-    id: 'packet-journey',
-    courseId: 'networks',
-    lectureId: 'net-lec-2',
-    category: 'networks',
-    categoryLabel: 'Networks',
-    categoryLabelAr: 'شبكات الحاسب',
-    title: 'Hop-by-Hop Packet Journey & MAC Rewrite',
-    subtitleAr: 'رحلة الحزمة ونطة الراوتر والماك',
-    descriptionAr: 'أهم سؤال في الامتحان: ليه الـ IP بيفضل ثابت طول الرحلة والـ MAC بيتغير مع كل نطة راوتر؟',
-    icon: Route,
-    badge: 'Routing & Frames'
-  },
-  {
-    id: 'osi-visualizer',
-    courseId: 'networks',
-    lectureId: 'net-lec-2',
-    category: 'networks',
-    categoryLabel: 'Networks',
-    categoryLabelAr: 'شبكات الحاسب',
-    title: 'OSI 7 Layers vs TCP/IP Encapsulation',
-    subtitleAr: 'محاكي طبقات الشبكة وتغليف الحزمة',
-    descriptionAr: 'تتبع نزول البيانات وتغليف الترويسات (Headers) طبقة بطبقة مع طريقة ذكية لحفظ الترتيب للامتحان.',
-    icon: Layers,
-    badge: 'OSI vs TCP/IP'
-  },
-  {
-    id: 'subnet-calculator',
-    courseId: 'networks',
-    lectureId: 'net-lec-2',
-    category: 'networks',
-    categoryLabel: 'Networks',
-    categoryLabelAr: 'شبكات الحاسب',
-    title: 'IPv4 Subnetting & Bitwise AND Engine',
-    subtitleAr: 'حاسبة الـ Subnetting بالوحايد والأصفار',
-    descriptionAr: 'سلايدر مباشر لحساب الـ CIDR وعنوان الشبكة (Network ID) والبث (Broadcast) وعدد الأجهزة الصالحة.',
-    icon: Calculator,
-    badge: 'CIDR & Binary'
-  },
-  {
-    id: 'transmission-lab',
-    courseId: 'networks',
-    lectureId: 'net-lec-1',
-    category: 'networks',
-    categoryLabel: 'Networks',
-    categoryLabelAr: 'شبكات الحاسب',
-    title: 'Unicast vs Broadcast vs Multicast',
-    subtitleAr: 'طرق الإرسال في السويتش والأجهزة',
-    descriptionAr: 'تجربة حية للفرق بين إرسال لشخص واحد، أو نداء عام لكل الأجهزة، أو بث لجروب مشتركين.',
-    icon: Radio,
-    badge: 'Traffic Modes'
-  },
-  {
-    id: 'topology-simulator',
-    courseId: 'networks',
-    lectureId: 'net-lec-1',
-    category: 'networks',
-    categoryLabel: 'Networks',
-    categoryLabelAr: 'شبكات الحاسب',
-    title: 'Network Topologies & Link Failure Lab',
-    subtitleAr: 'معمل طوبولوجيا التوصيل وقطع الكابلات',
-    descriptionAr: 'جرب تقطع كابل في الـ Bus وشوف الشبكة بتقف إزاي، وجرب الـ Star والـ Mesh والـ Ring عملياً.',
-    icon: Network,
-    badge: 'Topologies'
-  },
-  {
-    id: 'vacuum-world',
-    courseId: 'ai',
-    lectureId: 'ai-lec-2',
-    category: 'ai',
-    categoryLabel: 'Artificial Intelligence',
-    categoryLabelAr: 'ذكاء اصطناعي',
-    title: 'Vacuum World & Rational Agent Lab',
-    subtitleAr: 'معمل المكنسة الذكية وإطار PEAS',
-    descriptionAr: 'روبوت كنس تفاعلي بأنيميشن شفط التراب، قياس نقاط الأداء، ومصفوفة الـ PEAS لأسئلة الفاينل.',
-    icon: Bot,
-    badge: 'Rational Agents'
-  },
-  {
-    id: 'turing-test',
-    courseId: 'ai',
-    lectureId: 'ai-lec-1',
-    category: 'ai',
-    categoryLabel: 'Artificial Intelligence',
-    categoryLabelAr: 'ذكاء اصطناعي',
-    title: 'Alan Turing Test & 6 Disciplines',
-    subtitleAr: 'محاكي اختبار تورينج والتخصصات الستة',
-    descriptionAr: 'شات تفاعلي بين إنسان وآلة والمحقق البشري، مع شرح قدرات الذكاء الاصطناعي الشاملة.',
-    icon: Bot,
-    badge: 'Turing Test'
-  },
-  {
-    id: 'search-visualizer',
-    courseId: 'ai',
-    lectureId: 'ai-lec-4',
-    category: 'ai',
-    categoryLabel: 'Artificial Intelligence',
-    categoryLabelAr: 'ذكاء اصطناعي',
-    title: 'Uninformed Search Simulator (BFS, DFS, UCS)',
-    subtitleAr: 'محاكي استراتيجيات البحث وشجرة الشيت',
-    descriptionAr: 'تتبع جبهة البحث (Frontier) ومقارنة ترتيب زيارة العقد في مسائل شيت المحاضرة 4.',
-    icon: Search,
-    badge: 'BFS • DFS • UCS'
-  },
-  {
-    id: 'edge-vs-cloud',
-    courseId: 'iot',
-    lectureId: 'iot-lec-1',
-    category: 'iot',
-    categoryLabel: 'Internet of Things',
-    categoryLabelAr: 'إنترنت الأشياء',
-    title: 'Edge vs Cloud Computing Tradeoff Lab',
-    subtitleAr: 'معمل الـ Edge مقابل الـ Cloud في الطوارئ',
-    descriptionAr: 'محاكاة حريق في مصنع: شوف سرعة استجابة الـ Edge (3ms) مقارنة بالـ Cloud (240ms)، وإيه اللي بيحصل لو النت فصل.',
-    icon: Cpu,
-    badge: 'Edge vs Cloud'
-  },
-  {
-    id: 'iot-simulator',
-    courseId: 'iot',
-    lectureId: 'iot-lec-1',
-    category: 'iot',
-    categoryLabel: 'Internet of Things',
-    categoryLabelAr: 'إنترنت الأشياء',
-    title: 'IoT 4-Stage End-to-End Pipeline',
-    subtitleAr: 'محاكي السلسلة الرباعية لإنترنت الأشياء',
-    descriptionAr: 'سلايدرات تحكم حية لسنسور الحرارة، نقل الداتا عبر MQTT، التحليل على الـ Cloud، وتشغيل المحابس أوتوماتيك.',
-    icon: Sliders,
-    badge: 'IoT Pipeline'
-  },
-  {
-    id: 'iot-stack-lab',
-    courseId: 'iot',
-    lectureId: 'iot-lec-2',
-    category: 'iot',
-    categoryLabel: 'Internet of Things',
-    categoryLabelAr: 'إنترنت الأشياء',
-    title: 'IoT 5-Layer Stack & Transport Flow Lab',
-    subtitleAr: 'معمل المعمارية الخماسية لإنترنت الأشياء ومحاكاة بروتوكولات النقل',
-    descriptionAr: 'تتبع حزم الحساسات عبر طبقات الـ IoT الخمس، مع محاكاة بصرية لمصافحة TCP الثلاثية مقابل إرسال UDP الموفر للطاقة.',
-    icon: Layers,
-    badge: 'IoT Stack & Protocols'
-  }
-];
+type LabDirectoryItem = typeof LAB_CATALOG[number];
+const ALL_LABS = LAB_CATALOG;
 
 // Helper to parse location state from URL hash
 const parseLocationState = () => {
@@ -222,7 +53,8 @@ export const App: React.FC = () => {
   const [lectureInitialTab, setLectureInitialTab] = useState<'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz'>(
     initialNav?.tab || 'summary'
   );
-  const [labFilter, setLabFilter] = useState<'all' | 'networks' | 'ai' | 'iot'>('all');
+  const [lectureInitialExperiment, setLectureInitialExperiment] = useState<string | undefined>();
+  const [labFilter, setLabFilter] = useState<'all' | LabCategory>('all');
 
   const [isDark, setIsDark] = useState<boolean>(() => {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -318,6 +150,7 @@ export const App: React.FC = () => {
     setSelectedLecture(lecture);
     setSelectedSheetId(null);
     setLectureInitialTab(tab);
+    setLectureInitialExperiment(undefined);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -327,6 +160,7 @@ export const App: React.FC = () => {
     const lecture = course.lectures.find(l => l.id === lab.lectureId);
     if (!lecture) return;
     handleOpenLecture(course, lecture, 'interactive');
+    setLectureInitialExperiment(lab.id);
   };
 
   const filteredLabs = ALL_LABS.filter(lab => labFilter === 'all' || lab.category === labFilter);
@@ -352,6 +186,7 @@ export const App: React.FC = () => {
           <LectureSummary
             lecture={selectedLecture}
             initialTab={lectureInitialTab}
+            initialExperiment={lectureInitialExperiment}
             onTabChange={(tab) => setLectureInitialTab(tab)}
             onBackToCourse={() => {
               setSelectedLecture(null);
@@ -406,15 +241,15 @@ export const App: React.FC = () => {
                 </h1>
                 {/* Secondary description */}
                 <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-2">
-                  Concise lecture summaries, bilingual translations, interactive labs for deep conceptual understanding, and exam-standard quizzes.
+                  Turn the page. See the idea. Explore source-led English notes, supporting Arabic explanations, and hands-on experiments at your own pace.
                 </p>
                 <ArabicText className="text-sm font-medium text-stone-600 dark:text-zinc-300">
-                  المنهج في بصمة من غير رغي وحشو: شرح ببساطة ومن الآخر، معامل تفاعلية تفهمك الفكرة في ثواني، وبنك أسئلة يخليك تبصم بالعشرة إنك داخل الامتحان فاهم.
+                  من صفحة لفكرة… ومن فكرة لتجربة. شرح منظم بالإنجليزي، توضيح بالعربي، وتجارب تخليك تشوف اللي بتتعلّمه.
                 </ArabicText>
               </div>
 
               {/* Minimalist Summary Badges */}
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
                 {[
                   { label: 'Courses', value: termCourses.length },
                   { label: 'Lectures', value: totalLecturesCount },
@@ -459,7 +294,7 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Comprehensive Interactive Labs Explorer (10 Labs) */}
+            {/* Experiment catalogue */}
             <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-beige-200 dark:border-stone-800 pb-4">
                 <div>
@@ -473,12 +308,14 @@ export const App: React.FC = () => {
                 </div>
 
                 {/* Filter Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto text-sm bg-[#FAF7F2] dark:bg-stone-950 p-1 rounded-2xl border border-beige-300 dark:border-stone-800">
+                <div className="flex flex-wrap items-center gap-1.5 text-sm bg-[#FAF7F2] dark:bg-stone-950 p-1 rounded-2xl border border-beige-300 dark:border-stone-800">
                   {[
-                    { id: 'all', label: `كل المعامل (${ALL_LABS.length})` },
-                    { id: 'networks', label: `الشبكات (${ALL_LABS.filter(l => l.category === 'networks').length})` },
-                    { id: 'ai', label: `الذكاء الاصطناعي (${ALL_LABS.filter(l => l.category === 'ai').length})` },
-                    { id: 'iot', label: `إنترنت الأشياء (${ALL_LABS.filter(l => l.category === 'iot').length})` },
+                    { id: 'all', label: `All (${ALL_LABS.length})` },
+                    { id: 'networks', label: `Networks (${ALL_LABS.filter(l => l.category === 'networks').length})` },
+                    { id: 'ai', label: `AI (${ALL_LABS.filter(l => l.category === 'ai').length})` },
+                    { id: 'iot', label: `IoT (${ALL_LABS.filter(l => l.category === 'iot').length})` },
+                    { id: 'windows', label: `Windows (${ALL_LABS.filter(l => l.category === 'windows').length})` },
+                    { id: 'signals', label: `Signals (${ALL_LABS.filter(l => l.category === 'signals').length})` },
                   ].map(tab => {
                     const isSelected = labFilter === tab.id;
                     return (
@@ -505,6 +342,9 @@ export const App: React.FC = () => {
                   return (
                     <div
                       key={lab.id}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleOpenLab(lab); } }}
                       onClick={() => handleOpenLab(lab)}
                       className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 hover:shadow-md transition-all flex flex-col justify-between gap-3 group cursor-pointer"
                     >
@@ -535,9 +375,7 @@ export const App: React.FC = () => {
                         </div>
 
                         {/* Requirement 1: Secondary text contrast & min 14px body */}
-                        <ArabicText className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed line-clamp-2">
-                          {lab.descriptionAr}
-                        </ArabicText>
+                        <p className="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">{lab.description}</p>
                       </div>
 
                       <div className="pt-3 border-t border-beige-200 dark:border-stone-800/80 flex items-center justify-between text-sm text-stone-600 dark:text-zinc-300">

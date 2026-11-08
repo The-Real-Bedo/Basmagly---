@@ -280,26 +280,19 @@ export const OsiTcpVisualizer: React.FC = () => {
               </span>
             </div>
 
-            {/* Simplified Explanation Box */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/25 border border-amber-300 dark:border-amber-700/60 space-y-1.5">
-              <span dir="rtl" className="font-arabic text-xs font-bold text-amber-900 dark:text-amber-300 block">
-                💡 الفكرة ببساطة:
-              </span>
-              <ArabicText className="text-sm text-stone-800 dark:text-zinc-200 font-medium">
-                {currentLayer.explanationAr}
-              </ArabicText>
-            </div>
-
-            {/* Formal Academic Function */}
-            <div className="bg-white dark:bg-stone-900 p-4 rounded-xl border border-beige-200 dark:border-stone-800 space-y-1">
-              <div>
-                <ArabicText as="span" className="text-xs font-bold text-stone-600 dark:text-zinc-400">
-                  التعريف الأكاديمي (Academic Definition)
-                </ArabicText>
+            <div className="bg-white dark:bg-stone-900 p-4 rounded-xl border border-beige-200 dark:border-stone-800 space-y-2">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="text-xs font-bold text-stone-600 dark:text-zinc-400">Layer function</span>
+                <ArabicText as="span" className="text-xs font-bold text-stone-600 dark:text-zinc-400">وظيفة الطبقة</ArabicText>
               </div>
               <p className="text-sm font-medium text-stone-800 dark:text-stone-200 leading-relaxed">
                 {currentLayer.keyFunction}
               </p>
+              <div className="border-t border-beige-200 dark:border-stone-800 pt-2">
+                <ArabicText className="text-sm text-stone-700 dark:text-zinc-300 font-medium">
+                  {currentLayer.explanationAr}
+                </ArabicText>
+              </div>
             </div>
 
             {/* Protocols & Hardware Grid */}

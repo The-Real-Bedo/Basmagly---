@@ -1,421 +1,237 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Cpu, Play } from 'lucide-react';
+import { Activity, Cpu, Factory, LucideIcon, Play, Radio, RotateCcw, Sprout, Thermometer, Zap } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
 
 interface Scenario {
   id: string;
   name: string;
   nameAr: string;
-  shortLabel: string;
-  shortLabelAr: string;
   metric: string;
   unit: string;
-  unitAr: string;
-  defaultVal: number;
+  defaultValue: number;
   min: number;
   max: number;
   threshold: number;
-  thresholdType: 'above' | 'below';
-  thresholdText: string;
-  thresholdTextAr: string;
-  actuatorAction: string;
-  actuatorActionAr: string;
-  networkType: string;
+  comparison: 'below' | 'above';
+  network: string;
+  action: string;
+  actionAr: string;
+  icon: LucideIcon;
 }
 
-interface StatusLog {
+interface BilingualMessage {
   en: string;
   ar: string;
 }
 
-// Arabic strings spell units out because "%" and "°" flip next to numbers in RTL text.
 const SCENARIOS: Scenario[] = [
   {
-    id: 'agriculture',
-    name: 'Smart Agriculture (Soil Monitoring)',
-    nameAr: 'الزراعة الذكية ومراقبة رطوبة التربة',
-    shortLabel: 'Smart Agriculture',
-    shortLabelAr: 'الزراعة الذكية',
-    metric: 'Soil Moisture Level',
-    unit: '%',
-    unitAr: 'في المية',
-    defaultVal: 18,
-    min: 0,
-    max: 100,
-    threshold: 25,
-    thresholdType: 'below',
-    thresholdText: 'Moisture < 25%',
-    thresholdTextAr: 'الرطوبة أقل من 25 في المية',
-    actuatorAction: 'Activate drip irrigation pump and smart solenoid valves.',
-    actuatorActionAr: 'مضخة الري بالتنقيط والصمامات الذكية اشتغلت فورًا 💧',
-    networkType: 'LoRaWAN / Cellular',
+    id: 'agriculture', name: 'Smart agriculture', nameAr: 'الزراعة الذكية', metric: 'Soil moisture', unit: '%',
+    defaultValue: 18, min: 0, max: 100, threshold: 25, comparison: 'below', network: 'LoRaWAN / cellular',
+    action: 'The irrigation pump and smart valves turn on.', actionAr: 'مضخة الري والصمامات الذكية اشتغلوا.', icon: Sprout,
   },
   {
-    id: 'smarthome',
-    name: 'Smart Home (Climate & Energy)',
-    nameAr: 'المنزل الذكي وضبط المناخ والطاقة',
-    shortLabel: 'Smart Home',
-    shortLabelAr: 'المنزل الذكي',
-    metric: 'Room Temperature',
-    unit: '°C',
-    unitAr: 'درجة مئوية',
-    defaultVal: 31,
-    min: 15,
-    max: 45,
-    threshold: 28,
-    thresholdType: 'above',
-    thresholdText: 'Temperature > 28°C',
-    thresholdTextAr: 'الحرارة أكتر من 28 درجة مئوية',
-    actuatorAction: 'Engage inverter cooling compressor and adjust smart louvers.',
-    actuatorActionAr: 'ضاغط التكييف اشتغل وفتحات التهوية الذكية اتظبطت ❄️',
-    networkType: 'Zigbee / Wi-Fi 6',
+    id: 'home', name: 'Smart home', nameAr: 'المنزل الذكي', metric: 'Room temperature', unit: '°C',
+    defaultValue: 31, min: 15, max: 45, threshold: 28, comparison: 'above', network: 'Zigbee / Wi-Fi',
+    action: 'The cooling system turns on.', actionAr: 'نظام التبريد اشتغل.', icon: Thermometer,
   },
   {
-    id: 'safety',
-    name: 'Industrial Fire & Gas Safety',
-    nameAr: 'السلامة الصناعية وكشف الغاز والدخان',
-    shortLabel: 'Industrial Safety',
-    shortLabelAr: 'السلامة الصناعية',
-    metric: 'Smoke & Gas Density',
-    unit: 'PPM',
-    unitAr: 'PPM',
-    defaultVal: 130,
-    min: 0,
-    max: 300,
-    threshold: 100,
-    thresholdType: 'above',
-    thresholdText: 'Density > 100 PPM',
-    thresholdTextAr: 'التركيز أكتر من 100 PPM',
-    actuatorAction: 'Sound sirens, unlock emergency fire doors, and notify dispatch.',
-    actuatorActionAr: 'صفارات الإنذار اشتغلت وأبواب الطوارئ اتفتحت والدفاع المدني اتبلّغ 🚨',
-    networkType: '5G Low-Latency',
+    id: 'safety', name: 'Industrial safety', nameAr: 'السلامة الصناعية', metric: 'Smoke and gas density', unit: 'ppm',
+    defaultValue: 130, min: 0, max: 300, threshold: 100, comparison: 'above', network: 'Industrial wireless',
+    action: 'The alarm sounds and an emergency notification is sent.', actionAr: 'الإنذار اشتغل واتبعث إشعار طوارئ.', icon: Factory,
   },
 ];
 
-const IDLE_LOG: StatusLog = {
-  en: 'System idle. Adjust the reading, then execute the pipeline.',
-  ar: 'النظام جاهز. حرّك القراءة وبعدين شغّل الدورة.',
+const STAGES = [
+  { step: 1, title: 'Collect', titleAr: 'جمع البيانات', detail: 'A sensor samples the physical condition.', detailAr: 'الحساس بياخد قراءة من الحالة الفيزيائية.', icon: Activity },
+  { step: 2, title: 'Transmit', titleAr: 'نقل البيانات', detail: 'A network carries the reading to a processor.', detailAr: 'الشبكة بتنقل القراءة لوحدة المعالجة.', icon: Radio },
+  { step: 3, title: 'Analyze', titleAr: 'تحليل البيانات', detail: 'Edge or cloud software checks the rule.', detailAr: 'برمجيات الـ Edge أو السحابة بتراجع القاعدة.', icon: Cpu },
+  { step: 4, title: 'Act · extension', titleAr: 'التنفيذ · امتداد تعليمي', detail: 'An actuator carries out the decision.', detailAr: 'المشغّل بينفّذ القرار.', icon: Zap },
+];
+
+const IDLE_MESSAGE: BilingualMessage = {
+  en: 'Choose a scenario, adjust its sensor reading, then run the data flow.',
+  ar: 'اختار سيناريو، وغيّر قراءة الحساس، وبعدها شغّل تدفق البيانات.',
 };
 
-const READING_CHANGED_LOG: StatusLog = {
-  en: 'Reading updated. Execute the pipeline to see the new result.',
-  ar: 'القراءة اتغيّرت. شغّل الدورة وشوف النتيجة الجديدة.',
+const STAGE_MESSAGES: Record<number, BilingualMessage> = {
+  1: { en: 'Collect: the sensor converts the physical condition into a reading.', ar: 'الجمع: الحساس بيحوّل الحالة الفيزيائية لقراءة.' },
+  2: { en: 'Transmit: the reading travels over the selected network.', ar: 'النقل: القراءة بتتنقل عبر الشبكة المختارة.' },
+  3: { en: 'Analyze: the processor compares the reading with the scenario rule.', ar: 'التحليل: وحدة المعالجة بتقارن القراءة بقاعدة السيناريو.' },
 };
-
-const STEP_DELAYS_MS = [700, 1400, 2100] as const;
-
-interface StageCardProps {
-  n: number;
-  title: string;
-  caption: string;
-  current: boolean;
-  highlighted?: boolean;
-  children: React.ReactNode;
-}
-
-const StageCard: React.FC<StageCardProps> = ({ n, title, caption, current, highlighted = false, children }) => (
-  <li
-    className={`p-4 rounded-2xl border space-y-2 text-center transition-all ${
-      highlighted
-        ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-400 dark:border-amber-700 shadow-sm'
-        : 'bg-[#FAF7F2] dark:bg-stone-950 border-beige-300 dark:border-stone-800'
-    } ${current ? 'ring-2 ring-amber-400 dark:ring-amber-500' : ''}`}
-  >
-    <span className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-beige-200 dark:bg-stone-800 font-mono text-xs font-bold text-stone-800 dark:text-stone-200">
-      {n}
-    </span>
-    <ArabicText className="text-sm font-bold text-center text-stone-900 dark:text-stone-100">{title}</ArabicText>
-    {children}
-    <ArabicText className="text-xs text-center text-stone-600 dark:text-zinc-400">{caption}</ArabicText>
-  </li>
-);
-
-const CHIP_BASE = 'inline-block max-w-full px-2.5 py-1 rounded-lg text-xs font-bold border';
-const CHIP_NEUTRAL =
-  'bg-white dark:bg-stone-900 border-beige-300 dark:border-stone-700 text-stone-900 dark:text-stone-100';
 
 export const IotPipelineSimulator: React.FC = () => {
-  const [selectedSc, setSelectedSc] = useState<Scenario>(SCENARIOS[0]);
-  const [val, setVal] = useState<number>(SCENARIOS[0].defaultVal);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [stage, setStage] = useState<number>(0);
-  const [statusLog, setStatusLog] = useState<StatusLog>(IDLE_LOG);
+  const [scenario, setScenario] = useState(SCENARIOS[0]);
+  const [reading, setReading] = useState(SCENARIOS[0].defaultValue);
+  const [stage, setStage] = useState(0);
+  const [hasRun, setHasRun] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [message, setMessage] = useState(IDLE_MESSAGE);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const isTriggered = selectedSc.thresholdType === 'below'
-    ? val < selectedSc.threshold
-    : val > selectedSc.threshold;
+  const triggered = scenario.comparison === 'below' ? reading < scenario.threshold : reading > scenario.threshold;
+  const SensorIcon = scenario.icon;
 
   const clearTimers = () => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
   };
 
-  const schedule = (fn: () => void, ms: number) => {
-    timersRef.current.push(setTimeout(fn, ms));
-  };
-
   useEffect(() => () => clearTimers(), []);
 
-  const handleSelectScenario = (sc: Scenario) => {
-    if (isProcessing) return;
+  const clearRun = (nextMessage: BilingualMessage = IDLE_MESSAGE) => {
     clearTimers();
-    setSelectedSc(sc);
-    setVal(sc.defaultVal);
     setStage(0);
-    setStatusLog({
-      en: `Switched to ${sc.name}. Ready to execute.`,
-      ar: `اخترت سيناريو ${sc.nameAr}. دوس على «شغّل الدورة» وشوف اللي هيحصل.`,
-    });
+    setHasRun(false);
+    setIsProcessing(false);
+    setMessage(nextMessage);
   };
 
-  const handleValChange = (next: number) => {
-    setVal(next);
-    if (stage !== 0) {
-      setStage(0);
-      setStatusLog(READING_CHANGED_LOG);
-    }
+  const selectScenario = (next: Scenario) => {
+    if (isProcessing) return;
+    clearRun();
+    setScenario(next);
+    setReading(next.defaultValue);
   };
 
   const runPipeline = () => {
     if (isProcessing) return;
     clearTimers();
-
-    // Snapshot the inputs so every log line matches what the user saw at click time.
-    const sc = selectedSc;
-    const reading = val;
-    const triggered = isTriggered;
-    const networkAr = sc.networkType.replace(' / ', ' أو ');
-
-    setIsProcessing(true);
+    const snapshot = { scenario, reading, triggered };
     setStage(1);
-    setStatusLog({
-      en: `[Step 1: Sense] Sensor measured ${reading} ${sc.unit} and converted it into a digital signal.`,
-      ar: `المرحلة 1 (Sense): الحساس قاس ${reading} ${sc.unitAr} وحوّل القياس لإشارة رقمية.`,
+    setHasRun(true);
+    setIsProcessing(true);
+    setMessage(STAGE_MESSAGES[1]);
+
+    [2, 3].forEach((nextStage, index) => {
+      timersRef.current.push(setTimeout(() => {
+        setStage(nextStage);
+        setMessage(STAGE_MESSAGES[nextStage]);
+      }, (index + 1) * 750));
     });
-
-    schedule(() => {
-      setStage(2);
-      setStatusLog({
-        en: `[Step 2: Transmit] Packet sent over ${sc.networkType} to the IoT gateway, then published to the cloud via MQTT.`,
-        ar: `المرحلة 2 (Transmit): القراءة بتتبعت عبر ${networkAr} للـ Gateway، ومنه للسحابة بـ MQTT.`,
-      });
-    }, STEP_DELAYS_MS[0]);
-
-    schedule(() => {
-      setStage(3);
-      setStatusLog({
-        en: `[Step 3: Analyze] Rule: ${sc.thresholdText}. Current reading: ${reading} ${sc.unit}. Result: ${triggered ? 'TRIGGERED' : 'NORMAL'}.`,
-        ar: `المرحلة 3 (Analyze): الشرط ${sc.thresholdTextAr}، والقراءة الحالية ${reading} ${sc.unitAr}. النتيجة: ${triggered ? 'الشرط اتحقق' : 'الوضع طبيعي'}.`,
-      });
-    }, STEP_DELAYS_MS[1]);
-
-    schedule(() => {
+    timersRef.current.push(setTimeout(() => {
       setStage(4);
       setIsProcessing(false);
-      setStatusLog(
-        triggered
-          ? {
-              en: `[Step 4: Act] Action dispatched: ${sc.actuatorAction}`,
-              ar: `المرحلة 4 (Act): ${sc.actuatorActionAr}`,
-            }
-          : {
-              en: '[Step 4: Act] Reading within limits. Actuator stays in standby.',
-              ar: 'المرحلة 4 (Act): القراءة في النطاق الطبيعي، فالمشغّل فضل في وضع الانتظار (Standby).',
-            }
-      );
-    }, STEP_DELAYS_MS[2]);
+      setMessage(snapshot.triggered
+        ? { en: 'Act: the rule matched. ' + snapshot.scenario.action, ar: 'التنفيذ: الشرط اتحقق. ' + snapshot.scenario.actionAr }
+        : { en: 'Act: the reading is within range, so the actuator stays on standby.', ar: 'التنفيذ: القراءة ضمن النطاق، فالمشغّل في وضع الاستعداد.' });
+    }, 2250));
   };
 
+  const reset = () => {
+    clearRun();
+    setReading(scenario.defaultValue);
+  };
+
+  const updateReading = (value: number) => {
+    clearRun({ en: 'Reading changed. Run the flow to inspect the new result.', ar: 'القراءة اتغيّرت. شغّل التدفق عشان تشوف النتيجة الجديدة.' });
+    setReading(value);
+  };
+
+  const valuePosition = ((reading - scenario.min) / (scenario.max - scenario.min)) * 100;
+  const thresholdPosition = ((scenario.threshold - scenario.min) / (scenario.max - scenario.min)) * 100;
+  const SensorGlyph = SensorIcon;
+
   return (
-    <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-beige-200 dark:border-stone-800">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
-              <Cpu className="w-5 h-5" />
-            </span>
+    <section className="space-y-6 rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
+      <header className="flex flex-col gap-4 border-b border-beige-200 pb-5 dark:border-stone-800 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="rounded-xl bg-amber-100 p-2 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"><Activity className="h-5 w-5" /></span>
+          <div>
+            <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">IoT Data-Flow Simulator</h3>
+            <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">محاكي تدفق بيانات إنترنت الأشياء من الحساس لحد القرار</ArabicText>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Select a scenario">
+          {SCENARIOS.map((item) => (
+            <button key={item.id} type="button" onClick={() => selectScenario(item)} disabled={isProcessing} aria-pressed={scenario.id === item.id}
+              className={'rounded-xl border px-3 py-2 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50 ' + (scenario.id === item.id ? 'border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900' : 'border-beige-300 bg-white text-stone-700 hover:border-stone-500 dark:border-stone-700 dark:bg-stone-950 dark:text-zinc-300 dark:hover:border-stone-500')}>
+              <span className="block text-sm font-semibold">{item.name}</span>
+              <ArabicText className={"text-[13px] " + (scenario.id === item.id ? "text-white dark:text-stone-900" : "text-stone-600 dark:text-zinc-400")}>{item.nameAr}</ArabicText>
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="space-y-4 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950 sm:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="rounded-xl border border-beige-300 bg-white p-2 text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-200"><SensorGlyph className="h-5 w-5" /></span>
+              <div>
+                <h4 className="text-base font-bold text-stone-900 dark:text-stone-100">{scenario.metric}</h4>
+                <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">{scenario.nameAr}</ArabicText>
+              </div>
+            </div>
+            <output className="shrink-0 font-mono text-2xl font-bold text-stone-900 dark:text-stone-100" aria-live="polite">{reading} {scenario.unit}</output>
+          </div>
+          <div><label htmlFor="iot-reading" className="block text-sm font-medium text-stone-700 dark:text-zinc-300">Adjust sensor reading</label><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">غيّر قراءة الحساس</ArabicText></div>
+          <input id="iot-reading" type="range" min={scenario.min} max={scenario.max} value={reading} disabled={isProcessing}
+            onChange={(event) => updateReading(Number(event.target.value))} aria-valuetext={reading + ' ' + scenario.unit}
+            className="h-3 w-full cursor-pointer accent-stone-800 disabled:cursor-not-allowed disabled:opacity-50 dark:accent-stone-200" />
+          <div className="relative h-2 rounded-full bg-stone-200 dark:bg-stone-800" aria-hidden="true">
+            <div className="absolute inset-y-0 left-0 rounded-full bg-amber-400 dark:bg-amber-500" style={{ width: valuePosition + '%' }} />
+            <span className="absolute -top-1 h-4 w-1 rounded-full bg-stone-700 dark:bg-stone-200" style={{ left: thresholdPosition + '%' }} />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-stone-600 dark:text-zinc-400">
+            <span>{scenario.min} {scenario.unit}</span>
+            <span>Rule: {scenario.comparison === 'below' ? '<' : '>'} {scenario.threshold} {scenario.unit}</span>
+            <span>{scenario.max} {scenario.unit}</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-beige-300 bg-white p-3 dark:border-stone-800 dark:bg-stone-900">
+            <span className={'h-2.5 w-2.5 shrink-0 rounded-full ' + (triggered ? 'bg-amber-500 dark:bg-amber-400' : 'bg-emerald-600 dark:bg-emerald-400')} />
             <div>
-              <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-                IoT End-to-End Pipeline Simulator
-              </h3>
-              <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">
-                شغّل رحلة البيانات الكاملة في إنترنت الأشياء (IoT) من القراءة لحد التنفيذ، وشوف القرار بيتاخد إزاي في كل مرحلة
-              </ArabicText>
+              <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">{triggered ? 'Rule matched' : 'Reading is in range'}</p>
+              <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">{triggered ? 'شرط التفعيل اتحقق' : 'القراءة ضمن النطاق الطبيعي'}</ArabicText>
             </div>
           </div>
         </div>
 
-        {/* Scenario Switcher */}
-        <div
-          role="group"
-          aria-label="Scenario"
-          className="flex flex-wrap items-center gap-1 bg-beige-100 dark:bg-stone-800/80 p-1.5 rounded-2xl border border-beige-300 dark:border-stone-700"
-        >
-          {SCENARIOS.map((sc) => {
-            const isSelected = selectedSc.id === sc.id;
-            return (
-              <button
-                key={sc.id}
-                type="button"
-                onClick={() => handleSelectScenario(sc)}
-                disabled={isProcessing}
-                aria-pressed={isSelected}
-                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-xl text-sm font-bold transition-all disabled:cursor-not-allowed ${
-                  isSelected
-                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
-                    : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-stone-100 disabled:opacity-50'
-                }`}
-              >
-                <span dir="rtl" className="font-arabic">{`${sc.shortLabelAr} (${sc.shortLabel})`}</span>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h4 className="text-base font-bold text-stone-900 dark:text-stone-100">Follow the reading</h4>
+              <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">تابع القراءة وهي بتعدّي على المراحل</ArabicText>
+            </div>
+            <div className="flex gap-2">
+              <button type="button" onClick={runPipeline} disabled={isProcessing}
+                className="inline-flex items-center gap-2 rounded-xl bg-stone-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white">
+                <Play className="h-4 w-4" /> Run flow
               </button>
-            );
-          })}
+              <button type="button" onClick={reset} aria-label="Reset simulator" title="Reset simulator"
+                className="rounded-xl border border-beige-300 p-2 text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800"><RotateCcw className="h-4 w-4" /></button>
+            </div>
+          </div>
+          <ol className="grid gap-3 sm:grid-cols-2">
+            {STAGES.map((item) => {
+              const Icon = item.icon;
+              const active = stage === item.step && isProcessing;
+              const complete = hasRun && !isProcessing && stage >= item.step;
+              return (
+                <li key={item.step} aria-current={active ? 'step' : undefined}
+                  className={'relative min-w-0 rounded-2xl border p-4 transition-colors ' + (active ? 'border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30' : complete ? 'border-emerald-300 bg-emerald-50/60 dark:border-emerald-800 dark:bg-emerald-950/20' : 'border-beige-300 bg-white dark:border-stone-800 dark:bg-stone-950')}>
+                  <div className="flex items-center gap-3">
+                    <span className={'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ' + (active ? 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200 motion-safe:animate-pulse motion-reduce:animate-none' : complete ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-beige-100 text-stone-700 dark:bg-stone-800 dark:text-zinc-300')}><Icon className="h-5 w-5" /></span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{item.title}</p>
+                      <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">{item.titleAr}</ArabicText>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-stone-700 dark:text-zinc-300">{item.detail}</p>
+                  <ArabicText className="text-[13px] leading-relaxed text-stone-600 dark:text-zinc-400">{item.detailAr}</ArabicText>
+                  {item.step === 4 && <div className="mt-2 border-t border-beige-200 pt-2 dark:border-stone-800"><p className="text-[13px] text-stone-600 dark:text-zinc-400">The lecture source diagram has three stages; Act is an added feedback extension.</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">رسم المحاضرة فيه ثلاث مراحل؛ ومرحلة التنفيذ امتداد إضافي للتغذية الراجعة.</ArabicText></div>}
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </div>
 
-      {/* Sensor Input Slider */}
-      <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-1 min-w-0">
-            <span className="text-xs font-mono font-bold text-stone-600 dark:text-zinc-400 uppercase tracking-wider block">
-              Active Transducer / Sensor
-            </span>
-            <h4 className="font-bold text-base text-stone-900 dark:text-stone-100">{selectedSc.name}</h4>
-            <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{selectedSc.nameAr}</ArabicText>
-          </div>
-
-          <div className="text-right shrink-0">
-            <span className="text-xs text-stone-600 dark:text-zinc-400 block">{selectedSc.metric}</span>
-            <span
-              className={`font-mono text-2xl font-extrabold ${
-                isTriggered ? 'text-amber-800 dark:text-amber-400' : 'text-stone-800 dark:text-stone-200'
-              }`}
-            >
-              {val} {selectedSc.unit}
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-            <ArabicText as="span" className="text-sm font-medium text-stone-600 dark:text-zinc-400">
-              حرّك المؤشر عشان تغيّر قراءة الحساس (Sensor Reading)
-            </ArabicText>
-            <span className="inline-flex flex-wrap items-center gap-2">
-              <ArabicText as="span" className="text-sm font-medium text-stone-600 dark:text-zinc-400">
-                شرط التفعيل (Rule)
-              </ArabicText>
-              <span
-                className={`px-2 py-0.5 rounded-md border font-mono text-xs font-bold ${
-                  isTriggered
-                    ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                    : 'bg-white dark:bg-stone-900 text-stone-800 dark:text-zinc-200 border-beige-300 dark:border-stone-700'
-                }`}
-              >
-                {selectedSc.thresholdText}
-              </span>
-            </span>
-          </div>
-          <input
-            type="range"
-            min={selectedSc.min}
-            max={selectedSc.max}
-            value={val}
-            disabled={isProcessing}
-            onChange={(e) => handleValChange(parseInt(e.target.value, 10))}
-            aria-label={selectedSc.metric}
-            className="w-full h-2.5 bg-stone-200 dark:bg-stone-800 rounded-lg appearance-none cursor-pointer accent-stone-700 dark:accent-zinc-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <div className="flex justify-between font-mono text-xs text-stone-600 dark:text-zinc-400">
-            <span>{selectedSc.min} {selectedSc.unit}</span>
-            <span>{selectedSc.max} {selectedSc.unit}</span>
-          </div>
-        </div>
+      <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-stone-100 dark:border-stone-700 dark:bg-stone-950 dark:text-stone-100" aria-live="polite">
+        <p className="text-sm leading-relaxed">{message.en}</p>
+        <ArabicText className="text-sm leading-relaxed text-zinc-300 dark:text-zinc-300">{message.ar}</ArabicText>
       </div>
-
-      {/* 4 Pipeline Stages: Sense -> Transmit -> Analyze -> Act */}
-      <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <StageCard
-          n={1}
-          title="الاستشعار (Sense)"
-          caption="الحساس بيرصد القراءة الفيزيائية ويحوّلها لإشارة رقمية"
-          current={stage === 1}
-        >
-          <span className={`${CHIP_BASE} font-mono ${CHIP_NEUTRAL}`}>{val} {selectedSc.unit}</span>
-        </StageCard>
-
-        <StageCard
-          n={2}
-          title="النقل (Transmit)"
-          caption="القراءة بتتبعت عبر الشبكة للـ Gateway، ومنه للسحابة بـ MQTT"
-          current={stage === 2}
-        >
-          <span className={`${CHIP_BASE} font-mono ${CHIP_NEUTRAL}`}>{selectedSc.networkType}</span>
-        </StageCard>
-
-        <StageCard
-          n={3}
-          title="التحليل (Analyze)"
-          caption="السحابة أو الـ Edge بتقارن القراءة بالشرط وتاخد القرار"
-          current={stage === 3}
-        >
-          <span
-            dir="rtl"
-            className={`${CHIP_BASE} font-arabic ${
-              isTriggered
-                ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                : CHIP_NEUTRAL
-            }`}
-          >
-            {isTriggered ? 'الشرط اتحقق (Triggered)' : 'طبيعي (Normal)'}
-          </span>
-        </StageCard>
-
-        <StageCard
-          n={4}
-          title="التنفيذ (Act)"
-          caption="المشغّل (Actuator) بينفّذ الفعل الحقيقي في الواقع"
-          current={stage === 4}
-          highlighted={isTriggered}
-        >
-          <span
-            dir="rtl"
-            className={`${CHIP_BASE} font-arabic ${
-              isTriggered
-                ? 'bg-stone-900 text-white border-stone-900 dark:bg-stone-100 dark:text-stone-900 dark:border-stone-100'
-                : 'border-beige-300 dark:border-stone-700 text-stone-600 dark:text-zinc-400'
-            }`}
-          >
-            {isTriggered ? 'المشغّل شغال (Active)' : 'مستني (Standby)'}
-          </span>
-        </StageCard>
-      </ol>
-
-      {/* Terminal Output: `dark` keeps ArabicText's inline English terms readable on the always-dark panel. */}
-      <div className="dark bg-stone-950 text-stone-100 p-5 rounded-2xl border border-stone-800 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="text-xs font-mono text-zinc-400">IoT Bus Telemetry Trace</span>
-          <button
-            type="button"
-            onClick={runPipeline}
-            disabled={isProcessing}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-100 hover:bg-white text-stone-900 text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 shadow-sm"
-          >
-            <Play className="w-3.5 h-3.5" />
-            <span dir="rtl" className="font-arabic">
-              {isProcessing ? 'بيشتغل...' : 'شغّل الدورة (Execute Pipeline)'}
-            </span>
-          </button>
-        </div>
-
-        <div className="border-t border-stone-800 pt-2.5 space-y-1" aria-live="polite">
-          <p className="font-mono text-sm text-zinc-200">{statusLog.en}</p>
-          <ArabicText className="text-sm text-zinc-300">{statusLog.ar}</ArabicText>
-        </div>
-      </div>
-    </div>
+    </section>
   );
 };
 

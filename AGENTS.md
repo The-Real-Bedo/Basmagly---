@@ -126,3 +126,12 @@ Rules that keep it readable:
 - Missing `dark:` variants on any coloured element.
 - Timers that survive unmount/reset.
 - Changing `vite.config.ts` `base`, the Pages workflow, or lab ids.
+
+## 9. Current curriculum and continuation contract
+
+- English is the primary language for every explanation: summaries, visual lab status, worked solutions, quizzes, cheat sheets and glossary. Render English first; Egyptian Arabic follows as an equally accurate supporting explanation. Keep English free of Arabic inside mono/uppercase labels.
+- Prefer direct manipulation, diagrams, plots, visible state transitions and concise observations. A long description or quiz alone is not a simulator. Use semantic colours sparingly, respect reduced motion, and expose Run/Step/Reset where meaningful.
+- Source scope is the uploaded lecture decks and official sheets, not every chapter in the accompanying reference books. Label supplementary examples, dated claims and teaching-model limitations. Do not manufacture missing official sheets.
+- The source ZIP and extracted texts are private workspace inputs under `.hoplite/`; do not commit them. File/page coverage and remaining verification live in `docs/CONTINUATION.md`. A future model should read that report, then current files and applicable instructions before editing.
+- Preserve existing course/lecture/question IDs. New source-backed courses and lab IDs are allowed when requested; keep the data, lab catalogue and rendered registry aligned. Historical counts and original allowed-ID list above describe the initial version, not a cap on requested additions.
+- Commit coherent verified checkpoints. The agent cannot read the user's daily/overall quota percentage; never claim detection of a 98% threshold. If interrupted, preserve completed work, explicitly record incomplete checks, and publish to the existing task branch when authorized. Do not merge or force-push.
