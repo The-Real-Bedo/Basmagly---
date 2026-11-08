@@ -2670,27 +2670,13 @@ export const COURSES_DATA: Course[] = [
     "sheets": []
   },
   {
-    "id": "database-systems",
-    "title": "Database Systems & Design",
-    "titleAr": "نظم قواعد البيانات وتصميمها",
-    "instructor": "هيئة التدريس",
-    "description": "Relational data modeling, Entity-Relationship Diagrams (ERD), normalization rules, advanced SQL querying, transactions, and concurrency.",
-    "descriptionAr": "النمذجة العلائقية للبيانات، مخططات الكيانات والعلاقات (ERD)، قواعد الـ Normalization، استعلامات SQL المتقدمة، والمعاملات (Transactions) والتزامن (Concurrency).",
+    "id": "mobile-programming",
+    "title": "Mobile Programming",
+    "titleAr": "برمجة تطبيقات الموبايل",
+    "description": "Mobile Programming lectures and study materials will be added soon.",
+    "descriptionAr": "محاضرات ومحتوى مادة برمجة تطبيقات الموبايل هيتضافوا قريبًا.",
     "term": 1,
-    "icon": "Database",
-    "isAvailable": false,
-    "lectures": [],
-    "sheets": []
-  },
-  {
-    "id": "software-engineering",
-    "title": "Software Engineering & Lifecycle",
-    "titleAr": "هندسة البرمجيات ودورة حياة التطوير",
-    "instructor": "هيئة التدريس",
-    "description": "Software development life cycle models and methodologies (Waterfall, Agile, Scrum), requirements engineering, UML modeling, testing methodologies, and project management.",
-    "descriptionAr": "نماذج ومنهجيات دورة حياة تطوير البرمجيات (Waterfall و Agile و Scrum)، هندسة المتطلبات، النمذجة بـ UML، منهجيات الاختبار، وإدارة المشروعات.",
-    "term": 1,
-    "icon": "FolderKanban",
+    "icon": "Smartphone",
     "isAvailable": false,
     "lectures": [],
     "sheets": []

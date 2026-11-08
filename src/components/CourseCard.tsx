@@ -1,6 +1,6 @@
 import React from 'react';
 import { Course } from '../types';
-import { BookOpen, HelpCircle, ArrowRight, User, Network, Bot, Cpu, Layout, Database, FolderKanban, Wrench } from 'lucide-react';
+import { BookOpen, HelpCircle, ArrowRight, User, Network, Bot, Cpu, Layout, Smartphone, Wrench } from 'lucide-react';
 import { ArabicText, hasArabic } from './ArabicText';
 
 const ICON_MAP: { [key: string]: any } = {
@@ -8,8 +8,7 @@ const ICON_MAP: { [key: string]: any } = {
   Bot,
   Cpu,
   Layout,
-  Database,
-  FolderKanban,
+  Smartphone,
 };
 
 interface CourseCardProps {
@@ -44,7 +43,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
               <span
                 className="text-[13px] font-semibold px-2.5 py-1 rounded-full bg-stone-200/90 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-stone-300 dark:border-stone-600 shadow-sm"
               >
-                Slides pending <ArabicText as="span" className="text-[13px] text-current">(في انتظار السلايدات)</ArabicText>
+                Coming soon <ArabicText as="span" className="text-[13px] text-current">(قريبًا)</ArabicText>
               </span>
             )}
           </div>

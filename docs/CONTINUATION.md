@@ -1,7 +1,7 @@
 # Curriculum / visual learning handoff
 
 ## Outcome and scope
-The requested uploaded lecture decks are implemented: **13 lectures, 100 practice questions, 22 registered experiments**, across five available subjects. The catalogue also retains the two unavailable Database Systems and Software Engineering placeholders. English is primary for notes, examples, quizzes, worked solutions, lab observations, review and glossary; Egyptian Arabic supports it.
+The requested uploaded lecture decks are implemented: **13 lectures, 100 practice questions, 22 registered experiments**, across five available subjects. The catalogue now has one unavailable Mobile Programming placeholder in place of Database Systems and Software Engineering. English is primary for notes, examples, quizzes, worked solutions, lab observations, review and glossary; Egyptian Arabic supports it.
 
 - AI: four lectures, including the earlier AI1 work; remaining agents/PEAS, formulation and search material is source-linked.
 - Networks: three lectures, with dedicated subnetting instead of squeezing the entire third deck into the IPv4 introduction.
@@ -38,8 +38,11 @@ See `docs/SOURCE_COVERAGE.md` and `docs/ai-source-map.md` for source scope and m
 No supplied lecture deck remains unimplemented in this task. Further work should be a separately scoped request:
 1. Split or defer course text to reduce the remaining initial-bundle warning, if performance becomes a priority.
 2. Expand reference-book chapters only when requested; later Windows SDK/MFC/Qt/C++/CLI and signal transforms/filters chapters are not inferred to be taught lectures.
-3. Add Database Systems / Software Engineering only after receiving their actual source materials.
+3. Add Mobile Programming content when its actual source materials are supplied; its current card is marked Coming soon.
 4. More exhaustive scenario combinations, accessibility auditing, native Windows execution or real network/audio measurements were not claimed; the existing labs are explicitly teaching models.
 
 ## Quota and publication
 No tool exposes daily/overall quota percentage, so a 98% trigger cannot be detected or guaranteed. A safe checkpoint (`253dbea`, including prior AI1 work) was pushed early; the completed implementation and this report are committed and pushed to the existing `hoplite/ioulis-f08d7e22` branch. No force-push, merge, or main-branch deployment is performed. Read current Git status and this report before continuing with another model; never equate the private Preview with a production deploy.
+
+## Local-only follow-up — 2026-11-08
+The user requested replacing the two unavailable Database Systems / Software Engineering cards with one Mobile Programming card marked Coming soon / قريبًا. The change is committed locally only. **Do not push this follow-up or subsequent edits until the user explicitly asks to publish the batch.** Earlier publication notes above apply to the previous curriculum checkpoint, not this follow-up.
