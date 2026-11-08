@@ -35,7 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             {/* Tagline: hidden on small screens so the brand and controls fit on one row */}
             <ArabicText as="p" className="hidden lg:block text-sm font-medium text-stone-600 dark:text-zinc-300 pt-1 text-left">
-              من صفحة لفكرة… ومن فكرة لتجربة
+              بصمجة؟ آه. عمياني؟ لأ.
             </ArabicText>
           </div>
         </button>

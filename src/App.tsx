@@ -9,7 +9,7 @@ import { LAB_CATALOG, LabCategory } from './data/labCatalog';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
 import { BrandLogo } from './components/BrandLogo';
-import { Wrench, Clock, ArrowRight } from 'lucide-react';
+import { Wrench, Clock, ArrowRight, TriangleAlert } from 'lucide-react';
 
 type LabDirectoryItem = typeof LAB_CATALOG[number];
 const ALL_LABS = LAB_CATALOG;
@@ -239,13 +239,23 @@ export const App: React.FC = () => {
                 <h1 className="pt-1">
                   <BrandLogo size="hero" />
                 </h1>
-                {/* Secondary description */}
-                <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-2">
-                  Turn the page. See the idea. Explore source-led English notes, supporting Arabic explanations, and hands-on experiments at your own pace.
-                </p>
-                <ArabicText className="text-sm font-medium text-stone-600 dark:text-zinc-300">
-                  من صفحة لفكرة… ومن فكرة لتجربة. شرح منظم بالإنجليزي، توضيح بالعربي، وتجارب تخليك تشوف اللي بتتعلّمه.
-                </ArabicText>
+                <aside data-testid="hero-study-notice" className="mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 p-5 sm:p-6 space-y-4">
+                  <div className="flex items-center justify-end gap-2 text-amber-800 dark:text-amber-300">
+                    <ArabicText as="span" className="text-[13px] font-semibold text-inherit">تنبيه قبل البصمجة</ArabicText>
+                    <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  </div>
+                  <ArabicText as="h2" className="text-xl sm:text-2xl font-semibold leading-relaxed text-stone-900 dark:text-stone-100">
+                    <span className="block">البصمجة ياما جابت تقديرات.</span>
+                    <span className="block">بس هتظبط المرة دي؟</span>
+                    <span className="mt-2 block text-3xl sm:text-4xl font-bold text-amber-800 dark:text-amber-300">ما أوعدكش.</span>
+                  </ArabicText>
+                  <ArabicText className="text-sm sm:text-base text-stone-700 dark:text-zinc-300">
+                    اللي نقدر عليه: نلمّ لك المنهج، ونفكّ لك الفكرة. الباقي عليك يا هندسة.
+                  </ArabicText>
+                  <p className="border-t border-beige-300 dark:border-stone-800 pt-3 text-[13px] leading-relaxed text-stone-600 dark:text-zinc-400">
+                    Cramming has landed good grades before. Will it work this time? No promises. We can pull the material together and unpack the ideas. The rest is on you.
+                  </p>
+                </aside>
               </div>
 
               {/* Minimalist Summary Badges */}
