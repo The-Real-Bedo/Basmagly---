@@ -7,7 +7,7 @@ type KernelPreset = 'average' | 'impulse';
 const INPUTS: Record<InputPreset, number[]> = { book: [3, 0, 6], pulse: [1, 2, 1], ramp: [0, 1, 2, 1] };
 const KERNELS: Record<KernelPreset, number[]> = { average: [1 / 3, 1 / 3, 1 / 3], impulse: [1] };
 const clean = (value: number) => Number(value.toFixed(2));
-const show = (value: number) => Number.isInteger(value) ? `${value}` : `${clean(value)}`;
+const show = (value: number) => Math.abs(value - 1 / 3) < 1e-10 ? '1/3' : Number.isInteger(value) ? `${value}` : `${clean(value)}`;
 
 const StemRow: React.FC<{ name: string; values: number[]; active?: number; completed?: number }> = ({ name, values, active = -1, completed = -1 }) => {
   const max = Math.max(1, ...values.map(Math.abs));
