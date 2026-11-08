@@ -29,7 +29,15 @@ const entries = [
   ['windows-message-loop', 'windows-programming', 'win-lec-2', 'windows', 'Windows Message Loop', 'طابور الرسائل وتحديث النافذة', 'Post events, dispatch messages and update a mock window.', Monitor],
   ['event-driven-lab', 'windows-programming', 'win-lec-1', 'windows', 'Sequential vs Event-Driven', 'تنفيذ متسلسل ولا استجابة للأحداث؟', 'Compare how two programs respond to the same events.', Wrench],
   ['signal-sampling', 'signal-processing', 'signal-lec-1', 'signals', 'Sampling & Quantization', 'من موجة مستمرة لعينات', 'Control sample rate and bit depth on a real computed waveform.', Waves],
-  ['discrete-signals', 'signal-processing', 'signal-lec-2', 'signals', 'Discrete-Time Signal Explorer', 'الإشارات المتقطعة وتحويلاتها', 'Shift and inspect impulse, step and exponential sequences.', Activity],
+  ['discrete-signals', 'signal-processing', 'signal-lec-1', 'signals', 'Discrete-Time Signal Explorer', 'الإشارات المتقطعة وتحويلاتها', 'Shift and inspect impulse, step and exponential sequences.', Activity],
+  ['win32-code-lab', 'windows-programming', 'win-lec-2', 'windows', 'Win32 Code Trace', 'تتبّع كود النافذة', 'Follow the API call, message and callback as the window changes.', Monitor],
+  ['win32-types-lab', 'windows-programming', 'win-lec-2', 'windows', 'Win32 Types & Handles', 'أنواع البيانات والمقابض', 'Choose types and inspect pointer width and Unicode boundaries.', Layers],
+  ['network-media', 'networks', 'net-lec-1', 'networks', 'Media & Throughput Workbench', 'وسيط النقل وسعة القناة', 'Compare media choices and actual throughput under explicit assumptions.', Radio],
+  ['ai-environments', 'ai', 'ai-lec-2', 'ai', 'Task Environment Explorer', 'استكشف بيئة الوكيل', 'Change what the agent can see and how the world evolves.', Brain],
+  ['signal-support', 'signal-processing', 'signal-lec-1', 'signals', 'Sequence Support Mapper', 'حدود الإشارة بعد التحويل', 'Map input indices through shifts and reversal to find guaranteed zeros.', Route],
+  ['signal-periodicity', 'signal-processing', 'signal-lec-1', 'signals', 'Discrete Periodicity Explorer', 'الدورة الصحيحة في الزمن المتقطع', 'Overlay a shifted sequence and connect it with the integer-period rule.', Waves],
+  ['signal-systems', 'signal-processing', 'signal-lec-1', 'signals', 'System Property Bench', 'اختبر خواص النظام', 'Compare the two paths in linearity and time-invariance tests.', Sliders],
+  ['signal-convolution', 'signal-processing', 'signal-lec-1', 'signals', 'Convolution & MAC Studio', 'اضرب واجمع خطوة بخطوة', 'Slide the impulse response, multiply overlapping samples and accumulate.', Activity],
 ] as const;
 
 export const LAB_CATALOG = entries.map(([id, courseId, lectureId, category, title, subtitleAr, description, icon]) => ({

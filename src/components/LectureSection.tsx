@@ -2,6 +2,8 @@ import React from 'react';
 import { BookOpen, Lightbulb, Star, Sparkles, RotateCcw, CheckCircle2, XCircle, HelpCircle } from 'lucide-react';
 import { SummarySection, QuickCheck } from '../types';
 import { ArabicText, formatArabicWithEnglish } from './ArabicText';
+import { CodeStudyBlock } from './CodeStudyBlock';
+import { InlineExperiment } from './interactive/ExperimentStudio';
 
 /** Splits "Term: explanation" into a bold lead + rest when the colon comes early. */
 const splitLead = (text: string): [string | null, string] => {
@@ -278,6 +280,9 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
             </div>
           </div>
         )}
+
+        {section.codeExamples && section.codeExamples.length > 0 && <div className="border-t border-beige-300 dark:border-stone-800 p-4 sm:p-7 space-y-4">{section.codeExamples.map((example, index) => <CodeStudyBlock key={index} example={example} />)}</div>}
+        {section.experimentIds && section.experimentIds.length > 0 && <div className="border-t border-beige-300 dark:border-stone-800 p-4 sm:p-7 space-y-4">{section.experimentIds.map(id => <InlineExperiment key={id} id={id} />)}</div>}
 
         {/* Micro-interactive Quick Concept Check */}
         {section.quickCheck && (

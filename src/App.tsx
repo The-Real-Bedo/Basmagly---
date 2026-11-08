@@ -9,7 +9,7 @@ import { LAB_CATALOG, LabCategory } from './data/labCatalog';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
 import { BrandLogo } from './components/BrandLogo';
-import { Wrench, Clock, ArrowRight } from 'lucide-react';
+import { Wrench, Clock, ArrowRight, TriangleAlert } from 'lucide-react';
 
 type LabDirectoryItem = typeof LAB_CATALOG[number];
 const ALL_LABS = LAB_CATALOG;
@@ -136,7 +136,6 @@ export const App: React.FC = () => {
   }, [selectedCourse, selectedLecture, lectureInitialTab, selectedSheetId, currentTerm]);
 
   const termCourses = COURSES_DATA.filter(c => c.term === currentTerm);
-  const totalLecturesCount = COURSES_DATA.reduce((acc, c) => acc + c.lectures.length, 0);
 
   const handleHomeClick = () => {
     setSelectedCourse(null);
@@ -187,6 +186,14 @@ export const App: React.FC = () => {
             lecture={selectedLecture}
             initialTab={lectureInitialTab}
             initialExperiment={lectureInitialExperiment}
+            exerciseCount={selectedCourse?.sheets?.find(sheet => sheet.sheetNumber === selectedLecture.lectureNumber)?.problemsCount}
+            onOpenExercises={(selectedCourse?.id === 'windows-programming' || selectedCourse?.id === 'signal-processing') && selectedCourse.sheets?.some(sheet => sheet.sheetNumber === selectedLecture.lectureNumber) ? () => {
+              const sheet = selectedCourse.sheets?.find(item => item.sheetNumber === selectedLecture.lectureNumber);
+              setSelectedSheetId(sheet?.id ?? null);
+              setSelectedLecture(null);
+              setLectureInitialTab('summary');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } : undefined}
             onTabChange={(tab) => setLectureInitialTab(tab)}
             onBackToCourse={() => {
               setSelectedLecture(null);
@@ -230,8 +237,8 @@ export const App: React.FC = () => {
           /* View 1: Clean, Practical Course Dashboard */
           <div className="space-y-8">
             {/* Practical Academic Banner */}
-            <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
+            <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="min-w-0 w-full flex-1 space-y-2">
                 {/* Requirement 8: Calm neutral badge instead of amber overload */}
                 <span className="text-[13px] font-mono font-bold text-stone-700 dark:text-zinc-300 uppercase tracking-wider block">
                   Academic Year 2026 / 2027 • Term 1
@@ -239,20 +246,26 @@ export const App: React.FC = () => {
                 <h1 className="pt-1">
                   <BrandLogo size="hero" />
                 </h1>
-                {/* Secondary description */}
-                <p className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-2">
-                  Turn the page. See the idea. Explore source-led English notes, supporting Arabic explanations, and hands-on experiments at your own pace.
-                </p>
-                <ArabicText className="text-sm font-medium text-stone-600 dark:text-zinc-300">
-                  من صفحة لفكرة… ومن فكرة لتجربة. شرح منظم بالإنجليزي، توضيح بالعربي، وتجارب تخليك تشوف اللي بتتعلّمه.
-                </ArabicText>
+                <aside data-testid="hero-study-notice" className="mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 min-h-[240px] p-5 sm:p-6 flex flex-col justify-between gap-3">
+                  <div className="flex items-center justify-end gap-2 text-amber-800 dark:text-amber-300">
+                    <ArabicText as="span" className="text-[13px] font-semibold text-inherit">تنبيه قبل البصمجة</ArabicText>
+                    <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  </div>
+                  <ArabicText as="h2" className="text-xl sm:text-2xl font-semibold leading-relaxed text-stone-900 dark:text-stone-100">
+                    <span className="block">البصمجة ياما جابت تقديرات.</span>
+                    <span className="block">بس هتظبط المرة دي؟</span>
+                    <span className="mt-2 block text-3xl sm:text-4xl font-bold text-amber-800 dark:text-amber-300">موعدكش.</span>
+                  </ArabicText>
+                  <ArabicText className="text-sm sm:text-base text-stone-700 dark:text-zinc-300">
+                    اللي نقدر عليه: نلمّ لك المنهج، ونفكّ لك الفكرة. الباقي عليك يا هندسة.
+                  </ArabicText>
+                </aside>
               </div>
 
               {/* Minimalist Summary Badges */}
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 {[
                   { label: 'Courses', value: termCourses.length },
-                  { label: 'Lectures', value: totalLecturesCount },
                   { label: 'Labs', value: ALL_LABS.length },
                 ].map(stat => (
                   <div

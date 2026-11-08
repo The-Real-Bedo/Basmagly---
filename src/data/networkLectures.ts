@@ -24,6 +24,7 @@ const section = (
   bulletPointsAr: string[],
   keyRule: string,
   keyRuleAr: string,
+  experimentIds?: string[],
 ): SummarySection => ({
   title,
   titleAr,
@@ -33,6 +34,7 @@ const section = (
   bulletPointsAr,
   keyRule,
   keyRuleAr,
+  experimentIds,
 });
 
 const subnetQuestions: Question[] = [
@@ -115,6 +117,7 @@ const lecture1Sections: SummarySection[] = [
       'Wireless: Carries radio signals; the environment and distance affect the link.',
       'Media selection: Consider distance, environment, required data rate, and cost when choosing a medium.',
       'Measured performance: Throughput is affected by users, devices, media, and network conditions, so it does not exceed the link bandwidth.',
+      'Quick example (illustrative numbers): if a 100 Mbps link measures 65 Mbps, 100 Mbps is its bandwidth and 65 Mbps is its throughput.',
     ],
     [
       'الـCopper: بينقل إشارات كهربائية وبيُستخدم كتير في الوصلات السلكية.',
@@ -122,9 +125,11 @@ const lecture1Sections: SummarySection[] = [
       'الـWireless: بينقل إشارات لاسلكية؛ والبيئة والمسافة بيأثروا على الوصلة.',
       'اختيار الوسيط: راعي المسافة والبيئة ومعدل البيانات المطلوب والتكلفة وإنت بتختار وسيط النقل.',
       'الأداء المقاس: الـThroughput بيتأثر بالمستخدمين والأجهزة والوسيط وظروف الشبكة، فعشان كده ما بيعدّيش الـBandwidth.',
+      'مثال سريع (أرقام توضيحية): لو وصلة 100 Mbps حققت قياسًا قدره 65 Mbps، فالـ100 Mbps هي الـBandwidth والـ65 Mbps هي الـThroughput.',
     ],
     'Bandwidth is the capacity limit; throughput is the rate actually achieved.',
     'الـBandwidth هو حدّ السعة، والـThroughput هو المعدل اللي اتحقق فعليًا.',
+    ['network-media'],
   ),
   section(
     '3. Network Scope and Management', '3. نطاق الشبكة وطريقة إدارتها',
@@ -418,7 +423,7 @@ const lecture1: Lecture = {
     { en: 'Physical topology = arrangement; logical topology = data flow.', ar: 'الـPhysical topology = ترتيب الأجهزة؛ والـLogical topology = حركة البيانات.' },
     { en: 'Unicast: one destination; broadcast: all LAN devices; multicast: selected group.', ar: 'Unicast: وجهة واحدة؛ Broadcast: كل أجهزة الـLAN؛ Multicast: مجموعة مختارة.' },
   ],
-  interactiveTools: ['network-devices', 'topology-simulator', 'transmission-lab'],
+  interactiveTools: ['network-devices', 'topology-simulator', 'transmission-lab', 'network-media'],
   questions: copyQuestions(existingLectures[0]),
 };
 

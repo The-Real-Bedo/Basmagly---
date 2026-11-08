@@ -4,9 +4,9 @@ import type { Course } from '../types';
 export const COURSES_DATA: Course[] = [
   {
     "id": "networks",
-    "title": "Computer Networks",
-    "titleAr": "شبكات الحاسب",
-    "instructor": "Cisco Networking Curriculum",
+    "title": "CCNA",
+    "titleAr": "شبكات الحاسب (CCNA)",
+    "instructor": "د. سامية",
     "description": "Comprehensive coverage of network fundamentals, the OSI 7-layer and TCP/IP reference models, devices, topologies, transmission modes, and IPv4 addressing and subnetting.",
     "descriptionAr": "تغطية شاملة لأساسيات الشبكات، والنماذج المرجعية OSI (7 طبقات) و TCP/IP، والأجهزة، والطوبولوجيا، وأنماط الإرسال، وعنونة IPv4 وتقسيم الشبكات (Subnetting).",
     "term": 1,
@@ -2143,7 +2143,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "A sensor is a device that detects physical input from the environment and converts physical phenomena into measurable signals.",
             "questionAr": "الحساس هو جهاز يكتشف المدخلات الفيزيائية من البيئة المحيطة ويحول الظواهر الفيزيائية إلى إشارات قابلة للقياس.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Lecture 1, Slide 3 defines a sensor verbatim as: \"A sensor is a device that detects and responds to physical input from the environment, converting physical phenomena into measurable signals.\" Examples include thermometers, smoke detectors, and camera sensors.",
             "solutionAr": "الإجابة: صح (TRUE). السلايد رقم 3 من المحاضرة الأولى تعرّف الحساس نصاً بأنه: جهاز يكتشف ويستجيب للمدخلات الفيزيائية من البيئة المحيطة ويحول الظواهر الطبيعية لإشارات قابلة للقياس (زي قياس الحرارة والدخان والحركة)."
           },
@@ -2155,7 +2155,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "According to the lecture, every IoT system is built upon four essential components.",
             "questionAr": "وفقاً للمحاضرة، كل نظام إنترنت أشياء مبني على أربعة مكونات أساسية.",
-            "correctAnswer": "False",
+            "correctAnswer": false,
             "solution": "Answer: FALSE. Lecture 1, Slide 5 explicitly states: \"Every Internet of Things (IoT) system is fundamentally built upon THREE essential components: Devices, Sensors, and Networks.\" Databases/Cloud platforms are backend storage/analytics destinations, not one of the foundational three.",
             "solutionAr": "الإجابة: غلط (FALSE). السلايد رقم 5 توضح نصاً أن أي نظام إنترنت أشياء مبني أساساً على ثلاثة مكونات أساسية فقط (Devices, Sensors, Networks) مش أربعة؛ وقواعد البيانات والسحابة ليست من هذا الثلاثي التأسيسي."
           },
@@ -2167,7 +2167,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "IoT devices connect and exchange data over the internet, and this always requires human intervention.",
             "questionAr": "تتصل أجهزة إنترنت الأشياء وتتبادل البيانات عبر الإنترنت، وهذا يتطلب دائماً تدخلاً بشرياً.",
-            "correctAnswer": "False",
+            "correctAnswer": false,
             "solution": "Answer: FALSE. Lecture 1, Slide 6 states that IoT devices \"connect and exchange data over the internet, often WITHOUT human intervention.\" Machine-to-Machine (M2M) autonomous operation is the core defining characteristic of IoT.",
             "solutionAr": "الإجابة: غلط (FALSE). السلايد رقم 6 تؤكد أن أجهزة الـ IoT تتصل وتتبادل البيانات عبر الإنترنت دون اشتراط تدخل بشري (often without human intervention)؛ والتشغيل الآلي الذاتي (M2M) هو جوهر إنترنت الأشياء."
           },
@@ -2179,7 +2179,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "Edge computing is presented as a solution to the scalability and performance challenge in IoT adoption.",
             "questionAr": "تم تقديم معالجة الحافة (Edge Computing) كحل لتحدي قابلية التوسع والأداء في تبني إنترنت الأشياء.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Lecture 1, Slide 12 addresses the \"Scalability & Performance\" challenge and directly presents the architectural solution: \"Solution: Edge computing for localized processing and cloud-based scalable architectures.\"",
             "solutionAr": "الإجابة: صح (TRUE). السلايد رقم 12 توضح نصاً تحت بند تحدي التوسع والأداء (Scalability & Performance) أن الحل الهندسي المعتمد هو: معالجة الحافة للمعالجة المحلية (Edge computing for localized processing) مع بنية سحابية مرنة."
           },
@@ -2540,7 +2540,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "Network standards help devices from different manufacturers communicate with one another.",
             "questionAr": "تساعد معايير الشبكات الأجهزة المصنعة من شركات مختلفة على التواصل والتفاهم مع بعضها البعض.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 3 states: \"Standards solve this problem... Allow different companies to create devices that work together.\"",
             "solutionAr": "الإجابة: صح (TRUE). السلايد 3 تؤكد نصاً أن المعايير القياسية تحل مشكلة اختلاف الشركات وتسمح للأجهزة بالعمل سوياً بتوافق تام."
           },
@@ -2552,7 +2552,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "In a layered model, every layer must know and manage all the internal details of every other layer.",
             "questionAr": "في نموذج الطبقات، يجب على كل طبقة معرفة وإدارة جميع التفاصيل الداخلية لجميع الطبقات الأخرى.",
-            "correctAnswer": "False",
+            "correctAnswer": false,
             "solution": "Answer: FALSE. Slide 4 states: \"Pass work to the next layer without interfering.\" Modularity and encapsulation ensure layers do NOT manage the internal details of other layers.",
             "solutionAr": "الإجابة: غلط (FALSE). السلايد 4 تؤكد أن كل طبقة متخصصة وتسلم البيانات للطبقة المجاورة دون التدخل في تفاصيل عملها الداخلية (تجريد وفصل المهام)."
           },
@@ -2564,7 +2564,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "The OSI model contains Application, Presentation, Session, Transport, Network, Data Link, and Physical layers.",
             "questionAr": "يتكون نموذج OSI من طبقات التطبيقات، العرض، الجلسة، النقل، الشبكة، ربط البيانات، والفيزيائية.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 7 explicitly lists all 7 of these exact layers in order.",
             "solutionAr": "الإجابة: صح (TRUE). السلايد 7 تسرد نصاً هذه الطبقات السبع الدقيقة لنموذج OSI بالترتيب."
           },
@@ -2576,7 +2576,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "The TCP/IP model is presented in the lecture as a four-layer model.",
             "questionAr": "تم تقديم نموذج TCP/IP في المحاضرة كنموذج مكون من أربع طبقات.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 9 presents TCP/IP with exactly four distinct layers: 01 Application, 02 Transport, 03 Internet, 04 Network Access.",
             "solutionAr": "الإجابة: صح (TRUE). السلايد 9 تعرف نموذج TCP/IP صراحة بنموذج من أربع طبقات (Application, Transport, Internet, Network Access)."
           },
@@ -2588,7 +2588,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "The TCP/IP Internet layer is associated with packet routing across networks and protocols such as IP and ICMP.",
             "questionAr": "ترتبط طبقة الإنترنت في نموذج TCP/IP بتوجيه الحزم عبر الشبكات وبروتوكولات مثل IP و ICMP.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 10 and Slide 11 state explicitly: \"03 Internet Layer: Packet routing across networks (IP, ICMP)\".",
             "solutionAr": "الإجابة: صح (TRUE). السلايدات 10 و 11 تحدد صراحة وظيفة طبقة الإنترنت في توجيه الحزم ببروتوكولات IP و ICMP."
           },
@@ -2600,7 +2600,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "TCP is described as reliable and connection-oriented.",
             "questionAr": "يوصف بروتوكول TCP بأنه بروتوكول موثوق ويعتمد على الاتصال المسبق.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 12 explicitly defines TCP as: \"Reliable, connection-oriented, Guarantees data delivery, Error checking and correction\".",
             "solutionAr": "الإجابة: صح (TRUE). السلايد 12 تصف TCP نصاً بأنه: موثوق ويعتمد على الاتصال ويضمن تسليم البيانات وتصحيح الأخطاء."
           },
@@ -2612,7 +2612,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "UDP guarantees that every transmitted data packet will be delivered successfully.",
             "questionAr": "يضمن بروتوكول UDP وصول كل حزمة بيانات مرسلة بنجاح.",
-            "correctAnswer": "False",
+            "correctAnswer": false,
             "solution": "Answer: FALSE. Slide 12 highlights under UDP: \"No delivery guarantee... Faster but less reliable\". Lost datagrams are never retransmitted.",
             "solutionAr": "الإجابة: غلط (FALSE). السلايد 12 توضح نصاً أن UDP لا يضمن وصول البيانات (No delivery guarantee)؛ ولا يعيد إرسال الحزم المفقودة."
           },
@@ -2624,7 +2624,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "In the IPv4-to-IPv6 example, the lecture states that the network layer changed while the other layers remained the same.",
             "questionAr": "في مثال التحول من IPv4 إلى IPv6، أوضحت المحاضرة أن طبقة الشبكة هي التي تغيرت بينما ظلت الطبقات الأخرى دون تغيير.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 6 (\"Real-World Example: Evolution Without Breaking\") states: \"Only the Network layer changed; All other layers remained the same; Applications still work normally; Transport, Physical layers unaffected.\"",
             "solutionAr": "الإجابة: صح (TRUE). السلايد 6 توضح نصاً أن التحول لـ IPv6 اقتصر على طبقة الشبكة فقط وظلت باقي الطبقات والتطبيقات تعمل دون أي تغيير."
           },
@@ -2636,7 +2636,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "IoT systems may use lightweight protocols and emphasize power efficiency for resource-constrained devices.",
             "questionAr": "قد تستخدم أنظمة إنترنت الأشياء بروتوكولات خفيفة الوزن وتركز على كفاءة استهلاك الطاقة للأجهزة محدودة الموارد.",
-            "correctAnswer": "True",
+            "correctAnswer": true,
             "solution": "Answer: TRUE. Slide 14 and Slide 17 highlight that IoT devices have limited memory and battery, requiring lightweight protocols and power efficiency.",
             "solutionAr": "الإجابة: صح (TRUE). السلايد 14 و 17 تؤكدان أن طبيعة أجهزة الـ IoT محدودة المعالجات والبطارية تفرض استخدام بروتوكولات خفيفة موفرة للطاقة."
           },
@@ -2648,7 +2648,7 @@ export const COURSES_DATA: Course[] = [
             "type": "true_false",
             "question": "The IoT stack is concerned only with network communication protocols and does not include device hardware or applications.",
             "questionAr": "تهتم معمارية طبقات إنترنت الأشياء ببروتوكولات الاتصال الشبكي فقط ولا تشمل عتاد الأجهزة أو التطبيقات.",
-            "correctAnswer": "False",
+            "correctAnswer": false,
             "solution": "Answer: FALSE. Slide 17 explicitly highlights that unlike OSI/TCP-IP, the IoT stack \"Starts from hardware itself (Sensors) to end user application... Includes device management, cloud platforms, and user interfaces.\"",
             "solutionAr": "الإجابة: غلط (FALSE). السلايد 17 توضح نصاً أن معمارية الـ IoT تبدأ من العتاد الفيزيائي نفسه وتصل لتطبيقات المستخدم وإدارة المنصات السحابية."
           }
@@ -2658,8 +2658,8 @@ export const COURSES_DATA: Course[] = [
   },
   {
     "id": "windows-programming",
-    "title": "Visual & Windows Programming",
-    "titleAr": "البرمجة المرئية وبرمجة تطبيقات Windows",
+    "title": "Windows Programming",
+    "titleAr": "برمجة Windows",
     "instructor": "هيئة التدريس",
     "description": "Desktop GUI application development using C# and the Microsoft .NET Framework, Windows Forms, event-driven programming, and database connectivity.",
     "descriptionAr": "تطوير تطبيقات سطح المكتب ذات الواجهات الرسومية (GUI) باستخدام لغة C# وإطار عمل Microsoft .NET وتقنية Windows Forms، وبرمجة الأحداث (Event-Driven)، والاتصال بقواعد البيانات.",
@@ -2670,27 +2670,13 @@ export const COURSES_DATA: Course[] = [
     "sheets": []
   },
   {
-    "id": "database-systems",
-    "title": "Database Systems & Design",
-    "titleAr": "نظم قواعد البيانات وتصميمها",
-    "instructor": "هيئة التدريس",
-    "description": "Relational data modeling, Entity-Relationship Diagrams (ERD), normalization rules, advanced SQL querying, transactions, and concurrency.",
-    "descriptionAr": "النمذجة العلائقية للبيانات، مخططات الكيانات والعلاقات (ERD)، قواعد الـ Normalization، استعلامات SQL المتقدمة، والمعاملات (Transactions) والتزامن (Concurrency).",
+    "id": "mobile-programming",
+    "title": "Mobile Programming",
+    "titleAr": "برمجة تطبيقات الموبايل",
+    "description": "Mobile Programming lectures and study materials will be added soon.",
+    "descriptionAr": "محاضرات ومحتوى مادة برمجة تطبيقات الموبايل هيتضافوا قريبًا.",
     "term": 1,
-    "icon": "Database",
-    "isAvailable": false,
-    "lectures": [],
-    "sheets": []
-  },
-  {
-    "id": "software-engineering",
-    "title": "Software Engineering & Lifecycle",
-    "titleAr": "هندسة البرمجيات ودورة حياة التطوير",
-    "instructor": "هيئة التدريس",
-    "description": "Software development life cycle models and methodologies (Waterfall, Agile, Scrum), requirements engineering, UML modeling, testing methodologies, and project management.",
-    "descriptionAr": "نماذج ومنهجيات دورة حياة تطوير البرمجيات (Waterfall و Agile و Scrum)، هندسة المتطلبات، النمذجة بـ UML، منهجيات الاختبار، وإدارة المشروعات.",
-    "term": 1,
-    "icon": "FolderKanban",
+    "icon": "Smartphone",
     "isAvailable": false,
     "lectures": [],
     "sheets": []
