@@ -276,6 +276,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
 
                       <h3 className="text-xl font-bold text-stone-900 dark:text-stone-100 pt-0.5">{sheet.title}</h3>
                       <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{sheet.titleAr}</ArabicText>
+                      <p className="text-sm leading-relaxed text-stone-700 dark:text-zinc-300">{sheet.brief}</p>
+                      <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{sheet.briefAr}</ArabicText>
                     </div>
 
                     <button
@@ -300,6 +302,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                           <div className="min-w-0 space-y-1">
                             <h4 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-white">{sheet.title}</h4>
                             <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{sheet.titleAr}</ArabicText>
+                      <p className="text-sm leading-relaxed text-stone-700 dark:text-zinc-300">{sheet.brief}</p>
+                      <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{sheet.briefAr}</ArabicText>
                             <span className="text-sm font-mono text-stone-500 dark:text-zinc-400 block">
                               {sheet.title} · {sheet.problemsCount} Questions
                             </span>
@@ -494,7 +498,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                                         <div className="flex items-center justify-between gap-2 flex-wrap">
                                           <div className="flex flex-wrap items-center gap-2 text-stone-900 dark:text-stone-100 text-sm font-bold">
                                             <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                                            <span>Model solution</span>
+                                            <span>{problem.conciseSolution ? 'Worked explanation' : 'Model solution'}</span>
                                             <ArabicText as="span" className="text-[13px] text-stone-600 dark:text-zinc-400">(الحل النموذجي)</ArabicText>
                                           </div>
                                           {problem.correctAnswer !== undefined && (
@@ -506,7 +510,13 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                                           )}
                                         </div>
 
-                                        <p className="text-sm text-stone-800 dark:text-stone-200 leading-relaxed">{problem.solution}</p>
+                                        {problem.conciseSolution && <div className="rounded-xl border border-beige-300 dark:border-stone-700 bg-white dark:bg-stone-900 p-4 space-y-2" data-testid="concise-model-answer">
+                                          <h5 className="text-[13px] font-semibold text-stone-900 dark:text-stone-100">Short model answer · book-grounded</h5>
+                                          <p dir="ltr" className="whitespace-pre-wrap break-words text-sm leading-relaxed text-stone-800 dark:text-zinc-200">{problem.conciseSolution}</p>
+                                          {problem.conciseSolutionAr && <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{problem.conciseSolutionAr}</ArabicText>}
+                                        </div>}
+                                        {problem.sourceReference && <p className="text-[13px] text-stone-600 dark:text-zinc-400">{problem.sourceReference}</p>}
+                                        <p dir="ltr" className="whitespace-pre-wrap break-words text-sm text-stone-800 dark:text-stone-200 leading-relaxed">{problem.solution}</p>
                                         {problem.solutionAr && (
                                           <ArabicText className="text-sm text-stone-700 dark:text-zinc-300 leading-relaxed pt-2 border-t border-beige-200 dark:border-stone-800">
                                             {problem.solutionAr}

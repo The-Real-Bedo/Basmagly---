@@ -186,6 +186,14 @@ export const App: React.FC = () => {
             lecture={selectedLecture}
             initialTab={lectureInitialTab}
             initialExperiment={lectureInitialExperiment}
+            exerciseCount={selectedCourse?.sheets?.find(sheet => sheet.sheetNumber === selectedLecture.lectureNumber)?.problemsCount}
+            onOpenExercises={(selectedCourse?.id === 'windows-programming' || selectedCourse?.id === 'signal-processing') && selectedCourse.sheets?.some(sheet => sheet.sheetNumber === selectedLecture.lectureNumber) ? () => {
+              const sheet = selectedCourse.sheets?.find(item => item.sheetNumber === selectedLecture.lectureNumber);
+              setSelectedSheetId(sheet?.id ?? null);
+              setSelectedLecture(null);
+              setLectureInitialTab('summary');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } : undefined}
             onTabChange={(tab) => setLectureInitialTab(tab)}
             onBackToCourse={() => {
               setSelectedLecture(null);

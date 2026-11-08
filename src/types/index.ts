@@ -29,6 +29,18 @@ export interface QuickCheck {
   explanationAr: string;
 }
 
+export interface CodeExample {
+  title: string;
+  titleAr: string;
+  language: string;
+  code: string;
+  explanation: string;
+  explanationAr: string;
+  memoryCue?: string;
+  memoryCueAr?: string;
+  sourceReference?: string;
+}
+
 export interface SummarySection {
   title: string;
   titleAr: string;
@@ -39,6 +51,8 @@ export interface SummarySection {
   keyRule?: string;
   keyRuleAr?: string;
   quickCheck?: QuickCheck;
+  codeExamples?: CodeExample[];
+  experimentIds?: string[];
 }
 
 export interface TermDefinition {
@@ -82,6 +96,9 @@ export interface SheetProblem {
   correctAnswer?: number | boolean | string;
   solution?: string;
   solutionAr?: string;
+  conciseSolution?: string;
+  conciseSolutionAr?: string;
+  sourceReference?: string;
 }
 
 export interface CourseSheet {

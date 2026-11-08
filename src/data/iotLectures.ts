@@ -409,6 +409,7 @@ const LECTURE_1_SECTIONS: SummarySection[] = [
       'Transmit: a connectivity link carries the reading to a gateway, edge node, or cloud service.',
       'Analyze: software applies rules or analytics and presents an insight or decision.',
       'Actuate/feedback is a useful system-design extension, not part of the slide’s three named stages.',
+      'Worked trace from the agriculture case: collect a soil-moisture reading → transmit it → analyze it to inform an irrigation decision.',
       'The slide describes efficiency, automation, and data-driven insight as benefits across industries.',
     ],
     [
@@ -416,6 +417,7 @@ const LECTURE_1_SECTIONS: SummarySection[] = [
       'النقل: وصلة اتصال بتنقل القراءة لبوابة أو عقدة Edge أو خدمة سحابية.',
       'التحليل: البرمجيات بتطبّق قواعد أو تحليلات وتعرض نتيجة أو قرارًا.',
       'التنفيذ والتغذية الراجعة امتداد مفيد للتصميم، لكن مش من المراحل الثلاث المذكورة في الشريحة.',
+      'تطبيق من مثال الزراعة: اجمع قراءة رطوبة التربة ← انقلها ← حلّلها عشان تساعد في قرار الري.',
       'الشريحة بتعرض الكفاءة والأتمتة والرؤى المبنية على البيانات كفوائد في قطاعات مختلفة.',
     ],
     'Remember the source figure as Collect → Transmit → Analyze; label any Act stage as an added feedback extension.',

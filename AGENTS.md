@@ -135,3 +135,11 @@ Rules that keep it readable:
 - The source ZIP and extracted texts are private workspace inputs under `.hoplite/`; do not commit them. File/page coverage and remaining verification live in `docs/CONTINUATION.md`. A future model should read that report, then current files and applicable instructions before editing.
 - Preserve existing course/lecture/question IDs. New source-backed courses and lab IDs are allowed when requested; keep the data, lab catalogue and rendered registry aligned. Historical counts and original allowed-ID list above describe the initial version, not a cap on requested additions.
 - Commit coherent verified checkpoints. The agent cannot read the user's daily/overall quota percentage; never claim detection of a 98% threshold. If interrupted, preserve completed work, explicitly record incomplete checks, and publish to the existing task branch when authorized. Do not merge or force-push.
+
+## 10. Book-chapter study upgrade (2026-11-08)
+
+- The current request explicitly expands Windows Programming to the reference book's real Chapters 1 and 2 (Foundations and SDK), including code and end-of-chapter exercises. Do not mistake Foundation I/II lecture parts for two complete book chapters.
+- Signal Processing is limited to book Chapter 1. Consolidate its foundation parts under one chapter; later reference chapters remain outside this request.
+- Preserve authentic question numbering, wording and choices. Give book-grounded worked and concise answers with page references, but do not claim the generated solutions are the author's official answer key. Mark source omissions or unclear notation rather than inventing missing questions.
+- Code examples belong in dedicated LTR code blocks, with context, memory cues and independently checked API/error/resource behavior. Interactive teaching models must label their limitations; maintain English-first instruction with accurate supporting Arabic.
+- `docs/CONTINUATION.md` is the handoff entry point. Quota percentages are not observable; keep verified checkpoints and explicit remaining checks rather than claiming a 98% warning was detected. The latest user authorizes an emergency save/push if work is interrupted; no main-branch merge is authorized.

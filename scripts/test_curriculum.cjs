@@ -64,6 +64,16 @@ for (const course of COURSES_DATA) {
     for (const section of lecture.sections) {
       pair(section.content, section.contentAr, section.title);
       assert.equal(section.bulletPoints?.length ?? 0, section.bulletPointsAr?.length ?? 0, `${lecture.id}: bullet translation count`);
+      for (const id of section.experimentIds ?? []) {
+        assert.ok(lecture.interactiveTools.includes(id), `${lecture.id}: embedded lab not in lecture ${id}`);
+        assert.ok(LAB_CATALOG.some(lab => lab.id === id), `${lecture.id}: unknown embedded lab ${id}`);
+      }
+      for (const example of section.codeExamples ?? []) {
+        pair(example.title, example.titleAr, `${lecture.id}: code title`);
+        pair(example.explanation, example.explanationAr, `${lecture.id}: code explanation`);
+        assert.ok(example.code.trim(), `${lecture.id}: empty code example`);
+        if (example.memoryCue || example.memoryCueAr) pair(example.memoryCue, example.memoryCueAr, `${lecture.id}: memory cue`);
+      }
       if (section.quickCheck) {
         const q = section.quickCheck;
         pair(q.question, q.questionAr, `${lecture.id}: quick check`);
@@ -82,6 +92,12 @@ for (const course of COURSES_DATA) {
       unique(problem.id);
       pair(problem.question, problem.questionAr, problem.id);
       if (sheet.hasSolution) pair(problem.solution, problem.solutionAr, `${problem.id}: solution`);
+      if (problem.conciseSolution || problem.conciseSolutionAr) pair(problem.conciseSolution, problem.conciseSolutionAr, `${problem.id}: concise solution`);
+      if (problem.type === 'mcq') {
+        assert.equal(problem.options?.length, problem.optionsAr?.length, `${problem.id}: sheet option translations`);
+        assert.ok(Number.isInteger(problem.correctAnswer) && problem.correctAnswer >= 0 && problem.correctAnswer < problem.options.length, `${problem.id}: invalid sheet answer`);
+      }
+      if (problem.type === 'true_false') assert.equal(typeof problem.correctAnswer, 'boolean', `${problem.id}: sheet boolean answer`);
     }
   }
 }
@@ -92,6 +108,23 @@ for (const lab of LAB_CATALOG) {
   assert.ok(lecture.interactiveTools.includes(lab.id), `${lab.id}: destination does not include lab`);
   assert.ok(studio.includes(`'${lab.id}': lazy(`), `${lab.id}: missing lazy component`);
 }
+const windows = COURSES_DATA.find(course => course.id === 'windows-programming');
+const signals = COURSES_DATA.find(course => course.id === 'signal-processing');
+assert.equal(windows.lectures.length, 2, 'Windows requires the two requested book chapters');
+assert.equal(signals.lectures.length, 1, 'Signal scope is book Chapter 1 only');
+for (const sheet of windows.sheets) {
+  assert.equal(sheet.problems.length, 35, `${sheet.id}: original book inventory`);
+  assert.deepEqual(sheet.problems.map(problem => problem.problemNumber), Array.from({ length: 35 }, (_, i) => i + 1));
+  assert.equal(sheet.problems.filter(problem => problem.type === 'mcq').length, 10);
+  assert.equal(sheet.problems.filter(problem => problem.type === 'true_false').length, 10);
+  assert.ok(sheet.problems.every(problem => problem.conciseSolution && problem.sourceReference));
+}
+assert.equal(windows.sheets.length, 2);
+assert.equal(signals.sheets.length, 1);
+assert.deepEqual(signals.sheets[0].problems.map(problem => problem.problemNumber), Array.from({ length: 23 }, (_, i) => i + 1));
+assert.ok(signals.sheets[0].problems.every(problem => problem.conciseSolution && problem.sourceReference));
+assert.ok(signals.sheets[0].problems[22].question.includes('Source note:'), 'Signal Q23 source omission must remain explicit');
+
 const lectures = COURSES_DATA.flatMap(c => c.lectures);
 console.log(`Curriculum checks passed: ${COURSES_DATA.length} courses, ${lectures.length} lectures, ${lectures.reduce((n, l) => n + l.questions.length, 0)} questions, ${LAB_CATALOG.length} registered experiments.`);
 

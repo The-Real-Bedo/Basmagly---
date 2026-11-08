@@ -80,16 +80,21 @@ const ai2Sections: SummarySection[] = [
       'Observability: fully observable or partially observable; agents in partial environments may need memory.',
       'Other dimensions: single-agent or multiagent; deterministic or stochastic; episodic or sequential.',
       'Time and representation: static, dynamic, or semidynamic; discrete or continuous.',
-      'Knowledge: known or unknown. Chess with a clock is semidynamic because the board stays fixed while the score or remaining time changes.',
+      'Knowledge: rules and action outcomes are known, or the agent must learn how an unknown environment works.',
+      'Taxi driving is typically partially observable, multiagent, stochastic, sequential, dynamic, and continuous; its current percept does not reveal the whole traffic state.',
+      'Chess with a clock is fully observable, multiagent, deterministic, sequential, semidynamic, and discrete: the board can stay fixed while time falls. Image analysis is a contrasting episodic task.',
     ],
     bulletPointsAr: [
       'قابلية الملاحظة: كاملة أو جزئية؛ والبيئة الجزئية ممكن تحتاج من الـ Agent إنه يحتفظ بذاكرة.',
       'أبعاد تانية: وكيل واحد أو عدة وكلاء؛ حتمية أو احتمالية؛ حلقية مستقلة أو متتابعة.',
       'الوقت والتمثيل: ثابتة أو ديناميكية أو شبه ديناميكية؛ ومتقطعة أو مستمرة.',
-      'المعرفة: معروفة أو غير معروفة. الشطرنج مع ساعة شبه ديناميكي لأن اللوحة ثابتة لكن الوقت أو النتيجة بيتغيروا.',
+      'المعرفة: قواعد البيئة ونتائج الأفعال معروفة، أو إن الـAgent محتاج يتعلم إزاي البيئة المجهولة بتشتغل.',
+      'قيادة التاكسي غالبًا جزئية الملاحظة ومتعددة الوكلاء واحتمالية ومتتابعة وديناميكية ومستمرة؛ الإدراك الحالي مش بيكشف حالة المرور كلها.',
+      'الشطرنج مع ساعة كامل الملاحظة ومتعدد الوكلاء وحتمي ومتتابع وشبه ديناميكي ومتقطع: اللوحة ممكن تفضل ثابتة والوقت يقل. تحليل الصور مثال مختلف لمهمة حلقية مستقلة.',
     ],
     keyRule: 'A sequential, stochastic, or multiagent environment generally needs more than a current-percept reflex.',
     keyRuleAr: 'البيئة المتتابعة أو الاحتمالية أو متعددة الوكلاء غالبًا محتاجة أكتر من رد فعل على الإدراك الحالي.',
+    experimentIds: ['ai-environments'],
   },
 ];
 
@@ -347,7 +352,7 @@ const makeLecture = (
 
 export const AI_REMAINING_LECTURES: Lecture[] = [
   makeLecture(
-    'ai-lec-2', ai2Sections, ai2Terms, ai2Cheats, ['vacuum-world', 'agent-architecture'],
+    'ai-lec-2', ai2Sections, ai2Terms, ai2Cheats, ['vacuum-world', 'agent-architecture', 'ai-environments'],
     'How agents perceive and act, rationality, reflex and goal-based designs, PEAS, and task-environment dimensions.',
     'إزاي الوكلاء بيدركوا وبيتصرفوا، والعقلانية، وتصميمات رد الفعل والهدف، وPEAS، وأبعاد بيئة المهمة.',
   ),

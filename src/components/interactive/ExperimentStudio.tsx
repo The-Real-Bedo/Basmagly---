@@ -26,6 +26,14 @@ const experiments = {
   'event-driven-lab': lazy(() => import('./EventDrivenLab').then(m => ({ default: m.EventDrivenLab }))),
   'signal-sampling': lazy(() => import('./SignalSamplingLab').then(m => ({ default: m.SignalSamplingLab }))),
   'discrete-signals': lazy(() => import('./DiscreteSignalsLab').then(m => ({ default: m.DiscreteSignalsLab }))),
+  'win32-code-lab': lazy(() => import('./Win32CodeLab').then(m => ({ default: m.Win32CodeLab }))),
+  'win32-types-lab': lazy(() => import('./Win32TypesLab').then(m => ({ default: m.Win32TypesLab }))),
+  'network-media': lazy(() => import('./NetworkMediaLab').then(m => ({ default: m.NetworkMediaLab }))),
+  'ai-environments': lazy(() => import('./AiEnvironmentLab').then(m => ({ default: m.AiEnvironmentLab }))),
+  'signal-support': lazy(() => import('./SignalSupportLab').then(m => ({ default: m.SignalSupportLab }))),
+  'signal-periodicity': lazy(() => import('./SignalPeriodicityLab').then(m => ({ default: m.SignalPeriodicityLab }))),
+  'signal-systems': lazy(() => import('./SignalSystemsLab').then(m => ({ default: m.SignalSystemsLab }))),
+  'signal-convolution': lazy(() => import('./SignalConvolutionLab').then(m => ({ default: m.SignalConvolutionLab }))),
 } satisfies Record<LabId, React.LazyExoticComponent<React.ComponentType>>;
 
 export const Experiment: React.FC<{ id: string }> = ({ id }) => {

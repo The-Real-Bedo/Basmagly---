@@ -13,11 +13,15 @@ interface LectureSummaryProps {
   initialTab?: StudyTab;
   initialExperiment?: string;
   onTabChange?: (tab: StudyTab) => void;
+  onOpenExercises?: () => void;
+  exerciseCount?: number;
   onBackToCourse: () => void;
 }
 
-export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', initialExperiment, onTabChange, onBackToCourse }) => {
+export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', initialExperiment, onTabChange, onOpenExercises, exerciseCount, onBackToCourse }) => {
   const units = getCourseUnitLabels(lecture.courseId);
+  const embeddedIds = new Set(lecture.sections.flatMap(section => section.experimentIds ?? []));
+  const remainingExperimentIds = lecture.interactiveTools.filter(id => !embeddedIds.has(id));
   const [activeTab, setActiveTab] = useState<StudyTab>(initialTab);
   useEffect(() => { setActiveTab(initialTab); }, [initialTab, lecture.id]);
   const changeTab = (tab: StudyTab) => { setActiveTab(tab); onTabChange?.(tab); };
@@ -52,8 +56,9 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
       {lecture.sections.length > 1 && <nav aria-label="Sections" className="min-w-0 flex gap-2 overflow-x-auto pb-2">
         {lecture.sections.map((section, index) => <button key={index} onClick={() => document.getElementById(sectionAnchorId(index))?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="flex shrink-0 items-center gap-2 rounded-xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 px-3 py-2 text-sm text-stone-700 dark:text-zinc-300 hover:border-stone-400 dark:hover:border-stone-600"><span className="font-mono text-[13px] text-amber-800 dark:text-amber-300">{String(index + 1).padStart(2, '0')}</span>{stripLeadingNumber(section.title)}</button>)}
       </nav>}
-      {lecture.sections.map((section, index) => <LectureSection key={`${lecture.id}-${index}`} section={section} index={index} total={lecture.sections.length} />)}
-      {lecture.interactiveTools.length > 0 && <section className="space-y-4" aria-label="Experiments alongside the notes"><div><h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">Put the ideas in motion</h2><p className="text-sm text-stone-600 dark:text-zinc-400 mt-1">Open an experiment here, without leaving your notes.</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400 mt-1">افتح التجربة هنا من غير ما تسيب الشرح.</ArabicText></div>{lecture.interactiveTools.map(id => <InlineExperiment key={`${lecture.id}-${id}`} id={id} />)}</section>}
+      {lecture.sections.map((section, index) => <LectureSection key={`${lecture.id}-${index}`} section={{ ...section, experimentIds: section.experimentIds?.filter(id => lecture.sections.findIndex(item => item.experimentIds?.includes(id)) === index) }} index={index} total={lecture.sections.length} />)}
+      {onOpenExercises && <section className="rounded-3xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-5 sm:p-7 space-y-3" data-testid="chapter-exercises-link"><h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">Finish the chapter with its original exercises</h2><p className="text-sm text-stone-600 dark:text-zinc-400">{exerciseCount} source questions, with worked explanations and short book-grounded model answers. Answers are study guidance, not an official author answer key.</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400">خلّص الفصل بأسئلته الأصلية، ومعاها حل مفصّل وإجابة مختصرة مبنيين على الكتاب، مش مفتاح إجابة رسمي من المؤلف.</ArabicText><button type="button" onClick={onOpenExercises} className="inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 hover:bg-stone-800 dark:hover:bg-white">Open chapter exercises<ArrowUpRight className="h-4 w-4" /></button></section>}
+      {remainingExperimentIds.length > 0 && <section className="space-y-4" aria-label="Experiments alongside the notes"><div><h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">Put the ideas in motion</h2><p className="text-sm text-stone-600 dark:text-zinc-400 mt-1">Open an experiment here, without leaving your notes.</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400 mt-1">افتح التجربة هنا من غير ما تسيب الشرح.</ArabicText></div>{remainingExperimentIds.map(id => <InlineExperiment key={`${lecture.id}-${id}`} id={id} />)}</section>}
     </div>}
 
     {activeTab === 'interactive' && <ExperimentStudio key={lecture.id} ids={lecture.interactiveTools} initialExperiment={initialExperiment} />}
