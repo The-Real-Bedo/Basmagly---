@@ -8,8 +8,8 @@
    ========================================================================== */
 :root {
   /* Typography Tokens */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-arabic: 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-arabic: 'Tajawal', system-ui, -apple-system, sans-serif;
   --font-display: 'Changa', 'Cairo', system-ui, -apple-system, sans-serif; /* brand wordmark only */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
