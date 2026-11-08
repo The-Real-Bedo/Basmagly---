@@ -28,7 +28,7 @@ Mobile Programming (Coming soon) replaces Database Systems/Software Engineering 
 - Fresh browser matrix: **84 checks** (12 summaries +30 experiments ×light/dark at375px) pass without document horizontal overflow, including rendered code block counts. All three chapter sheets with **all 93 answers revealed** were checked in both themes at375px (6 checks), each rendering the exact expected count of concise answers without overflow.
 - Browser flows exercised: code recall/reveal, chapter→matching sheet link, short/worked answer reveal, Win32 mouse dispatch/WM_CHAR/reset, pointer-width x86/x64, convolution stepping/reset, nonlinear and time-varying counterexamples, support mappings, fundamental period2/step anomaly, throughput constraints and agent-world views. No current application errors returned by the browser.
 - Pure math checks confirmed full moving-average example `[3,0,6]*[1/3,1/3,1/3]=[1,1,3,2,2]` and all five support intervals. The input vector is explicitly a teaching example; coefficients follow the book's equation.
-- Desktop code/convolution screenshots inspected; private artifacts live under `.hoplite/artifacts/` and are not committed. Independent review is being finalized; record its findings/corrections below before declaring final completion.
+- Desktop code/convolution screenshots inspected; private artifacts live under `.hoplite/artifacts/` and are not committed. Independent source and implementation review completed; acceptance and limits are recorded below.
 
 ## Publication and quota
 The user previously asked to batch local changes without pushing, then requested an emergency push at 98% daily/overall usage. **No tool exposes either quota percentage**, so that trigger cannot be detected or guaranteed. Preserve verified local commits and this handoff; do not claim a threshold was observed. No main-branch merge is authorized.
@@ -36,6 +36,11 @@ The user previously asked to batch local changes without pushing, then requested
 PR #8 was found merged. Current work uses derived branch **`hoplite/ioulis-f08d7e22--chapter-studios`** based on `origin/main` and carries the six pending local UI commits on top. No force-push was used. The previous original-branch commits remain recoverable. Publication status for this chapter upgrade: **not pushed yet**; do not confuse the managed private Preview with the live GitHub Pages site.
 
 ## Remaining acceptance / limitations
-1. Finish independent source/solution review and resolve concrete findings; append acceptance evidence below.
+1. No known blocking acceptance item remains for this request; optional performance, accessibility or broader scenario work is outside this completed scope.
 2. No native Windows execution, live network measurements, real audio processing, full reference-book coverage beyond requested chapters, or proof that finite plots establish analytic properties is claimed.
 3. Further UI/performance/accessibility polishing or additional book chapters require a separate scoped request; do not indefinitely add simulators after the requested acceptance gates pass.
+
+## Independent acceptance and saved state
+A separate read-only reviewer compared the two Windows chapter inventories/MCQ and true-false keys with the supplied source and checked Signal’s sensitive support, periodicity, quantization and convolution answers. The reviewer found no blocking answer-key or core-math error. Printed −z..z summation ambiguity and Signal Q23’s missing formulas remain explicitly qualified. This is a bounded independent review, not a guarantee of zero editorial errors or an official author endorsement.
+
+Implementation checkpoint: `ecf7ee8`. All code/build/curriculum checks and the 84-panel plus 6-revealed-sheet browser checks passed; no application errors were observed in current checks. The initial bundle warning remains. This documentation completion is committed separately. **The chapter upgrade and preceding local UI refinements have not been pushed**, preserving the user's batching restriction because the conditional 98% quota trigger is not observable. On explicit publication authorization, push the current derived branch with an explicit refspec, create a PR targeting main, and verify CI/deployment separately; never merge or force-push automatically.

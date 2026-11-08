@@ -1,3 +1,5 @@
+> Updated scope: the book-chapter upgrade now covers real Windows book Chapters 1–2 and only Signal book Chapter 1, with original end-of-chapter exercises. See `docs/CONTINUATION.md` and `docs/windows-chapters-source-map.md`; the deck-level map below is retained as prior-milestone history.
+
 # Source coverage and teaching-model boundaries
 
 English is primary throughout the reading and experiment interface. Egyptian Arabic supports the same concepts. Page numbers refer to physical PDF pages, not an assumed printed-page offset. The original PDFs and raw OCR remain private inputs, not committed assets.
