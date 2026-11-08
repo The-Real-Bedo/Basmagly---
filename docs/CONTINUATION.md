@@ -50,3 +50,5 @@ The user requested replacing the two unavailable Database Systems / Software Eng
 The next local-only follow-up renames Computer Networks to CCNA, sets its instructor to د. سامية, and renames Visual & Windows Programming to Windows Programming (برمجة Windows). Course/lecture IDs and all teaching content remain unchanged. This correction is also held locally for the same unpublished batch.
 
 Another local-only follow-up replaces the navbar/footer tagline with “بصمجة؟ آه. عمياني؟ لأ.” and turns the homepage hero into a lighthearted Egyptian Arabic study notice: cramming may have worked before, but no grades are promised. An English counterpart remains, and instructional content stays English-first. This is still part of the unpublished batch; do not push until asked.
+
+Latest local-only refinement: keep the tagline inline beside the Arabic wordmark in both navbar and footer (never below the logo), remove the hero notice’s English translation at the user’s request, and use the exact colloquial spelling “موعدكش.”. Instructional English-first content is unchanged; publication remains on hold.

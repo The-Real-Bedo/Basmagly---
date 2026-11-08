@@ -247,14 +247,11 @@ export const App: React.FC = () => {
                   <ArabicText as="h2" className="text-xl sm:text-2xl font-semibold leading-relaxed text-stone-900 dark:text-stone-100">
                     <span className="block">البصمجة ياما جابت تقديرات.</span>
                     <span className="block">بس هتظبط المرة دي؟</span>
-                    <span className="mt-2 block text-3xl sm:text-4xl font-bold text-amber-800 dark:text-amber-300">ما أوعدكش.</span>
+                    <span className="mt-2 block text-3xl sm:text-4xl font-bold text-amber-800 dark:text-amber-300">موعدكش.</span>
                   </ArabicText>
                   <ArabicText className="text-sm sm:text-base text-stone-700 dark:text-zinc-300">
                     اللي نقدر عليه: نلمّ لك المنهج، ونفكّ لك الفكرة. الباقي عليك يا هندسة.
                   </ArabicText>
-                  <p className="border-t border-beige-300 dark:border-stone-800 pt-3 text-[13px] leading-relaxed text-stone-600 dark:text-zinc-400">
-                    Cramming has landed good grades before. Will it work this time? No promises. We can pull the material together and unpack the ideas. The rest is on you.
-                  </p>
                 </aside>
               </div>
 

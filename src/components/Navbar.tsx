@@ -1,6 +1,5 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { ArabicText } from './ArabicText';
 import { BrandLogo } from './BrandLogo';
 
 interface NavbarProps {
@@ -28,15 +27,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <div className="min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <BrandLogo />
+              <BrandLogo tagline="بصمجة؟ آه. عمياني؟ لأ." />
               <span className="hidden sm:inline px-2 py-0.5 rounded-md text-[13px] font-mono font-bold bg-beige-200 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-300 dark:border-stone-700">
                 2026/2027
               </span>
             </div>
-            {/* Tagline: hidden on small screens so the brand and controls fit on one row */}
-            <ArabicText as="p" className="hidden lg:block text-sm font-medium text-stone-600 dark:text-zinc-300 pt-1 text-left">
-              بصمجة؟ آه. عمياني؟ لأ.
-            </ArabicText>
           </div>
         </button>
 
