@@ -143,3 +143,10 @@ Rules that keep it readable:
 - Preserve authentic question numbering, wording and choices. Give book-grounded worked and concise answers with page references, but do not claim the generated solutions are the author's official answer key. Mark source omissions or unclear notation rather than inventing missing questions.
 - Code examples belong in dedicated LTR code blocks, with context, memory cues and independently checked API/error/resource behavior. Interactive teaching models must label their limitations; maintain English-first instruction with accurate supporting Arabic.
 - `docs/CONTINUATION.md` is the handoff entry point. Quota percentages are not observable; keep verified checkpoints and explicit remaining checks rather than claiming a 98% warning was detected. The latest user authorizes an emergency save/push if work is interrupted; no main-branch merge is authorized.
+
+## 11. Latest approved typography and pending publication (2026-11-08)
+
+- Read `docs/CONTINUATION.md` first for current scope, proofs, branch and pending publication. The current task branch is `hoplite/ioulis-f08d7e22--chapter-studios`; do not replace it or reimplement finished chapters.
+- The user selected **Manrope for English and Tajawal for Arabic**. They are now configured in index.html, CSS tokens and Tailwind fallbacks. Keep Changa for the brand and JetBrains Mono for code. The private comparison specimen is not a shipped feature.
+- Do not restore any instructor names. Course metadata intentionally omits all instructor fields. Keep the single English category badge per lab card and the hero notice at 75% desktop-column width, full width on mobile.
+- Recent homepage/category, instructor-removal and typography changes are local commits until explicit push authorization. Never claim main or production has these changes without checking GitHub. No merge/force-push is permitted through the agent.

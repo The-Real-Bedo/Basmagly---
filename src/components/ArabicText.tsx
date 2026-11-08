@@ -67,7 +67,7 @@ interface ArabicTextProps {
 /**
  * ArabicText Component
  * - Forces dir="rtl" and text-align: right (override with text-center/text-left via className)
- * - Applies IBM Plex Sans Arabic / Cairo typography with 1.75 line-height
+ * - Applies Tajawal typography with 1.75 line-height
  * - Automatically wraps embedded English terms in <bdi dir="ltr"> to prevent punctuation flips
  */
 export const ArabicText: React.FC<ArabicTextProps> = ({

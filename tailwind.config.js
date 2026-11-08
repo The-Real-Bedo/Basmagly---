@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', '"Inter"', 'system-ui', 'sans-serif'],
-        arabic: ['var(--font-arabic)', '"IBM Plex Sans Arabic"', '"Cairo"', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', '"Manrope"', 'system-ui', 'sans-serif'],
+        arabic: ['var(--font-arabic)', '"Tajawal"', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', '"Changa"', '"Cairo"', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', '"JetBrains Mono"', 'monospace'],
       },
