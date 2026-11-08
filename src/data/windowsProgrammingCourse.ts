@@ -711,7 +711,6 @@ export const WINDOWS_PROGRAMMING_COURSE: Course = {
   id: 'windows-programming',
   title: 'Windows Programming',
   titleAr: 'برمجة Windows',
-  instructor: 'Dr. Mousaad W. Hassan',
   description: 'A source-grounded study of Windows Programming textbook Chapters 1–2: event-driven foundations, the Windows message model, and the raw Win32 Software Development Kit. English explanations are primary, with matched Egyptian Arabic support, memorable code, exact end-of-chapter exercises, model answers, and interactive labs.',
   descriptionAr: 'مذاكرة مستندة للكتاب للفصلين 1 و2 في برمجة Windows: أساسيات البرمجة المعتمدة على الأحداث، ونموذج رسائل Windows، وWin32 SDK الخام. الشرح الإنجليزي هو الأساس ومعاه دعم عربي مصري مطابق، وأكواد سهلة الحفظ، ونص أسئلة نهاية الفصل كما ورد، وإجابات نموذجية ومحاكاة تفاعلية.',
   term: 1,
