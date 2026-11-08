@@ -4,9 +4,9 @@ import type { Course } from '../types';
 export const COURSES_DATA: Course[] = [
   {
     "id": "networks",
-    "title": "Computer Networks",
-    "titleAr": "شبكات الحاسب",
-    "instructor": "Cisco Networking Curriculum",
+    "title": "CCNA",
+    "titleAr": "شبكات الحاسب (CCNA)",
+    "instructor": "د. سامية",
     "description": "Comprehensive coverage of network fundamentals, the OSI 7-layer and TCP/IP reference models, devices, topologies, transmission modes, and IPv4 addressing and subnetting.",
     "descriptionAr": "تغطية شاملة لأساسيات الشبكات، والنماذج المرجعية OSI (7 طبقات) و TCP/IP، والأجهزة، والطوبولوجيا، وأنماط الإرسال، وعنونة IPv4 وتقسيم الشبكات (Subnetting).",
     "term": 1,
@@ -2658,8 +2658,8 @@ export const COURSES_DATA: Course[] = [
   },
   {
     "id": "windows-programming",
-    "title": "Visual & Windows Programming",
-    "titleAr": "البرمجة المرئية وبرمجة تطبيقات Windows",
+    "title": "Windows Programming",
+    "titleAr": "برمجة Windows",
     "instructor": "هيئة التدريس",
     "description": "Desktop GUI application development using C# and the Microsoft .NET Framework, Windows Forms, event-driven programming, and database connectivity.",
     "descriptionAr": "تطوير تطبيقات سطح المكتب ذات الواجهات الرسومية (GUI) باستخدام لغة C# وإطار عمل Microsoft .NET وتقنية Windows Forms، وبرمجة الأحداث (Event-Driven)، والاتصال بقواعد البيانات.",

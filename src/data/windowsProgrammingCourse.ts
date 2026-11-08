@@ -404,8 +404,8 @@ const messageTerms: TermDefinition[] = [
 
 export const WINDOWS_PROGRAMMING_COURSE: Course = {
   id: 'windows-programming',
-  title: 'Visual & Windows Programming',
-  titleAr: 'البرمجة المرئية وبرمجة Windows',
+  title: 'Windows Programming',
+  titleAr: 'برمجة Windows',
   instructor: 'Dr. Mousaad W. Hassan',
   description: 'Foundation lectures in event-driven Windows programming: the operating-system event path, Windows programming concepts, the Win32 message model, and the language families introduced in the supplied Chapter 1 materials.',
   descriptionAr: 'محاضرات تأسيسية في برمجة Windows المعتمدة على الأحداث: مسار الأحداث في نظام التشغيل، ومفاهيم برمجة Windows، ونموذج رسائل Win32، وعائلات اللغات المقدّمة في مواد الفصل الأول المرفوعة.',
