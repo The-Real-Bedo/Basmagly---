@@ -1,5 +1,6 @@
 import React from 'react';
 import { Course } from '../types';
+import { getCourseUnitLabels } from '../utils/courseUnits';
 import { BookOpen, HelpCircle, ArrowRight, User, Network, Bot, Cpu, Layout, Smartphone, Wrench } from 'lucide-react';
 import { ArabicText, hasArabic } from './ArabicText';
 
@@ -17,6 +18,7 @@ interface CourseCardProps {
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
+  const units = getCourseUnitLabels(course.id);
   const IconComp = ICON_MAP[course.icon] || BookOpen;
   const totalQuestions = course.lectures.reduce((acc, l) => acc + l.questions.length, 0);
   const totalTools = course.lectures.reduce((acc, l) => acc + l.interactiveTools.length, 0);
@@ -87,7 +89,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-stone-700 dark:text-zinc-300 font-medium">
           <span className="flex items-center gap-1.5">
             <BookOpen className="w-[18px] h-[18px] text-stone-500 dark:text-zinc-400 shrink-0" />
-            <span>{course.lectures.length} Lectures</span>
+            <span>{course.lectures.length} {units.plural}</span>
           </span>
           {totalTools > 0 && (
             <span className="flex items-center gap-1.5">

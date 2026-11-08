@@ -238,7 +238,7 @@ export const App: React.FC = () => {
                 <h1 className="pt-1">
                   <BrandLogo size="hero" />
                 </h1>
-                <aside data-testid="hero-study-notice" className="mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 min-h-[320px] p-6 sm:p-8 flex flex-col justify-between gap-6">
+                <aside data-testid="hero-study-notice" className="mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 min-h-[240px] p-5 sm:p-6 flex flex-col justify-between gap-3">
                   <div className="flex items-center justify-end gap-2 text-amber-800 dark:text-amber-300">
                     <ArabicText as="span" className="text-[13px] font-semibold text-inherit">تنبيه قبل البصمجة</ArabicText>
                     <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />

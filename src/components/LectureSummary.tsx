@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Sparkles, BookA, FlaskConical, HelpCircle, ChevronLeft, Clock, ArrowUpRight } from 'lucide-react';
 import { Lecture } from '../types';
+import { getCourseUnitLabels } from '../utils/courseUnits';
 import { ArabicText } from './ArabicText';
 import { LectureSection, sectionAnchorId, stripLeadingNumber } from './LectureSection';
 import { ExperimentStudio, InlineExperiment } from './interactive/ExperimentStudio';
@@ -16,6 +17,7 @@ interface LectureSummaryProps {
 }
 
 export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', initialExperiment, onTabChange, onBackToCourse }) => {
+  const units = getCourseUnitLabels(lecture.courseId);
   const [activeTab, setActiveTab] = useState<StudyTab>(initialTab);
   useEffect(() => { setActiveTab(initialTab); }, [initialTab, lecture.id]);
   const changeTab = (tab: StudyTab) => { setActiveTab(tab); onTabChange?.(tab); };
@@ -29,9 +31,9 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
 
   return <div className="min-w-0 space-y-6 [overflow-wrap:anywhere]">
     <header className="rounded-3xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 sm:p-8 shadow-sm space-y-5">
-      <button onClick={onBackToCourse} className="inline-flex flex-wrap gap-1.5 items-center text-sm font-semibold text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-white"><ChevronLeft className="w-4 h-4" />Course outline<ArabicText as="span" className="text-inherit text-[13px]">الرجوع للمحاضرات</ArabicText></button>
+      <button onClick={onBackToCourse} className="inline-flex flex-wrap gap-1.5 items-center text-sm font-semibold text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-white"><ChevronLeft className="w-4 h-4" />Course outline<ArabicText as="span" className="text-inherit text-[13px]">{`الرجوع لـ${units.pluralAr}`}</ArabicText></button>
       <div className="max-w-4xl space-y-3">
-        <div className="flex flex-wrap gap-3 items-center font-mono text-[13px] text-stone-500 dark:text-zinc-400"><span className="text-amber-800 dark:text-amber-300">LECTURE {String(lecture.lectureNumber).padStart(2, '0')}</span><span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{lecture.durationMinutes} min study guide</span></div>
+        <div className="flex flex-wrap gap-3 items-center font-mono text-[13px] text-stone-500 dark:text-zinc-400"><span className="text-amber-800 dark:text-amber-300">{units.singular.toUpperCase()} {String(lecture.lectureNumber).padStart(2, '0')}</span><span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{lecture.durationMinutes} min study guide</span></div>
         <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-stone-900 dark:text-stone-100">{lecture.title}</h1>
         <ArabicText className="text-base text-stone-600 dark:text-zinc-400">{lecture.titleAr}</ArabicText>
         <p className="text-[15px] leading-relaxed text-stone-700 dark:text-zinc-300">{lecture.brief}</p>

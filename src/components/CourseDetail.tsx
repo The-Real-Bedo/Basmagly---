@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Course, Lecture, SheetProblem } from '../types';
+import { getCourseUnitLabels } from '../utils/courseUnits';
 import {
   BookOpen,
   User,
@@ -63,6 +64,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
   };
 
   const totalQuestions = course.lectures.reduce((acc, l) => acc + l.questions.length, 0);
+  const units = getCourseUnitLabels(course.id);
   const totalTools = course.lectures.reduce((acc, l) => acc + l.interactiveTools.length, 0);
   const totalSheets = course.sheets?.length || 0;
 
@@ -110,7 +112,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
           {/* Quick Metrics */}
           <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
             <div className="bg-[#FAF7F2] dark:bg-stone-950 p-3.5 rounded-2xl text-center min-w-[80px] border border-beige-300 dark:border-stone-800">
-              <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">Lectures</span>
+              <span className="text-[13px] text-stone-600 dark:text-zinc-400 block font-mono">{units.plural}</span>
               <span className="text-xl font-bold font-mono text-stone-900 dark:text-stone-100">
                 {course.lectures.length}
               </span>
@@ -142,10 +144,10 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
         <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-stone-700 dark:text-zinc-300" />
-            <span>Lectures & Study Units ({course.lectures.length})</span>
+            <span>{units.plural} & Study Units ({course.lectures.length})</span>
           </div>
           <ArabicText as="span" className="text-sm font-normal text-stone-600 dark:text-zinc-400">
-            المحاضرات ووحدات المذاكرة
+            {units.pluralAr} ووحدات المذاكرة
           </ArabicText>
         </h2>
 
@@ -159,7 +161,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                 <div className="min-w-0 space-y-2.5 max-w-3xl">
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <span className="px-3 py-1 rounded-md text-[13px] font-bold font-mono bg-beige-100 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 border border-beige-200 dark:border-stone-700">
-                      Lecture {lec.lectureNumber}
+                      {units.singular} {lec.lectureNumber}
                     </span>
                     <span className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-zinc-400 font-mono">
                       <Clock className="w-3.5 h-3.5" />
@@ -199,7 +201,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                   className="max-w-full px-4 sm:px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold text-sm shadow-sm transition-all flex flex-wrap items-center justify-center gap-2 shrink-0 active:scale-95"
                 >
                   <span className="font-arabic">ابدأ المذاكرة</span>
-                  <span className="font-mono font-medium text-[13px] opacity-80">(Open Lecture)</span>
+                  <span className="font-mono font-medium text-[13px] opacity-80">(Open {units.singular})</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -207,8 +209,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
           </div>
         ) : (
           <div className="bg-[#FAF7F2] dark:bg-stone-950 border border-dashed border-beige-300 dark:border-stone-800 rounded-3xl p-10 text-center space-y-3">
-            <h3 className="text-base font-bold text-stone-900 dark:text-stone-100 text-center">No lectures available yet</h3>
-            <ArabicText className="text-sm text-stone-600 dark:text-stone-300 max-w-lg mx-auto leading-relaxed text-center">لا توجد محاضرات متاحة للمادة حاليًا.</ArabicText>
+            <h3 className="text-base font-bold text-stone-900 dark:text-stone-100 text-center">No {units.plural.toLowerCase()} available yet</h3>
+            <ArabicText className="text-sm text-stone-600 dark:text-stone-300 max-w-lg mx-auto leading-relaxed text-center">{units.emptyAr}</ArabicText>
           </div>
         )}
       </div>
