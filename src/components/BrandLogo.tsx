@@ -24,7 +24,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ size = 'nav', showLatin = 
       >
         <Fingerprint className={isHero ? 'w-8 h-8' : 'w-6 h-6'} strokeWidth={2.25} />
       </span>
-      <span className={`flex items-baseline gap-2 min-w-0 ${tagline ? 'flex-nowrap' : 'flex-wrap'}`}>
+      <span className={`flex min-w-0 ${tagline ? 'flex-col items-start gap-1.5' : 'items-baseline gap-2 flex-wrap'}`}>
         <span
           dir="rtl"
           className={`font-display font-extrabold leading-none whitespace-nowrap text-stone-900 dark:text-stone-100 ${
@@ -33,7 +33,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ size = 'nav', showLatin = 
         >
           بصمجّلي <span className="text-amber-600 dark:text-amber-400">شكرًا</span>
         </span>
-        {tagline && <ArabicText as="span" className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-stone-600 dark:text-zinc-300">{tagline}</ArabicText>}
+        {tagline && <ArabicText as="span" className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-left text-stone-600 dark:text-zinc-300">{tagline}</ArabicText>}
         {showLatin && !tagline && (
           <span className={`font-mono font-medium text-stone-500 dark:text-zinc-400 ${isHero ? 'text-base' : 'text-xs'}`}>
             Basmagly

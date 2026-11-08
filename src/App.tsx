@@ -136,7 +136,6 @@ export const App: React.FC = () => {
   }, [selectedCourse, selectedLecture, lectureInitialTab, selectedSheetId, currentTerm]);
 
   const termCourses = COURSES_DATA.filter(c => c.term === currentTerm);
-  const totalLecturesCount = COURSES_DATA.reduce((acc, c) => acc + c.lectures.length, 0);
 
   const handleHomeClick = () => {
     setSelectedCourse(null);
@@ -230,8 +229,8 @@ export const App: React.FC = () => {
           /* View 1: Clean, Practical Course Dashboard */
           <div className="space-y-8">
             {/* Practical Academic Banner */}
-            <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
+            <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="min-w-0 w-full flex-1 space-y-2">
                 {/* Requirement 8: Calm neutral badge instead of amber overload */}
                 <span className="text-[13px] font-mono font-bold text-stone-700 dark:text-zinc-300 uppercase tracking-wider block">
                   Academic Year 2026 / 2027 • Term 1
@@ -239,7 +238,7 @@ export const App: React.FC = () => {
                 <h1 className="pt-1">
                   <BrandLogo size="hero" />
                 </h1>
-                <aside data-testid="hero-study-notice" className="mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 p-5 sm:p-6 space-y-4">
+                <aside data-testid="hero-study-notice" className="mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 min-h-[320px] p-6 sm:p-8 flex flex-col justify-between gap-6">
                   <div className="flex items-center justify-end gap-2 text-amber-800 dark:text-amber-300">
                     <ArabicText as="span" className="text-[13px] font-semibold text-inherit">تنبيه قبل البصمجة</ArabicText>
                     <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -259,7 +258,6 @@ export const App: React.FC = () => {
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 {[
                   { label: 'Courses', value: termCourses.length },
-                  { label: 'Lectures', value: totalLecturesCount },
                   { label: 'Labs', value: ALL_LABS.length },
                 ].map(stat => (
                   <div
