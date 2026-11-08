@@ -10,42 +10,49 @@ interface Capability {
   ar: string;
   en: string;
   descAr: string;
+  descEn: string;
 }
 
 // The first four cover the (text-only) Turing Test; vision and robotics are added by the Total Turing Test.
 const CAPABILITIES: Capability[] = [
   {
     id: 'nlp',
+    descEn: 'Interpret and produce human language to communicate.',
     ar: 'معالجة اللغات الطبيعية',
     en: 'Natural Language Processing',
     descAr: 'الـ NLP بتخلي الآلة تفهم لغة البشر وتتواصل بيها وتصيغ ردود واضحة.',
   },
   {
     id: 'kr',
+    descEn: 'Store and organize what the system knows or hears.',
     ar: 'تمثيل المعرفة',
     en: 'Knowledge Representation',
     descAr: 'بتخزّن بيها الآلة اللي تعرفه أو تسمعه بشكل منظم ومترابط.',
   },
   {
     id: 'reasoning',
+    descEn: 'Use stored knowledge to answer questions and infer new conclusions.',
     ar: 'الاستدلال الآلي',
     en: 'Automated Reasoning',
     descAr: 'بتستخدم المعلومات المخزنة عشان تجاوب على الأسئلة وتستنتج نتايج جديدة.',
   },
   {
     id: 'ml',
+    descEn: 'Learn patterns from experience and adapt to new situations.',
     ar: 'التعلم الآلي',
     en: 'Machine Learning',
     descAr: 'الـ ML بتخلي الآلة تتكيف مع المواقف الجديدة وتكتشف الأنماط وتتعلم من التجربة.',
   },
   {
     id: 'vision',
+    descEn: 'Perceive objects and images in the physical world. Slide 17 also includes speech recognition as a perception capability.',
     ar: 'الرؤية الحاسوبية',
     en: 'Computer Vision',
-    descAr: 'بتخلي الآلة تدرك الأجسام والصور في العالم الحقيقي.',
+    descAr: 'بتخلي الآلة تدرك الأجسام والصور في العالم الحقيقي. سلايد 17 بيضيف كمان الـ Speech Recognition كقدرة على الإدراك.',
   },
   {
     id: 'robotics',
+    descEn: 'Manipulate objects and move through the physical world.',
     ar: 'الروبوتات',
     en: 'Robotics',
     descAr: 'بتخلي الآلة تحرك الأجسام وتتعامل معاها وتتنقل في العالم المادي.',
@@ -101,7 +108,7 @@ const SCENARIOS: Scenario[] = [
       'My hand snaps back before my brain even realizes what happened! Then comes the screaming and running to the cold water tap.',
     aiAnswer:
       'A spinal reflex arc bypasses conscious deliberation, triggering an immediate flexor muscle contraction that withdraws the hand within milliseconds and limits tissue damage.',
-    disciplines: ['robotics', 'ml'],
+    disciplines: ['nlp', 'kr'],
     explanation:
       'The human describes the experience in first person, with emotion and a small story; the AI gives a textbook account of the reflex arc. It also shows why AI studies "acting rationally", not just logical reasoning: a reflex protects the hand faster than slow deliberation could.',
     explanationAr:
@@ -119,6 +126,7 @@ const pillClass = (active: boolean) =>
 export const TuringTestPlayground: React.FC = () => {
   const [selectedScenario, setSelectedScenario] = useState<Scenario>(SCENARIOS[0]);
   const [userGuess, setUserGuess] = useState<Terminal | null>(null);
+  const [testMode, setTestMode] = useState<'text' | 'total'>('text');
   const [isSwapped, setIsSwapped] = useState<boolean>(() => Math.random() > 0.5);
 
   const handleSelectScenario = (sc: Scenario) => {
@@ -136,7 +144,7 @@ export const TuringTestPlayground: React.FC = () => {
   const isCorrect = userGuess === humanTerminal;
 
   return (
-    <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
+    <div data-testid="turing-test" className="min-w-0 bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-beige-200 dark:border-stone-800">
         <div>
@@ -171,6 +179,10 @@ export const TuringTestPlayground: React.FC = () => {
         </div>
       </div>
 
+      <div className="rounded-2xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-4 space-y-2">
+        <ArabicText className="text-sm text-stone-700 dark:text-zinc-300">دي ردود مكتوبة مسبقًا للتوضيح، مش محادثة مع إنسان أو نموذج حي. الأسلوب العاطفي أو الرسمي لوحده مش دليل على الهوية، وجولة واحدة مش إثبات لاجتياز اختبار تورنج.</ArabicText>
+        <p className="text-sm text-stone-700 dark:text-zinc-300">These are scripted teaching examples, not a live human–AI conversation. Emotional or formal wording alone cannot identify a speaker, and one guess cannot establish a Turing Test pass.</p>
+      </div>
       {/* Interrogation Terminal */}
       <div className="bg-[#FAF7F2] dark:bg-stone-950 rounded-2xl p-4 sm:p-6 border border-beige-300 dark:border-stone-800 space-y-5">
         {/* Interrogator Prompt */}
@@ -277,7 +289,7 @@ export const TuringTestPlayground: React.FC = () => {
               >
                 {isCorrect
                   ? '🎯 تخمينك صح! عرفت مين الإنسان'
-                  : '🤖 الآلة خدعتك! عدّت الاختبار في الجولة دي'}
+                  : 'الرد المكتوب لخبطك؛ ده مش إثبات إن آلة اجتازت الاختبار.'}
               </ArabicText>
               <button
                 dir="rtl"
@@ -302,15 +314,27 @@ export const TuringTestPlayground: React.FC = () => {
       <div className="space-y-3 pt-2">
         <div className="space-y-1">
           <ArabicText as="h4" className="text-sm font-bold text-stone-900 dark:text-stone-100">
-            6 مهارات لازمة لاجتياز اختبار تورنج الكامل (Total Turing Test)
+            {`${CAPABILITIES.length} قدرات في نموذج الاختبار (Test capabilities)`}
           </ArabicText>
           <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">
             أول 4 مهارات للـ Turing Test العادي (محادثة مكتوبة)، وآخر اتنين (Computer Vision وRobotics) بيضيفهم الـ Total Turing Test.
           </ArabicText>
         </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Turing test mode">
+          {(['text', 'total'] as const).map(mode => (
+            <button key={mode} aria-pressed={testMode === mode} onClick={() => setTestMode(mode)} className={pillClass(testMode === mode)}>
+              <ArabicText as="span" className="text-inherit">{mode === 'text' ? 'محادثة مكتوبة (Text test)' : 'تفاعل مع العالم (Total test)'}</ArabicText>
+            </button>
+          ))}
+        </div>
+        <div aria-live="polite" className="space-y-1">
+          <ArabicText className="text-sm font-semibold text-stone-900 dark:text-stone-100">{testMode === 'text' ? 'راقب أول 4 قدرات: اختبار محادثة مكتوبة ما بيختبرش حركة الروبوت أو الرؤية مباشرة.' : 'بنضيف الرؤية والروبوتات: وصف مسك الكوباية بالكلام مش زي إدراكها ومسكها فعلًا.'}</ArabicText>
+          <p className="text-sm text-stone-700 dark:text-zinc-300">{testMode === 'text' ? 'The text test uses the first four capabilities; it does not directly test vision or physical action.' : 'The Total test adds vision and robotics: describing a cup is different from perceiving and grasping it.'}</p>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-sm">
           {CAPABILITIES.map((cap, idx) => {
-            const highlighted = revealed && selectedScenario.disciplines.includes(cap.id);
+            const highlighted = (testMode === 'total' || idx < 4);
+            const usedInExample = revealed && selectedScenario.disciplines.includes(cap.id);
             return (
               <div
                 key={cap.id}
@@ -329,7 +353,8 @@ export const TuringTestPlayground: React.FC = () => {
                   </ArabicText>
                 </div>
                 <ArabicText className="text-sm text-stone-700 dark:text-zinc-400">{cap.descAr}</ArabicText>
-                {highlighted && (
+                <p className="text-sm text-stone-700 dark:text-zinc-400">{cap.descEn}</p>
+                {usedInExample && (
                   <ArabicText as="div" className="text-xs font-bold text-amber-800 dark:text-amber-300">
                     ⭐ ظاهرة في السؤال ده
                   </ArabicText>

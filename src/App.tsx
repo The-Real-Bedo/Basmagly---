@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import { CourseCard } from './components/CourseCard';
 import { CourseDetail } from './components/CourseDetail';
 import { LectureSummary } from './components/LectureSummary';
+import { AI_ONE_LABS } from './components/interactive/AiLectureOneLabs';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
 import { BrandLogo } from './components/BrandLogo';
@@ -25,6 +26,15 @@ interface LabDirectoryItem {
 }
 
 const ALL_LABS: LabDirectoryItem[] = [
+  ...AI_ONE_LABS.filter(lab => lab.id !== 'turing-test').map(lab => ({
+    ...lab,
+    courseId: 'ai',
+    lectureId: 'ai-lec-1',
+    category: 'ai' as const,
+    categoryLabel: 'Artificial Intelligence',
+    categoryLabelAr: 'ذكاء اصطناعي',
+    subtitleAr: lab.titleAr,
+  })),
   {
     id: 'network-devices',
     courseId: 'networks',
@@ -125,7 +135,7 @@ const ALL_LABS: LabDirectoryItem[] = [
     categoryLabelAr: 'ذكاء اصطناعي',
     title: 'Alan Turing Test & 6 Disciplines',
     subtitleAr: 'محاكي اختبار تورينج والتخصصات الستة',
-    descriptionAr: 'شات تفاعلي بين إنسان وآلة والمحقق البشري، مع شرح قدرات الذكاء الاصطناعي الشاملة.',
+    descriptionAr: 'جرّب دور المحقق في ردود تعليمية مكتوبة مسبقًا، وقارن الاختبار النصي بالاختبار الشامل وحدود الاستنتاج.',
     icon: Bot,
     badge: 'Turing Test'
   },
@@ -222,6 +232,7 @@ export const App: React.FC = () => {
   const [lectureInitialTab, setLectureInitialTab] = useState<'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz'>(
     initialNav?.tab || 'summary'
   );
+  const [lectureInitialExperiment, setLectureInitialExperiment] = useState<string | undefined>();
   const [labFilter, setLabFilter] = useState<'all' | 'networks' | 'ai' | 'iot'>('all');
 
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -318,6 +329,7 @@ export const App: React.FC = () => {
     setSelectedLecture(lecture);
     setSelectedSheetId(null);
     setLectureInitialTab(tab);
+    setLectureInitialExperiment(undefined);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -327,6 +339,7 @@ export const App: React.FC = () => {
     const lecture = course.lectures.find(l => l.id === lab.lectureId);
     if (!lecture) return;
     handleOpenLecture(course, lecture, 'interactive');
+    setLectureInitialExperiment(lab.id);
   };
 
   const filteredLabs = ALL_LABS.filter(lab => labFilter === 'all' || lab.category === labFilter);
@@ -352,6 +365,7 @@ export const App: React.FC = () => {
           <LectureSummary
             lecture={selectedLecture}
             initialTab={lectureInitialTab}
+            initialExperiment={lectureInitialExperiment}
             onTabChange={(tab) => setLectureInitialTab(tab)}
             onBackToCourse={() => {
               setSelectedLecture(null);

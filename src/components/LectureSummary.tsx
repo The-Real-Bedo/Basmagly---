@@ -16,15 +16,17 @@ import { EdgeVsCloudLab } from './interactive/EdgeVsCloudLab';
 import { IotStackArchitectureLab } from './interactive/IotStackArchitectureLab';
 import { SearchAlgorithmLab } from './interactive/SearchAlgorithmLab';
 import { QuizSystem } from './QuizSystem';
+import { AI_ONE_LABS, AiLectureOneLabs, AiOneExperiment, AiOneLabId } from './interactive/AiLectureOneLabs';
 
 interface LectureSummaryProps {
   lecture: Lecture;
   initialTab?: 'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz';
   onTabChange?: (tab: 'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz') => void;
+  initialExperiment?: string;
   onBackToCourse: () => void;
 }
 
-export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', onTabChange, onBackToCourse }) => {
+export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initialTab = 'summary', initialExperiment, onTabChange, onBackToCourse }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'cheatSheet' | 'terms' | 'interactive' | 'quiz'>(initialTab);
 
   React.useEffect(() => {
@@ -38,13 +40,16 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
     onTabChange?.(tab);
   };
 
+  const isAiIntroduction = lecture.id === 'ai-lec-1';
+  const inlineExperiments: Partial<Record<number, AiOneLabId>> = { 1: 'ai-fuel', 4: 'ai-approaches', 7: 'ai-rationality' };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-sm space-y-4">
         <button
           onClick={onBackToCourse}
-          className="inline-flex items-center gap-1.5 text-sm font-bold text-stone-700 hover:text-stone-900 dark:text-zinc-300 dark:hover:text-white transition-colors"
+          className="inline-flex flex-wrap items-center gap-1.5 text-sm font-bold text-stone-700 hover:text-stone-900 dark:text-zinc-300 dark:hover:text-white transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
           <span className="font-arabic">الرجوع لقائمة المحاضرات</span>
@@ -123,6 +128,20 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
       {/* Tab 1: Summary */}
       {activeTab === 'summary' && (
         <div className="space-y-6">
+          {isAiIntroduction && (
+            <div className="rounded-3xl border border-amber-200 dark:border-amber-900 bg-amber-50/70 dark:bg-amber-950/20 p-5 sm:p-7 space-y-4">
+              <p className="font-mono uppercase tracking-wider text-[13px] text-amber-800 dark:text-amber-300">Read / Experiment / Explain</p>
+              <ArabicText as="h2" className="text-2xl font-bold text-stone-900 dark:text-stone-100">افهم الذكاء الاصطناعي، مش بس تعريفه.</ArabicText>
+              <p className="text-sm text-stone-700 dark:text-zinc-300">A source-led reading path through AI-1.pdf (33 pages), with experiments that turn each idea into a decision you can test.</p>
+              <ArabicText className="text-sm text-stone-700 dark:text-zinc-300">مسار شرح مبني على الـ 33 صفحة في ملف AI-1.pdf، ومعاه تجارب تحوّل الفكرة لقرار تقدر تختبره. أمثلة المحاكيات إضافات تعليمية، مش نقل حرفي من السلايدز.</ArabicText>
+              <div className="flex flex-wrap items-center gap-3">
+                <button onClick={() => handleTabChange('interactive')} className="inline-flex flex-wrap items-center gap-2 rounded-xl px-4 py-3 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-sm font-bold hover:bg-stone-800 dark:hover:bg-white">
+                  <Wrench className="h-4 w-4" /><ArabicText as="span" className="text-white dark:text-stone-900">ادخل ساحة التجارب (Open studio)</ArabicText><span className="font-mono">{AI_ONE_LABS.length}</span>
+                </button>
+                <ArabicText as="span" className="text-sm text-stone-700 dark:text-zinc-300">{`${lecture.sections.length} محاور مترابطة · جرّب بعد الشرح · راجع بالمصطلحات والأسئلة`}</ArabicText>
+              </div>
+            </div>
+          )}
           {/* Section jump list */}
           {lecture.sections.length > 1 && (
             <nav aria-label="Sections" className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -139,15 +158,28 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
             </nav>
           )}
 
-          {lecture.sections.map((section, idx) => (
-            <LectureSection key={idx} section={section} index={idx} total={lecture.sections.length} />
-          ))}
+          {lecture.sections.map((section, idx) => {
+            const experimentId = isAiIntroduction ? inlineExperiments[idx] : undefined;
+            const experiment = AI_ONE_LABS.find(lab => lab.id === experimentId);
+            return <React.Fragment key={idx}>
+              <LectureSection section={section} index={idx} total={lecture.sections.length} />
+              {experimentId && experiment && (
+                <details className="rounded-3xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 sm:p-5" data-testid={`inline-${experimentId}`}>
+                  <summary className="cursor-pointer text-sm font-semibold text-stone-900 dark:text-stone-100">
+                    <ArabicText as="span">{`جرّب الفكرة: ${experiment.titleAr} (${experiment.title})`}</ArabicText>
+                  </summary>
+                  <div className="pt-4"><AiOneExperiment id={experimentId} /></div>
+                </details>
+              )}
+            </React.Fragment>;
+          })}
         </div>
       )}
 
       {/* Tab 2: Interactive Labs */}
       {activeTab === 'interactive' && (
         <div className="space-y-6">
+          {isAiIntroduction && <AiLectureOneLabs initialExperiment={initialExperiment} />}
           {lecture.interactiveTools.includes('network-devices') && <NetworkDevicesCollisionLab />}
           {lecture.interactiveTools.includes('packet-journey') && <PacketJourneyLab />}
           {lecture.interactiveTools.includes('osi-visualizer') && <OsiTcpVisualizer />}
@@ -155,7 +187,7 @@ export const LectureSummary: React.FC<LectureSummaryProps> = ({ lecture, initial
           {lecture.interactiveTools.includes('transmission-lab') && <TransmissionModesLab />}
           {lecture.interactiveTools.includes('topology-simulator') && <TopologyPlayground />}
           {lecture.interactiveTools.includes('vacuum-world') && <VacuumWorldAgentLab />}
-          {lecture.interactiveTools.includes('turing-test') && <TuringTestPlayground />}
+          {!isAiIntroduction && lecture.interactiveTools.includes('turing-test') && <TuringTestPlayground />}
           {lecture.interactiveTools.includes('edge-vs-cloud') && <EdgeVsCloudLab />}
           {lecture.interactiveTools.includes('iot-simulator') && <IotPipelineSimulator />}
           {lecture.interactiveTools.includes('iot-stack-lab') && <IotStackArchitectureLab />}
