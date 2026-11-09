@@ -128,6 +128,22 @@
   color: #A1A1AA;
 }
 
+/* Expanded experiments keep one mounted lab, with room for its scene and inspector. */
+.lab-expanded .grid:has([data-testid="lab-workbench"]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.lab-expanded .grid:has([data-testid="lab-workbench"]) > * {
+  grid-column: auto;
+}
+.grid:has([data-testid="lab-workbench"]) > * {
+  min-width: 0;
+}
+.lab-expanded [data-testid="workbench-viewport"],
+.lab-expanded [aria-label="Interactive 3D network topology"],
+.lab-expanded [data-testid="experiment-vacuum-world-3d"] .relative.isolate:has(canvas) {
+  height: clamp(340px, 65dvh, 720px);
+}
+
 /* Custom smooth scrollbar */
 ::-webkit-scrollbar {
   width: 7px;

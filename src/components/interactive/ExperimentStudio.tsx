@@ -1,8 +1,9 @@
 import React, { Component, lazy, Suspense, useEffect, useState } from 'react';
-import { FlaskConical, ArrowDownRight, RotateCcw } from 'lucide-react';
+import { FlaskConical, ArrowDownRight, RotateCcw, Maximize2 } from 'lucide-react';
 import { LAB_CATALOG, LabId } from '../../data/labCatalog';
 import { LAB_GUIDES } from '../../data/labGuides';
 import { ArabicText } from '../ArabicText';
+import { ExpandedLab } from './ExpandedLab';
 
 const experiments = {
   'ai-fuel': lazy(() => import('./AiProgressLab').then(m => ({ default: m.AiFuelLab }))),
@@ -55,10 +56,11 @@ export const Experiment: React.FC<{ id: string }> = ({ id }) => {
   const Lab = experiments[id as LabId];
   const guide = LAB_GUIDES[id as LabId];
   if (!Lab) return <p className="text-sm text-stone-600 dark:text-zinc-400">This experiment is not registered.</p>;
-  return <div data-testid={`experiment-${id}`} className="min-w-0 space-y-4">
+  return <ExpandedLab title={LAB_CATALOG.find(lab => lab.id === id)?.title ?? 'Experiment'}>{expand => <div data-testid={`experiment-${id}`} className="min-w-0 space-y-4">
     <section aria-label="Guided comparison" className="overflow-hidden rounded-2xl border border-beige-300 bg-white dark:border-stone-800 dark:bg-stone-900">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-beige-300 px-4 py-3 dark:border-stone-800">
         <h4 className="text-sm font-bold text-stone-900 dark:text-stone-100">Try this comparison</h4>
+        <button type="button" data-testid="expand-experiment" onClick={expand} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 bg-white px-3 text-[13px] font-semibold text-stone-800 hover:bg-beige-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-200 dark:hover:bg-stone-800 dark:focus-visible:ring-amber-400"><Maximize2 className="h-4 w-4" />Expand lab</button>
         <button type="button" data-testid="restart-experiment" onClick={() => setRevision(value => value + 1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 bg-[#FAF7F2] px-3 text-[13px] font-semibold text-stone-800 hover:bg-beige-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:border-stone-700 dark:bg-stone-950 dark:text-zinc-200 dark:hover:bg-stone-800 dark:focus-visible:ring-amber-400"><RotateCcw className="h-4 w-4" />Start again</button>
       </div>
       <div className="grid lg:grid-cols-2">
@@ -67,12 +69,12 @@ export const Experiment: React.FC<{ id: string }> = ({ id }) => {
       </div>
     </section>
     {/* Remounting clears local inputs and lets each lab dispose its timers and scene. */}
-    <ExperimentBoundary key={`${id}-${revision}`}><Suspense fallback={<p role="status" className="rounded-2xl border border-beige-300 dark:border-stone-800 p-5 text-sm text-stone-600 dark:text-zinc-400">Preparing the experiment…</p>}><Lab /></Suspense></ExperimentBoundary>
-    <details key={`${id}-${revision}-observation`} className="rounded-2xl border border-amber-200/80 bg-amber-50/70 p-4 dark:border-amber-900/60 dark:bg-amber-950/20">
+    <div data-lab-body><ExperimentBoundary key={`${id}-${revision}`}><Suspense fallback={<p role="status" className="rounded-2xl border border-beige-300 dark:border-stone-800 p-5 text-sm text-stone-600 dark:text-zinc-400">Preparing the experiment…</p>}><Lab /></Suspense></ExperimentBoundary></div>
+    <details data-lab-observation key={`${id}-${revision}-observation`} className="rounded-2xl border border-amber-200/80 bg-amber-50/70 p-4 dark:border-amber-900/60 dark:bg-amber-950/20">
       <summary className="min-h-6 cursor-pointer text-sm font-semibold text-amber-900 dark:text-amber-300">Compare your observation</summary>
       <div className="mt-3 grid gap-4 lg:grid-cols-2"><p className="text-[15px] text-stone-700 dark:text-zinc-300">{guide.observeEn}</p><ArabicText className="text-[15px] text-stone-700 dark:text-zinc-300">{guide.observeAr}</ArabicText></div>
     </details>
-  </div>;
+  </div>}</ExpandedLab>;
 };
 
 export const InlineExperiment: React.FC<{ id: string }> = ({ id }) => {
