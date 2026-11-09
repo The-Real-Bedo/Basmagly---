@@ -1,4 +1,4 @@
-import { Activity, Bot, Brain, CalendarDays, Compass, Cpu, Layers, MessageSquare, Monitor, Network, Radio, Route, Search, Sliders, Waves, Wrench } from 'lucide-react';
+import { Activity, Bot, Box, Brain, CalendarDays, Compass, Cpu, Layers, MessageSquare, Monitor, Network, Radio, Route, Search, Sliders, Waves, Wrench } from 'lucide-react';
 
 export type LabCategory = 'networks' | 'ai' | 'iot' | 'windows' | 'signals';
 const categoryNames: Record<LabCategory, [string, string]> = {
@@ -15,9 +15,11 @@ const entries = [
   ['turing-test', 'ai', 'ai-lec-1', 'ai', 'Turing Test & Its Limits', 'اختبار التقليد وحدوده', 'Compare scripted responses, then separate text from physical capabilities.', MessageSquare],
   ['ai-rationality', 'ai', 'ai-lec-1', 'ai', 'Rationality Under Uncertainty', 'قرار عقلاني ولا حظ؟', 'Choose a route before you know the outcome.', Compass],
   ['vacuum-world', 'ai', 'ai-lec-2', 'ai', 'Vacuum World & PEAS', 'المكنسة وإطار PEAS', 'Observe perception, action and performance in a small world.', Bot],
+  ['vacuum-world-3d', 'ai', 'ai-lec-2', 'ai', '3D Vacuum World', 'عالم المكنسة ثلاثي الأبعاد', 'Step through a four-room reflex-agent world and see only what the agent perceives.', Box],
   ['agent-architecture', 'ai', 'ai-lec-2', 'ai', 'Agent Architecture', 'من الإدراك للفعل', 'Step through the agent loop and compare architectures.', Brain],
   ['search-visualizer', 'ai', 'ai-lec-4', 'ai', 'BFS, DFS & Uniform-Cost Search', 'خطوات البحث وجبهة الانتظار', 'Expand nodes and compare frontier order and path cost.', Search],
   ['network-devices', 'networks', 'net-lec-1', 'networks', 'Network Devices & Collision Domains', 'الأجهزة ونطاقات التصادم', 'Send frames through a hub, switch or router.', Network],
+  ['network-3d', 'networks', 'net-lec-1', 'networks', '3D Network Decision Lab', 'قرارات الشبكة في مشهد ثلاثي الأبعاد', 'Orbit a live network and trace forwarding, flooding, routing and collisions.', Box],
   ['topology-simulator', 'networks', 'net-lec-1', 'networks', 'Topology & Link Failure', 'الشبكات وقطع الوصلات', 'Break a link and watch the delivery path change.', Network],
   ['transmission-lab', 'networks', 'net-lec-1', 'networks', 'Unicast, Broadcast & Multicast', 'لواحد ولا للكل ولا لمجموعة؟', 'Choose recipients and trace a frame across the LAN.', Radio],
   ['packet-journey', 'networks', 'net-lec-2', 'networks', 'Hop-by-Hop Packet Journey', 'رحلة الحزمة وتغيير الـ MAC', 'Follow the frame across a routed network.', Route],
