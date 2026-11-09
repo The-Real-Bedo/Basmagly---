@@ -13,6 +13,8 @@ import {
   ChevronRight,
   MousePointer2,
   RotateCcw,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
 import type { WorkbenchSceneProps } from './WorkbenchScene';
@@ -25,7 +27,7 @@ export type {
   WorkbenchKind,
 } from './WorkbenchScene';
 const button =
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400';
+  'inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400';
 const neutral =
   'border-beige-300 bg-white text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-300 dark:hover:bg-stone-800';
 const active =
@@ -50,12 +52,15 @@ export function LabWorkbench({
   nodes,
   links = [],
   children,
+  selectedId: controlledId,
+  onSelect: onInspect,
   ...sceneProps
 }: WorkbenchSceneProps & { children: ReactNode }) {
   const [view, setView] = useState<'3d' | '2d'>('3d');
   const [top, setTop] = useState(false);
   const [cameraTurn, setCameraTurn] = useState(0);
   const [cameraReset, setCameraReset] = useState(0);
+  const [cameraZoom, setCameraZoom] = useState(0);
   const [explore, setExplore] = useState(false);
   const [coarse, setCoarse] = useState(
     () => window.matchMedia('(pointer: coarse)').matches,
@@ -65,8 +70,14 @@ export function LabWorkbench({
   );
   const [unavailable, setUnavailable] = useState(false);
   const selected =
-    nodes.find((n) => n.id === selectedId && !n.decorative) ??
+    nodes.find((n) => n.id === (controlledId ?? selectedId) && !n.decorative) ??
     nodes.find((n) => !n.decorative);
+  const inspect = (id: string) => {
+    const node = nodes.find((n) => n.id === id && !n.decorative);
+    if (!node || (controlledId !== undefined && node.disabled)) return;
+    setSelectedId(id);
+    onInspect?.(id);
+  };
   useEffect(() => {
     const media = window.matchMedia('(pointer: coarse)');
     const update = () => setCoarse(media.matches);
@@ -156,6 +167,22 @@ export function LabWorkbench({
             </button>
             <button
               type="button"
+              aria-label="Zoom camera in"
+              onClick={() => setCameraZoom((v) => v + 1)}
+              className={`${button} ${neutral}`}
+            >
+              <ZoomIn className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Zoom camera out"
+              onClick={() => setCameraZoom((v) => v - 1)}
+              className={`${button} ${neutral}`}
+            >
+              <ZoomOut className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
               aria-label="Reset camera"
               onClick={() => {
                 setCameraTurn(0);
@@ -204,9 +231,10 @@ export function LabWorkbench({
                     top={top}
                     cameraTurn={cameraTurn}
                     cameraReset={cameraReset}
+                    cameraZoom={cameraZoom}
                     touchOrbit={!coarse || explore}
                     selectedId={selected?.id}
-                    onSelect={setSelectedId}
+                    onSelect={inspect}
                     onUnavailable={() => setUnavailable(true)}
                   />
                 )}
@@ -216,7 +244,7 @@ export function LabWorkbench({
           <p className="px-3 pt-2 text-xs text-stone-600 dark:text-zinc-400">
             {coarse && !explore
               ? 'Scroll the page normally. Enable touch orbit to explore the scene.'
-              : 'Drag to orbit · Scroll to zoom · Use the arrow buttons to rotate.'}
+              : 'Drag to orbit · Scroll to zoom · Camera buttons also work with a keyboard.'}
           </p>
           <div className="space-y-3 p-3">
             <div
@@ -231,7 +259,8 @@ export function LabWorkbench({
                     key={node.id}
                     type="button"
                     aria-pressed={selected?.id === node.id}
-                    onClick={() => setSelectedId(node.id)}
+                    onClick={() => inspect(node.id)}
+                    disabled={controlledId !== undefined && node.disabled}
                     className={`${button} ${selected?.id === node.id ? active : neutral}`}
                   >
                     <span

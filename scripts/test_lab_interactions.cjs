@@ -304,6 +304,30 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           await expect(/CC:33:CC:33:CC:33/);
           break;
         case 'osi-visualizer':
+          await button(/^L3/, true);
+          assert.equal(await page.$eval(`${root} [data-testid="osi-selected-layer"]`, e => e.textContent), 'Network Layer');
+          for (let i = 0; i < 14; i++) {
+            await button(/^Step trace$/);
+            const layer = i < 7 ? 7 - i : i - 6;
+            const phase = i < 7 ? 'Sender · Encapsulation' : 'Receiver · Decapsulation';
+            assert.match(await page.$eval(`${root} [data-testid="osi-trace-status"]`, e => e.innerText), new RegExp(`Step ${i + 1} of 14 · ${phase} · Layer ${layer}`));
+            assert.equal(await page.$eval(`${root} [aria-label="Inspect scene objects"] button[aria-pressed="true"]`, e => e.innerText.split(' · ')[0]), `L${layer}`);
+          }
+          await expect(/Complete/);
+          await button(/Replay trace/);
+          await delay(850);
+          await button(/Pause trace/);
+          const paused = await page.$eval(`${root} [data-testid="osi-trace-status"]`, e => e.innerText);
+          await delay(1000);
+          assert.equal(await page.$eval(`${root} [data-testid="osi-trace-status"]`, e => e.innerText), paused);
+          await toggleView('2D');
+          await toggleView('3D');
+          assert.equal(await page.$eval(`${root} [data-testid="osi-trace-status"]`, e => e.innerText), paused);
+          await button(/Resume trace/);
+          assert.ok(await page.$(`${root} [aria-label="Inspect scene objects"] button:disabled`));
+          await page.$eval(`${root} button[aria-label="Reset packet trace"]`, e => e.click());
+          await delay(1400);
+          await expect(/Trace ready/);
           await button(/Live Packet Trace/);
           await delay(950);
           await restart();
@@ -456,7 +480,42 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           await expect(/Linear|linearity/i);
           break;
         case 'signal-convolution':
-          for (let i = 0; i < 5; i++) await button(/^Step n/);
+          // Check each aligned product independently, including reversed asymmetric h.
+          for (const [preset, x] of [['book', [3, 0, 6]], ['pulse', [1, 2, 1]], ['ramp', [0, 1, 2, 1]]]) {
+            await select(0, preset);
+            for (const [kernel, h] of [['average', [1 / 3, 1 / 3, 1 / 3]], ['impulse', [1]], ['weighted', [1, 2, 0.5]]]) {
+              await select(1, kernel);
+              for (let n = 0; n < x.length + h.length - 1; n++) {
+                await input('#convolution-index', n);
+                assert.equal(await page.$eval(`${root} [data-testid="convolution-overlap"]`, table => {
+                  const region = table.parentElement.getBoundingClientRect();
+                  return [...table.querySelectorAll('tbody tr:first-child td[data-overlap="true"]')].some(cell => {
+                    const rect = cell.getBoundingClientRect();
+                    return rect.left >= region.left + 111 && rect.right <= region.right + 1;
+                  });
+                }), true, 'An overlapping sample must be visible on mobile without manual scrolling');
+                const rows = await page.$$eval(`${root} [data-testid="convolution-overlap"] tbody tr`, elements => elements.map(e => [...e.querySelectorAll('td')].map(td => ({k: Number(td.dataset.k), value: Number(td.dataset.value), overlap: td.dataset.overlap === 'true'}))));
+                const sum = rows[2].reduce((total, cell) => {
+                  const expected = (x[cell.k] ?? 0) * (h[n - cell.k] ?? 0);
+                  assert.ok(Math.abs(cell.value - expected) < 1e-10);
+                  assert.equal(cell.overlap, cell.k >= 0 && cell.k < x.length && n - cell.k >= 0 && n - cell.k < h.length);
+                  return total + cell.value;
+                }, 0);
+                if (preset === 'book') {
+                  const knownOutputs = { average: [1, 1, 3, 2, 2], impulse: [3, 0, 6], weighted: [3, 6, 7.5, 12, 3] };
+                  assert.ok(Math.abs(sum - knownOutputs[kernel][n]) < 1e-10);
+                }
+                assert.ok(Math.abs(sum - x.reduce((total, value, k) => total + value * (h[n - k] ?? 0), 0)) < 1e-10);
+                for (const cell of rows[1]) assert.equal(cell.value, h[n - cell.k] ?? 0);
+                if (kernel === 'weighted' && n === 2) assert.deepEqual(rows[1].filter(c => c.k >= 0 && c.k <= 2).map(c => c.value), [0.5, 2, 1]);
+              }
+            }
+          }
+          await page.$eval(`${root} button[aria-label="Reset convolution lab"]`, e => e.click());
+          for (let i = 0; i < 5; i++) {
+            await button(/^Step n/);
+            await expect(new RegExp(`Current sum · n = ${i} · computed`, 'i'));
+          }
           assert.ok(
             await page.$(
               `${root} button[aria-label="All output samples computed"]:disabled`,
@@ -512,6 +571,18 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       'pan-y',
     );
     await page.focus(`${root} button[aria-label="Rotate camera right"]`);
+    await page.keyboard.press('Enter');
+    await ready();
+    const canvas = await page.$(`${root} canvas`);
+    const beforeZoom = Buffer.from(await canvas.screenshot());
+    await page.focus(`${root} button[aria-label="Zoom camera in"]`);
+    await page.keyboard.press('Enter');
+    await ready();
+    assert.equal(beforeZoom.equals(Buffer.from(await canvas.screenshot())), false, 'Keyboard zoom must change the rendered view');
+    await page.focus(`${root} button[aria-label="Zoom camera out"]`);
+    await page.keyboard.press('Enter');
+    await ready();
+    await page.focus(`${root} button[aria-label="Reset camera"]`);
     await page.keyboard.press('Enter');
     await ready();
     await page.$eval(`${root} canvas`, (canvas) =>

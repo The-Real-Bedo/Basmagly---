@@ -1,5 +1,18 @@
 # Current study-platform handoff
 
+## Latest handoff — second lab pass (2026-11-10)
+
+**Start here.** Continue on `feat/interactive-labs-3d`; this checkpoint follows the all-lab upgrade `7c5699a` below. The user requested another improvement pass. The curriculum, registered IDs, approved fonts and Pages configuration remain unchanged. No push, PR or merge was requested.
+
+**Improvements:**
+- The shared 3D workbench now has keyboard-accessible zoom buttons and at least 44px camera targets. Zoom adjusts the current orbit rather than changing its direction, stays within the existing camera-distance bounds, and resets to the fitted view. Camera damping turns off under reduced motion. Optional controlled inspection keeps OSI's scene selection and its main explanation synchronized; selection stays locked during playback.
+- OSI now supports Step, Play/Pause, Resume, Replay and Reset with visible English/Arabic progress. Its 14 steps preserve sender 7 → 1 and receiver 1 → 7. Pausing retains the current step; resetting cancels scheduled updates. Layer functions have faithful Arabic counterparts, the illustrative unicast destination MAC has a valid unicast first octet, and a teaching-model notice distinguishes the conceptual stack and separate examples from a captured packet.
+- Convolution now aligns x[k], reversed/shifted h[n−k] and each product on the same k axis. A slider inspects any output position; Step retains the calculation just computed. The asymmetric [1, 2, 0.5] response is explicitly a supplementary teaching example that makes reversal visible. Calculations keep unrounded values, with exact thirds where applicable. Mobile tables keep row labels visible and scroll to overlapping samples; zero-valued samples still count as overlap. Arabic formulas use explicit LTR isolation.
+
+**Verified:** TypeScript, curriculum validation and the production build pass. All 32 interaction flows and the 128-panel light/dark × 375/1280px matrix passed without document overflow or application/console errors. Supplemental checks exercised OSI completion/pause/view-switch/reset, camera direction-preserving keyboard zoom, min/max distance, reset and reduced-motion damping. Convolution checks cover every output position for all nine input/response combinations, known result vectors, reversal and visible overlap on mobile. The final convolution changes were rechecked in both themes at both widths, and representative screenshots were inspected. Vite's existing large-chunk warning remains (initial about 950.7kB raw /277.7kB gzip; shared 3D about 971.3kB raw /259.7kB gzip).
+
+**Publication:** saved locally on the existing task branch only. Browser screenshots/review output remain private under `.hoplite/repo-review/`. No remaining required check is known for this pass; publish only on an explicit publication request, without merging or force-pushing.
+
 ## Latest handoff — all-lab improvement (2026-11-10)
 
 **Start here.** The current task branch is `feat/interactive-labs-3d`, based on GitHub main `2a68d5227657a2cf0a27b5f534ee9d788e636da2` (merged PR #13). The remote main SHA was checked again during final verification. Older branch/publication notes below are historical. GitHub CLI is authenticated as The-Real-Bedo, with ADMIN permission; network, dependency installation and browser automation now work without user-run export/install steps.

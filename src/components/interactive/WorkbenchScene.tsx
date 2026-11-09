@@ -64,6 +64,8 @@ export interface WorkbenchSceneProps {
   top?: boolean;
   cameraTurn?: number;
   cameraReset?: number;
+  /** Relative zoom requests; positive steps move closer without changing the orbit. */
+  cameraZoom?: number;
   touchOrbit?: boolean;
   selectedId?: string;
   onSelect?: (id: string) => void;
@@ -419,6 +421,8 @@ function CameraRig({
   top,
   turn,
   reset,
+  zoom,
+  reduced,
   touchOrbit,
   extent,
   height,
@@ -427,6 +431,8 @@ function CameraRig({
   top?: boolean;
   turn: number;
   reset: number;
+  zoom: number;
+  reduced: boolean;
   touchOrbit: boolean;
   extent: number;
   height: number;
@@ -434,6 +440,7 @@ function CameraRig({
 }) {
   const ref = useRef<ComponentRef<typeof OrbitControls>>(null);
   const { camera, size, gl, invalidate } = useThree();
+  const previousZoom = useRef(zoom);
   useEffect(() => {
     const fit = Math.max(1, 0.95 / (size.width / size.height));
     const distance = Math.max(8.5, extent * 2.3, height * 2.4) * fit;
@@ -460,6 +467,15 @@ function CameraRig({
     invalidate,
   ]);
   useEffect(() => {
+    const steps = zoom - previousZoom.current;
+    previousZoom.current = zoom;
+    if (!steps || !ref.current) return;
+    const target = ref.current.target;
+    camera.position.sub(target).multiplyScalar(1.25 ** -steps).clampLength(4, 40).add(target);
+    ref.current.update();
+    invalidate();
+  }, [zoom, camera, invalidate]);
+  useEffect(() => {
     gl.domElement.style.touchAction = touchOrbit ? 'none' : 'pan-y';
     const lost = (event: Event) => {
       event.preventDefault();
@@ -484,7 +500,7 @@ function CameraRig({
       maxDistance={40}
       minPolarAngle={0.03}
       maxPolarAngle={Math.PI / 2.03}
-      enableDamping
+      enableDamping={!reduced}
       dampingFactor={0.12}
     />
   );
@@ -496,6 +512,7 @@ export default function WorkbenchScene({
   top,
   cameraTurn = 0,
   cameraReset = 0,
+  cameraZoom = 0,
   touchOrbit = true,
   selectedId,
   onSelect,
@@ -606,6 +623,8 @@ export default function WorkbenchScene({
         top={top}
         turn={cameraTurn}
         reset={cameraReset}
+        zoom={cameraZoom}
+        reduced={reduced}
         extent={extent}
         height={height}
         touchOrbit={touchOrbit}
