@@ -352,7 +352,7 @@ const makeLecture = (
 
 export const AI_REMAINING_LECTURES: Lecture[] = [
   makeLecture(
-    'ai-lec-2', ai2Sections, ai2Terms, ai2Cheats, ['vacuum-world', 'agent-architecture', 'ai-environments'],
+    'ai-lec-2', ai2Sections, ai2Terms, ai2Cheats, ['vacuum-world', 'vacuum-world-3d', 'agent-architecture', 'ai-environments'],
     'How agents perceive and act, rationality, reflex and goal-based designs, PEAS, and task-environment dimensions.',
     'إزاي الوكلاء بيدركوا وبيتصرفوا، والعقلانية، وتصميمات رد الفعل والهدف، وPEAS، وأبعاد بيئة المهمة.',
   ),
