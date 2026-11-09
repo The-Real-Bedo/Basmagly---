@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, GitFork, Pause, Play, RotateCcw, StepForward } from 'lucide-react';
 import ArabicText from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 type Algorithm = 'bfs' | 'dfs' | 'ucs';
 
@@ -245,9 +246,13 @@ export function SearchAlgorithmLab() {
       <div className="overflow-hidden rounded-2xl border border-beige-300 bg-[#FAF7F2] dark:border-stone-800 dark:bg-stone-950">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-beige-300 px-4 py-3 dark:border-stone-800">
           <div><p className="font-semibold text-stone-900 dark:text-stone-100">{preset.label}</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{preset.labelAr}</ArabicText></div>
-          <p className="text-sm text-stone-600 dark:text-zinc-400">Expanded: {simulation.steps} · Goal: {preset.goalId}<br /><ArabicText>تم توسيع: {simulation.steps} · الهدف: {preset.goalId}</ArabicText></p>
+          <p className="text-sm text-stone-600 dark:text-zinc-400">Expanded: {simulation.steps} · Goal: {preset.goalId}<br /><ArabicText as="span">تم توسيع: {simulation.steps} · الهدف: {preset.goalId}</ArabicText></p>
         </div>
-        <div className="overflow-x-auto p-3" aria-label="Scrollable search tree">
+        <LabWorkbench title="Search · frontier and expansion" motionKey={simulation.steps}
+ nodes={preset.nodes.map<WorkbenchNode>(node => ({ id: node.id, label: node.id, kind: 'state', position: [(nodePosition(node, preset).x - 450) / 80, 0, node.depth * 1.25 - 2.5], tone: simulation.solution?.includes(node.id) ? 'success' : simulation.current === node.id ? 'active' : frontierSet.has(node.id) ? 'info' : 'neutral', detail: `Depth ${node.depth}. ${expandedSet.has(node.id) ? 'Expanded.' : frontierSet.has(node.id) ? 'Waiting in the frontier.' : 'Not yet discovered.'}`, detailAr: `العمق ${node.depth}. ${expandedSet.has(node.id) ? 'اتوسّعت.' : frontierSet.has(node.id) ? 'مستنية في الـ Frontier.' : 'لسه ما اتكتشفتش.'}` }))}
+ links={preset.nodes.flatMap(node => node.children.map<WorkbenchLink>(child => ({ id: `${node.id}-${child}`, from: node.id, to: child, tone: simulation.solution?.includes(node.id) && simulation.solution?.includes(child) ? 'success' : simulation.current === node.id ? 'active' : 'neutral', moving: playing && simulation.current === node.id })))}
+>
+<div className="overflow-x-auto p-3" aria-label="Scrollable search tree">
           <svg viewBox="0 0 900 430" role="img" aria-label={`${preset.label}, current node ${simulation.current ?? 'none'}`} className="mx-auto min-w-[620px] max-w-full">
             {preset.nodes.flatMap((node) => node.children.map((childId) => {
               const from = nodePosition(node, preset);
@@ -269,6 +274,7 @@ export function SearchAlgorithmLab() {
             })}
           </svg>
         </div>
+</LabWorkbench>
         <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-beige-300 px-4 py-3 dark:border-stone-800" aria-label="Search tree legend">
           {[
             ['bg-amber-200 dark:bg-amber-950', 'Current / next', 'الحالية / التالية'],

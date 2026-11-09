@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Radio, Send, CheckCircle2 } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 type TransmissionType = 'unicast' | 'broadcast' | 'multicast';
 
@@ -216,7 +217,18 @@ export const TransmissionModesLab: React.FC = () => {
         </div>
 
         {/* Network Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+        <LabWorkbench title="Transmission · selected recipients" motionKey={`${mode}-${activeStep}`}
+ nodes={[
+  { id: 'sender', label: 'PC-1', kind: 'computer', position: [-4, 0, 0], tone: 'active', detail: 'Sender · 192.168.1.10', detailAr: 'الراسل · 192.168.1.10' },
+  { id: 'switch', label: 'LAN Switch', sceneLabel: 'Switch', kind: 'switch', position: [-1.5, 0, 0], tone: isTransmitting ? 'active' : 'info', detail: 'Learned MAC table; IGMP snooping is enabled in this teaching model.', detailAr: 'جدول الـ MAC متعلّم، والـ IGMP Snooping شغّال في النموذج.' },
+  ...DESTINATIONS.map<WorkbenchNode>((n, i) => ({ id: String(n), label: `PC-${n}`, showValue: false, kind: 'computer', position: [i % 2 ? 4 : 1.5, 0, i < 2 ? -2 : 2], tone: receivedNodes?.includes(n) ? 'success' : mode === 'multicast' && multicastGroup.includes(n) ? 'active' : 'neutral', value: `192.168.1.${n * 10}`, detail: mode === 'multicast' ? multicastGroup.includes(n) ? 'Subscribed to group 239.1.1.1.' : 'Not subscribed to this multicast group.' : 'Observe whether this NIC receives the frame.', detailAr: mode === 'multicast' ? multicastGroup.includes(n) ? 'مشترك في المجموعة 239.1.1.1.' : 'مش مشترك في مجموعة الـ Multicast دي.' : 'تابع إذا كان كارت الشبكة ده استلم الـ Frame.', action: mode === 'multicast' ? () => toggleMulticastNode(n) : undefined, actionLabel: multicastGroup.includes(n) ? 'Leave group' : 'Join group', disabled: isTransmitting })),
+ ]}
+ links={[
+  { id: 'uplink', from: 'sender', to: 'switch', tone: isTransmitting ? 'active' : 'neutral', moving: isTransmitting && activeStep === 0 },
+  ...DESTINATIONS.map<WorkbenchLink>(n => { const target = mode === 'broadcast' || (mode === 'unicast' ? n === unicastTarget : multicastGroup.includes(n)); return { id: String(n), from: 'switch', to: String(n), tone: receivedNodes?.includes(n) ? 'success' : isTransmitting && target ? 'active' : 'neutral', moving: isTransmitting && activeStep > 0 && target }; }),
+ ]}
+>
+<div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
           {/* Sender Node */}
           <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-500 text-center space-y-1.5">
             <span dir="rtl" className="font-arabic text-xs font-bold text-amber-800 dark:text-amber-300 block">
@@ -306,6 +318,7 @@ export const TransmissionModesLab: React.FC = () => {
             })}
           </div>
         </div>
+</LabWorkbench>
 
         <div className="rounded-2xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">

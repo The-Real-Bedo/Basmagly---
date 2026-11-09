@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import { useState } from 'react';
 import { Activity, Cable, Radio, RotateCcw } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
@@ -144,11 +145,14 @@ export function NetworkMediaLab() {
             })}
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-beige-300 bg-[#FAF7F2] px-3 py-2 dark:border-stone-800 dark:bg-stone-950">
+          <LabWorkbench title="Media · modeled throughput" motionKey={distance+'-'+environment+'-'+selected}
+ nodes={results.map<WorkbenchNode>((result,index)=>({id:result.medium,label:MEDIA[result.medium].name,showValue:false,kind:'bar',position:[(index-1)*2.2,0,index===1?-1.6:1],size:[.85,Math.max(.15,result.throughput/350),.85],tone:result.meetsTarget?'success':'error',value:result.throughput+' Mbps',detail:'Illustrative capacity: '+result.capacity+' Mbps. '+mediaNote[result.medium].en,detailAr:'السعة التوضيحية: '+result.capacity+' Mbps. '+mediaNote[result.medium].ar,action:()=>setSelected(result.medium),actionLabel:'Inspect this medium'}))}>
+<div className="overflow-hidden rounded-2xl border border-beige-300 bg-[#FAF7F2] px-3 py-2 dark:border-stone-800 dark:bg-stone-950">
             <SignalPath medium={selected} />
             <p className="text-center text-[13px] font-medium text-stone-700 dark:text-stone-300">{MEDIA[selected].name} signal path · select a medium to switch it</p>
             <ArabicText className="text-center text-[13px] text-stone-600 dark:text-zinc-400">مسار الإشارة · اختار وسيطًا لتغييره</ArabicText>
           </div>
+</LabWorkbench>
 
           <div className="rounded-2xl border border-beige-300 bg-white p-4 dark:border-stone-800 dark:bg-stone-900" aria-live="polite">
             <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{MEDIA[selected].name}: {current.throughput} Mbps modeled throughput / {current.capacity} Mbps modeled capacity</p>
@@ -165,10 +169,10 @@ export function NetworkMediaLab() {
         </div>
       </div>
 
-      <p className="mt-4 rounded-xl bg-sky-50 p-3 text-[13px] leading-relaxed text-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
+      <div className="mt-4 rounded-xl bg-sky-50 p-3 text-[13px] leading-relaxed text-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
         Teaching model only: the Mbps capacities and condition factors are illustrative, not certified medium limits or measured performance. Actual selection also considers installation, cost, and equipment. Throughput is capped at modeled capacity by construction.
         <ArabicText className="mt-1 text-[13px] leading-relaxed text-sky-900 dark:text-sky-200">النموذج للتعليم فقط: سعات Mbps ومعاملات الظروف توضيحية، مش حدود معيارية للوسيط ولا قياسات أداء فعلية. الاختيار الحقيقي بيراعي كمان التركيب والتكلفة والأجهزة. الـThroughput ما بيعدّيش السعة الممثلة في النموذج.</ArabicText>
-      </p>
+      </div>
     </section>
   );
 }

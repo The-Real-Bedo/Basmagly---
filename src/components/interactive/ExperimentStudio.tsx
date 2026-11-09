@@ -1,6 +1,7 @@
-import React, { lazy, Suspense, useState } from 'react';
-import { FlaskConical, ArrowDownRight } from 'lucide-react';
+import React, { Component, lazy, Suspense, useEffect, useState } from 'react';
+import { FlaskConical, ArrowDownRight, RotateCcw } from 'lucide-react';
 import { LAB_CATALOG, LabId } from '../../data/labCatalog';
+import { LAB_GUIDES } from '../../data/labGuides';
 import { ArabicText } from '../ArabicText';
 
 const experiments = {
@@ -38,10 +39,40 @@ const experiments = {
   'signal-convolution': lazy(() => import('./SignalConvolutionLab').then(m => ({ default: m.SignalConvolutionLab }))),
 } satisfies Record<LabId, React.LazyExoticComponent<React.ComponentType>>;
 
+class ExperimentBoundary extends Component<{ children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    return this.state.failed ? <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-5 dark:border-rose-900 dark:bg-rose-950/30">
+      <p className="text-sm text-stone-800 dark:text-zinc-200">The experiment could not open. Use Start again to retry.</p>
+      <ArabicText className="mt-1 text-sm text-stone-700 dark:text-zinc-300">التجربة ما فتحتش. استخدم Start again عشان تحاول تاني.</ArabicText>
+    </div> : this.props.children;
+  }
+}
+
 export const Experiment: React.FC<{ id: string }> = ({ id }) => {
-  const Component = experiments[id as LabId];
-  if (!Component) return <p className="text-sm text-stone-600 dark:text-zinc-400">This experiment is not registered.</p>;
-  return <div data-testid={`experiment-${id}`} className="min-w-0"><Suspense fallback={<p role="status" className="rounded-2xl border border-beige-300 dark:border-stone-800 p-5 text-sm text-stone-600 dark:text-zinc-400">Preparing the experiment…</p>}><Component /></Suspense></div>;
+  const [revision, setRevision] = useState(0);
+  const Lab = experiments[id as LabId];
+  const guide = LAB_GUIDES[id as LabId];
+  if (!Lab) return <p className="text-sm text-stone-600 dark:text-zinc-400">This experiment is not registered.</p>;
+  return <div data-testid={`experiment-${id}`} className="min-w-0 space-y-4">
+    <section aria-label="Guided comparison" className="overflow-hidden rounded-2xl border border-beige-300 bg-white dark:border-stone-800 dark:bg-stone-900">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-beige-300 px-4 py-3 dark:border-stone-800">
+        <h4 className="text-sm font-bold text-stone-900 dark:text-stone-100">Try this comparison</h4>
+        <button type="button" data-testid="restart-experiment" onClick={() => setRevision(value => value + 1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 bg-[#FAF7F2] px-3 text-[13px] font-semibold text-stone-800 hover:bg-beige-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:border-stone-700 dark:bg-stone-950 dark:text-zinc-200 dark:hover:bg-stone-800 dark:focus-visible:ring-amber-400"><RotateCcw className="h-4 w-4" />Start again</button>
+      </div>
+      <div className="grid lg:grid-cols-2">
+        <p className="p-4 text-[15px] text-stone-700 dark:text-zinc-300">{guide.tryEn}</p>
+        <ArabicText className="border-t border-beige-300 bg-[#FAF7F2]/70 p-4 text-[15px] text-stone-700 dark:border-stone-800 dark:bg-stone-950/50 dark:text-zinc-300 lg:border-l lg:border-t-0">{guide.tryAr}</ArabicText>
+      </div>
+    </section>
+    {/* Remounting clears local inputs and lets each lab dispose its timers and scene. */}
+    <ExperimentBoundary key={`${id}-${revision}`}><Suspense fallback={<p role="status" className="rounded-2xl border border-beige-300 dark:border-stone-800 p-5 text-sm text-stone-600 dark:text-zinc-400">Preparing the experiment…</p>}><Lab /></Suspense></ExperimentBoundary>
+    <details key={`${id}-${revision}-observation`} className="rounded-2xl border border-amber-200/80 bg-amber-50/70 p-4 dark:border-amber-900/60 dark:bg-amber-950/20">
+      <summary className="min-h-6 cursor-pointer text-sm font-semibold text-amber-900 dark:text-amber-300">Compare your observation</summary>
+      <div className="mt-3 grid gap-4 lg:grid-cols-2"><p className="text-[15px] text-stone-700 dark:text-zinc-300">{guide.observeEn}</p><ArabicText className="text-[15px] text-stone-700 dark:text-zinc-300">{guide.observeAr}</ArabicText></div>
+    </details>
+  </div>;
 };
 
 export const InlineExperiment: React.FC<{ id: string }> = ({ id }) => {
@@ -58,8 +89,14 @@ export const InlineExperiment: React.FC<{ id: string }> = ({ id }) => {
 
 export const ExperimentStudio: React.FC<{ ids: string[]; initialExperiment?: string }> = ({ ids, initialExperiment }) => {
   const labs = LAB_CATALOG.filter(lab => ids.includes(lab.id));
-  const [activeId, setActiveId] = useState(() => labs.find(lab => lab.id === initialExperiment)?.id ?? labs[0]?.id);
-  if (!activeId) return null;
+  const [activeId, setActiveId] = useState<LabId | undefined>(() => labs.find(lab => lab.id === initialExperiment)?.id ?? labs[0]?.id);
+  const availableIds = labs.map(lab => lab.id).join(',');
+  useEffect(() => {
+    const available = availableIds.split(',').filter(Boolean);
+    setActiveId((initialExperiment && available.includes(initialExperiment) ? initialExperiment : available[0]) as LabId | undefined);
+  }, [availableIds, initialExperiment]);
+  const selectedId = labs.find(lab => lab.id === activeId)?.id ?? labs[0]?.id;
+  if (!selectedId) return null;
   return <div className="min-w-0 space-y-5" data-testid="experiment-studio">
     <section className="rounded-3xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 sm:p-7 space-y-5">
       <header className="flex gap-3 items-start">
@@ -69,9 +106,9 @@ export const ExperimentStudio: React.FC<{ ids: string[]; initialExperiment?: str
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" aria-label="Choose an experiment">
         {labs.map((lab, index) => {
           const Icon = lab.icon;
-          return <button key={lab.id} type="button" data-testid={`open-${lab.id}`} aria-pressed={activeId === lab.id}
+          return <button key={lab.id} type="button" data-testid={`open-${lab.id}`} aria-pressed={selectedId === lab.id}
             onClick={() => { setActiveId(lab.id); document.getElementById('active-experiment')?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}
-            className={`min-w-0 rounded-2xl border p-4 text-left transition-colors ${activeId === lab.id ? 'bg-stone-900 dark:bg-stone-100 border-stone-900 dark:border-stone-100 text-white dark:text-stone-900' : 'bg-[#FAF7F2] dark:bg-stone-950 border-beige-300 dark:border-stone-800 text-stone-800 dark:text-zinc-200 hover:border-stone-400 dark:hover:border-stone-600'}`}>
+            className={`min-w-0 rounded-2xl border p-4 text-left transition-colors ${selectedId === lab.id ? 'bg-stone-900 dark:bg-stone-100 border-stone-900 dark:border-stone-100 text-white dark:text-stone-900' : 'bg-[#FAF7F2] dark:bg-stone-950 border-beige-300 dark:border-stone-800 text-stone-800 dark:text-zinc-200 hover:border-stone-400 dark:hover:border-stone-600'}`}>
             <span className="flex justify-between mb-3"><Icon className="w-5 h-5" /><span className="font-mono text-[13px] opacity-70">{String(index + 1).padStart(2, '0')}</span></span>
             <span className="block text-sm font-semibold">{lab.title}</span>
             <ArabicText className="text-inherit text-[13px] mt-1 opacity-80">{lab.subtitleAr}</ArabicText>
@@ -80,6 +117,6 @@ export const ExperimentStudio: React.FC<{ ids: string[]; initialExperiment?: str
       </div>
       <p className="flex gap-2 items-center text-[13px] text-stone-600 dark:text-zinc-400"><ArrowDownRight className="w-4 h-4" />One experiment at a time. Reset, replay, and compare.</p>
     </section>
-    <div id="active-experiment" className="scroll-mt-28"><Experiment key={activeId} id={activeId} /></div>
+    <div id="active-experiment" className="scroll-mt-28"><Experiment key={selectedId} id={selectedId} /></div>
   </div>;
 };

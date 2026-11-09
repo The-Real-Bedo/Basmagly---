@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Network, Zap, Play, Flame, Cpu } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 type DeviceType = 'hub' | 'switch' | 'router';
 type NodeState = 'tx' | 'rx' | 'drop' | 'collision';
@@ -440,7 +441,16 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
       </div>
 
       {/* Visual Canvas Area */}
-      <div className="relative bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 rounded-2xl p-4 sm:p-6 overflow-hidden">
+      <LabWorkbench title="Network devices · live ports" motionKey={view.logEn}
+ nodes={[
+  ...NODES.map<WorkbenchNode>((n, i) => ({ id: n.id, label: n.name, showValue: false, kind: 'computer', position: [i % 2 ? 3 : -3, 0, i < 2 ? -2 : 2],
+    tone: view.nodes[n.id] === 'collision' ? 'error' : view.nodes[n.id] === 'rx' ? 'success' : view.nodes[n.id] === 'tx' ? 'active' : 'neutral', value: ipOf(n, activeDevice), detail: `${n.mac} · Port ${n.port}. ${view.nodes[n.id] === 'drop' ? 'Frame received and discarded by this NIC.' : 'Inspect the highlighted port during transmission.'}`, detailAr: `${n.mac} · المنفذ ${n.port}. ${view.nodes[n.id] === 'drop' ? 'الـ Frame وصل وكارت الشبكة تجاهله.' : 'راجع المنفذ المظلل أثناء الإرسال.'}` })),
+  { id: 'central', label: device.name, kind: activeDevice === 'hub' ? 'switch' : activeDevice, position: [0, 0, 0], tone: view.collision ? 'error' : isSimulating ? 'active' : 'info', detail: device.layer, detailAr: activeDevice === 'hub' ? 'الطبقة 1 · Physical' : activeDevice === 'switch' ? 'الطبقة 2 · Data Link' : 'الطبقة 3 · Network' },
+ ]}
+ links={NODES.map<WorkbenchLink>(n => ({ id: n.id, from: view.nodes[n.id] === 'tx' ? n.id : 'central', to: view.nodes[n.id] === 'tx' ? 'central' : n.id,
+   tone: view.nodes[n.id] === 'collision' ? 'error' : view.nodes[n.id] === 'rx' ? 'success' : view.nodes[n.id] === 'tx' || view.nodes[n.id] === 'drop' ? 'active' : 'neutral', moving: isSimulating && !!view.nodes[n.id] }))}
+>
+<div className="relative bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 rounded-2xl p-4 sm:p-6 overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#dcd1bd_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
         <div className="relative mx-auto w-full max-w-xl">
@@ -503,6 +513,8 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
           </div>
         </div>
       </div>
+
+      </LabWorkbench>
 
       {/* Forwarding Table */}
       <div className="bg-[#FAF7F2] dark:bg-stone-950 rounded-2xl border border-beige-300 dark:border-stone-800 p-4 space-y-3">

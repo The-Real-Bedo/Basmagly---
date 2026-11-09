@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, Pause, Play, RotateCcw, Sparkles, StepForward, Wind } from 'lucide-react';
 import ArabicText from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 type Location = 'A' | 'B';
 type Room = 'clean' | 'dirty';
@@ -159,7 +160,13 @@ export function VacuumWorldAgentLab() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto_1fr]" aria-label="Two-room vacuum world">
+          <LabWorkbench title="Vacuum world · rooms and percept" motionKey={state.steps}
+ nodes={[
+  ...(['A', 'B'] as const).map<WorkbenchNode>((room, i) => ({ id: room, label: `Room ${room}`, hideLabel: state.location === room, labelPosition: [0, .32, -1.15], kind: 'room', position: [i ? 1.65 : -1.65, 0, 0], dirty: state.rooms[room] === 'dirty', tone: state.rooms[room] === 'dirty' ? 'active' : 'success', value: state.rooms[room], detail: state.location === room ? 'The agent perceives this room now.' : 'The agent has no percept of this room now.', detailAr: state.location === room ? 'الوكيل شايف حالة الغرفة دي دلوقتي.' : 'الوكيل مش شايف حالة الغرفة دي دلوقتي.', action: () => editRoom(room), actionLabel: 'Toggle dirt', disabled: playing })),
+  { id: 'agent', label: 'Reflex agent', sceneLabel: 'Agent · ' + state.location, value: state.rooms[state.location], kind: 'robot', position: [state.location === 'A' ? -1.65 : 1.65, .14, 0], tone: 'info', detail: `Percept: [${state.location}, ${state.rooms[state.location]}]. ${state.action}`, detailAr: `الـ Percept: [${state.location}, ${state.rooms[state.location]}]. ${state.steps === 0 ? 'جاهز: راقب الغرفة الحالية.' : state.action.startsWith('Suck') ? 'شفط في الغرفة ' + state.location : 'حركة للغرفة ' + state.location}` },
+ ]}
+>
+<div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto_1fr]" aria-label="Two-room vacuum world">
             {(['A', 'B'] as Location[]).map((room, index) => {
               const dirty = state.rooms[room] === 'dirty';
               const occupied = state.location === room;
@@ -188,6 +195,7 @@ export function VacuumWorldAgentLab() {
             })}
             <div aria-hidden="true" className="hidden items-center justify-center text-stone-400 dark:text-zinc-500 md:col-start-2 md:row-start-1 md:flex"><ArrowRight size={24} /></div>
           </div>
+</LabWorkbench>
 
           <div aria-live="polite" className={`mt-4 rounded-2xl border p-4 ${state.done ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30' : 'border-beige-300 bg-[#FAF7F2] dark:border-stone-800 dark:bg-stone-950'}`}>
             <p className="font-semibold text-stone-900 dark:text-stone-100">{state.done ? 'Task complete: both rooms are clean.' : `Agent rule: ${state.action}`}</p>

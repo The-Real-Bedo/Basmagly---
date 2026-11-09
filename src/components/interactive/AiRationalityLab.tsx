@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import React, { useState } from 'react';
 import { ArrowRight, Compass, RotateCcw, Route } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
@@ -47,7 +48,18 @@ export const AiRationalityLab: React.FC = () => {
         </div>
       </div>
 
-      <figure className="rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
+      <LabWorkbench title="Route choice · expected time" motionKey={choice+'-'+outcome}
+ nodes={[
+ {id:'start',label:'Start',kind:'state',position:[-3,0,0],detail:'Choose using expected time before revealing a road condition.',detailAr:'اختار بناءً على الوقت المتوقع قبل ما تكشف حالة الطريق.'},
+ {id:'safe',label:'Safe route',kind:'car',position:[0,0,-1.6],tone:choice==='safe'?'active':'neutral',value:'8 min',detail:'Eight minutes in either road condition.',detailAr:'8 دقايق في أي حالة للطريق.',action:()=>{setChoice('safe');setOutcome(null)},actionLabel:'Choose safe route'},
+ {id:'shortcut',label:'Shortcut',kind:'car',position:[0,0,1.6],tone:outcome==='blocked'?'error':choice==='shortcut'?'active':'neutral',value:'Expected '+shortcutExpected.toFixed(1)+' min',detail:outcome===null?'Road condition is still unknown. Clear: 2 min; blocked: 20 min.':outcome==='clear'?'Revealed condition: clear.':'Revealed condition: blocked.',detailAr:outcome===null?'حالة الطريق لسه مجهولة. لو فاضي: دقيقتين؛ لو مسدود: 20 دقيقة.':outcome==='clear'?'الحالة المكشوفة: الطريق فاضي.':'الحالة المكشوفة: الطريق مسدود.',action:()=>{setChoice('shortcut');setOutcome(null)},actionLabel:'Choose shortcut'},
+ {id:'goal',label:'Goal',kind:'state',position:[3,0,0],tone:choice&&outcome?'success':'neutral',value:choice&&outcome?actual+' min':undefined,detail:'A good expected decision can still have an unlucky result.',detailAr:'القرار الكويس حسب التوقع ممكن برضه يطلع بنتيجة حظها وحش.'}
+ ]}
+ links={[
+ {id:'safe-road',points:[[-3,.04,0],[-1.5,.04,-1.6],[1.5,.04,-1.6],[3,.04,0]],tone:choice==='safe'?'active':'neutral',moving:choice==='safe'},
+ {id:'shortcut-road',points:[[-3,.04,0],[-1.5,.04,1.6],[1.5,.04,1.6],[3,.04,0]],tone:outcome==='blocked'?'error':choice==='shortcut'?'active':'neutral',moving:choice==='shortcut'&&outcome!=='blocked'}
+ ]}>
+<figure className="rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
         <svg viewBox="0 0 600 190" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="Two routes from start to goal: a safe route taking eight minutes and a shortcut taking two or twenty minutes">
           <path d="M45 95 Q150 -25 300 40 T555 95" fill="none" stroke="currentColor" strokeWidth={choice === 'safe' ? 5 : 2} opacity={choice === 'shortcut' ? 0.25 : 0.7} />
           <path d="M45 95 Q280 220 555 95" fill="none" stroke={outcome === 'blocked' ? '#be123c' : '#b45309'} strokeWidth={choice === 'shortcut' ? 5 : 2} strokeDasharray={outcome === 'blocked' ? '10 7' : undefined} opacity={choice === 'safe' ? 0.25 : 0.8} />
@@ -58,6 +70,7 @@ export const AiRationalityLab: React.FC = () => {
           <text x="45" y="135" fontSize="26" textAnchor="middle" fill="currentColor">Start</text><text x="555" y="135" fontSize="26" textAnchor="middle" fill="currentColor">Goal</text>
         </svg>
       </figure>
+</LabWorkbench>
       <div className="grid gap-3 sm:grid-cols-2">
         {(['safe', 'shortcut'] as const).map(route => (
           <button key={route} onClick={() => { setChoice(route); setOutcome(null); }} aria-pressed={choice === route}

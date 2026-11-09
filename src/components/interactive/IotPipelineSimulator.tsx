@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import React, { useEffect, useRef, useState } from 'react';
 import { Activity, Cpu, Factory, LucideIcon, Play, Radio, RotateCcw, Sprout, Thermometer, Zap } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
@@ -202,7 +203,10 @@ export const IotPipelineSimulator: React.FC = () => {
                 className="rounded-xl border border-beige-300 p-2 text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800"><RotateCcw className="h-4 w-4" /></button>
             </div>
           </div>
-          <ol className="grid gap-3 sm:grid-cols-2">
+          <LabWorkbench title="IoT · sensor to action" motionKey={scenario.id+'-'+stage}
+ nodes={STAGES.map<WorkbenchNode>((item,index)=>({id:String(item.step),label:item.title,sceneLabel:['Sensor','Link','Rule','Actuator'][index],kind:index===0?'sensor':index===1?'router':index===2?'cloud':scenario.id==='home'?'fan':scenario.id==='agriculture'?'water':'chip',position:[index===0||index===3?-2:2,0,index<2?-1.5:1.5],tone:stage===item.step?'active':stage>item.step?'success':'neutral',value:index===0?reading+scenario.unit:index===3&&stage===4&&hasRun?(triggered?'Activated':'No action'):undefined,detail:item.detail,detailAr:item.detailAr}))}
+ links={STAGES.slice(0,-1).map<WorkbenchLink>((item,index)=>({id:'flow-'+index,from:String(item.step),to:String(item.step+1),tone:stage===item.step+1?'active':stage>item.step+1?'success':'neutral',moving:stage===item.step+1}))}>
+<ol className="grid gap-3 sm:grid-cols-2">
             {STAGES.map((item) => {
               const Icon = item.icon;
               const active = stage === item.step && isProcessing;
@@ -224,6 +228,7 @@ export const IotPipelineSimulator: React.FC = () => {
               );
             })}
           </ol>
+</LabWorkbench>
         </div>
       </div>
 

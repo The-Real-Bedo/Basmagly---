@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Share2, Send, RotateCcw, CircleCheck, CircleX, Loader } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 type Topology = 'star' | 'bus' | 'ring' | 'mesh';
 type Phase = 'sending' | 'ok' | 'fail';
@@ -542,7 +543,14 @@ export const TopologyPlayground: React.FC = () => {
         </div>
 
         {/* Diagram: fixed-size canvas, scrolls sideways on narrow screens */}
-        <div className="w-full overflow-x-auto">
+        <LabWorkbench title={`${topology.toUpperCase()} · fault tolerance`} motionKey={sim?.phase}
+ nodes={[
+  ...[1, 2, 3, 4].map<WorkbenchNode>(n => ({ id: String(n), label: `PC-${n}`, kind: 'computer', position: [(PC_POS[topology][n].x - 170) / 35, 0, (PC_POS[topology][n].y - 150) / 35], tone: failedNodes.has(n) ? 'error' : sim?.phase === 'ok' && n === DST ? 'success' : isSending && (n === SRC || n === DST) ? 'active' : 'neutral', detail: failedNodes.has(n) ? 'This endpoint is offline.' : n === SRC ? 'Source endpoint.' : n === DST ? 'Destination endpoint.' : 'Neighboring endpoint.', detailAr: failedNodes.has(n) ? 'الجهاز ده متعطل.' : n === SRC ? 'الجهاز المرسل.' : n === DST ? 'الجهاز المستقبِل.' : 'جهاز مجاور.', action: () => toggleNode(n), actionLabel: failedNodes.has(n) ? 'Restore device' : 'Disable device', disabled: isSending })),
+  ...(topology === 'star' ? [{ id: '0', label: 'Central Switch', kind: 'switch' as const, position: [0, 0, 0] as [number, number, number], tone: hubFailed ? 'error' as const : 'info' as const, detail: 'Single point of failure: disabling the center disconnects the star.', detailAr: 'تعطيل الـ Switch المركزي بيفصل شبكة Star كلها.', action: () => toggleNode(0), actionLabel: hubFailed ? 'Restore switch' : 'Disable switch', disabled: isSending }] : []),
+ ]}
+ links={LINKS[topology].map<WorkbenchLink>(link => ({ id: link.id, label: link.label, points: [[(link.from.x - 170) / 35, .04, (link.from.y - 150) / 35], [(link.to.x - 170) / 35, .04, (link.to.y - 150) / 35]], tone: failedLinks.has(link.id) ? 'error' : sim?.path.includes(link.id) ? isSending ? 'active' : 'success' : 'neutral', moving: isSending && !!sim?.path.includes(link.id) && !failedLinks.has(link.id), action: link.cuttable ? () => toggleLink(link.id) : undefined, disabled: isSending }))}
+>
+<div className="w-full overflow-x-auto">
           <div className="relative mx-auto shrink-0" style={{ width: W, height: H }}>
             <svg
               width={W}
@@ -612,6 +620,7 @@ export const TopologyPlayground: React.FC = () => {
             {[1, 2, 3, 4].map(renderPc)}
           </div>
         </div>
+</LabWorkbench>
 
         {/* Legend */}
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">

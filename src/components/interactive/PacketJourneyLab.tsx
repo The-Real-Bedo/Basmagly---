@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Play, Pause, RotateCcw, StepForward } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 interface Endpoint {
   addr: string;
@@ -211,7 +212,11 @@ export const PacketJourneyLab: React.FC = () => {
 
       {/* Visual Network Path Map */}
       <div className="bg-[#FAF7F2] dark:bg-stone-950 rounded-2xl p-4 sm:p-6 border border-beige-300 dark:border-stone-800 space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 items-stretch text-center">
+        <LabWorkbench title="Packet journey · routed hop" motionKey={currentStep}
+ nodes={MAP_NODES.map<WorkbenchNode>((node, i) => ({ id: String(i), label: node.name, kind: (['computer', 'switch', 'router', 'server'] as const)[i], position: [-4.5 + i * 3, 0, i % 2 ? -1 : 1], tone: currentStep === i ? i === LAST_STEP ? 'success' : 'active' : i < currentStep ? 'success' : 'neutral', detail: i === 2 ? 'The router rebuilds the Layer-2 header; endpoint IPs stay fixed in this example without NAT.' : 'Inspect the IP and MAC fields below at each hop.', detailAr: i === 2 ? 'الـ Router بيبني ترويسة Layer 2 جديدة، والـ IP بيفضل ثابت في المثال ده من غير NAT.' : 'راجع خانات الـ IP والـ MAC تحت المشهد عند كل خطوة.' }))}
+ links={[0, 1, 2].map<WorkbenchLink>(i => ({ id: String(i), from: String(i), to: String(i + 1), tone: i < currentStep ? 'success' : i === currentStep ? 'active' : 'neutral', moving: isPlaying && i === currentStep }))}
+>
+<div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 items-stretch text-center">
           {MAP_NODES.map((node, i) => {
             const isActive = currentStep === i;
             const activeCls =
@@ -236,6 +241,7 @@ export const PacketJourneyLab: React.FC = () => {
             );
           })}
         </div>
+</LabWorkbench>
 
         {/* Real-time Packet Inspector */}
         <div className="bg-stone-900 text-stone-100 rounded-2xl p-4 sm:p-5 space-y-3.5 border border-stone-800">

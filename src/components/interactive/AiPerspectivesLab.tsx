@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import { useState, type ReactNode } from 'react';
 import { BrainCircuit, Check, Compass, RotateCcw } from 'lucide-react';
 import ArabicText from '../ArabicText';
@@ -609,7 +610,13 @@ export function AiFoundationsLab() {
         subtitle="اختار مهمة وتخصصات مساندة، وشوف كل مجال بيساهم فين في خط سير المساعد."
       />
 
-      <figure className="mt-5 rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
+      <LabWorkbench title="AI · contributing disciplines" motionKey={selectedIds.join('-')}
+ nodes={[
+ ...foundations.map<WorkbenchNode>((foundation,index)=>({id:foundation.id,label:foundation.en,sceneLabel:['Phi','Math','Neuro','Psych','Econ','Eng','Ctrl','Lang'][index],labelOnSelect:true,kind:'chip',position:[(index%4-1.5)*2,0,index<4?-2:2],tone:selectedIds.includes(foundation.id)?'active':'neutral',detail:foundation.contributions[taskId].en,detailAr:foundation.contributions[taskId].ar,action:()=>toggleFoundation(foundation.id),actionLabel:selectedIds.includes(foundation.id)?'Remove module':'Add module'})),
+ {id:'assistant',label:'AI assistant',kind:'server',position:[0,0,0],tone:'info',detail:task.description.en,detailAr:task.description.ar}
+ ]}
+ links={foundations.map<WorkbenchLink>(foundation=>({id:foundation.id,from:foundation.id,to:'assistant',tone:selectedIds.includes(foundation.id)?'active':'neutral',moving:selectedIds.includes(foundation.id)}))}>
+<figure className="mt-5 rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-4">
         <svg viewBox="0 0 600 260" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="Eight contributing disciplines connect to an AI system; selected disciplines light up their connections">
           {foundations.map((foundation, index) => {
             const x = 75 + (index % 4) * 150;
@@ -627,6 +634,7 @@ export function AiFoundationsLab() {
         <figcaption className="text-[13px] text-stone-600 dark:text-zinc-400">Toggle a discipline below to trace its contribution. This is a conceptual map, not a dependency checklist.</figcaption>
         <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400 mt-1">فعّل تخصص تحت وشوف مساهمته. دي خريطة مفاهيم، مش قائمة لازم كل نظام يحقّقها.</ArabicText>
       </figure>
+</LabWorkbench>
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <label htmlFor="ai-foundation-task" className="mb-2 block text-sm font-semibold text-stone-800 dark:text-stone-200">

@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Cloud, Cpu, Droplets, Flame, Play, RotateCcw, Thermometer, Wifi, WifiOff } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
@@ -137,7 +138,17 @@ export const EdgeVsCloudLab: React.FC = () => {
             <div><h4 className="text-base font-bold text-stone-900 dark:text-stone-100">Live response path</h4><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">مسار الاستجابة أثناء المحاكاة</ArabicText></div>
             <span className="rounded-full border border-beige-300 bg-[#FAF7F2] px-3 py-1 text-sm font-medium text-stone-700 dark:border-stone-700 dark:bg-stone-950 dark:text-zinc-300">{modeText}</span>
           </div>
-          <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr]">
+          <LabWorkbench title="Edge & cloud · response path" motionKey={runState}
+ nodes={[
+ {id:'sensor',label:'Temperature sensor',kind:'sensor',position:[-3,0,0],tone:fireDetected?'active':'neutral',value:temperature+'°C',detail:'The example fire rule triggers at 60°C or above.',detailAr:'قاعدة الحريق الافتراضية بتشتغل عند 60 درجة مئوية أو أكتر.'},
+ {id:'processor',label:mode==='edge'?'Local Edge rule':'Cloud rule',kind:mode==='edge'?'chip':'cloud',position:[0,0,mode==='cloud'?-1:0],tone:runState==='failure'?'error':runState==='running'?'active':'info',detail:mode==='edge'?'The decision runs locally, without a WAN round trip.':'The decision needs an internet route to the cloud.',detailAr:mode==='edge'?'القرار بيتاخد محليًا، من غير رحلة على شبكة WAN.':'القرار محتاج مسار إنترنت للـ Cloud.'},
+ {id:'actuator',label:'Sprinkler',kind:'water',position:[3,0,0],tone:sprinklerActive?'success':'neutral',value:sprinklerActive?'Active':'Standby',detail:'The sprinkler only activates when the rule returns a command.',detailAr:'الرشاش بيشتغل بس لما القاعدة ترجع أمر تشغيل.'}
+ ]}
+ links={[
+ {id:'reading',from:'sensor',to:'processor',tone:mode==='cloud'&&!online?'error':runState==='running'?'active':'neutral',moving:runState==='running'},
+ {id:'command',from:'processor',to:'actuator',tone:runState==='failure'?'error':sprinklerActive?'success':'neutral',moving:sprinklerActive}
+ ]}>
+<div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr]">
             <div className="flex min-w-0 flex-col items-center justify-center rounded-2xl border border-beige-300 bg-[#FAF7F2] p-3 text-center dark:border-stone-800 dark:bg-stone-950"><Thermometer className="mb-2 h-6 w-6 text-stone-700 dark:text-zinc-300" /><p className="text-sm font-bold text-stone-900 dark:text-stone-100">Temperature sensor</p><p className="font-mono text-sm text-stone-600 dark:text-zinc-400">{temperature}°C</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">حساس الحرارة</ArabicText></div>
             <div className="hidden items-center text-stone-400 dark:text-zinc-500 sm:flex"><ArrowRight className="h-5 w-5" /></div>
             <div className={'flex min-w-0 flex-col items-center justify-center rounded-2xl border p-3 text-center transition-colors ' + (runState === 'running' ? 'border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30' : 'border-beige-300 bg-[#FAF7F2] dark:border-stone-800 dark:bg-stone-950')}>
@@ -154,6 +165,7 @@ export const EdgeVsCloudLab: React.FC = () => {
               <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">{sprinklerActive ? 'المشغّل اشتغل' : 'المشغّل مستني'}</ArabicText>
             </div>
           </div>
+</LabWorkbench>
           <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-stone-100 dark:border-stone-700 dark:bg-stone-950 dark:text-stone-100" aria-live="polite">
             <p className="text-sm leading-relaxed">{message.en}</p><ArabicText className="text-sm leading-relaxed text-zinc-300 dark:text-zinc-300">{message.ar}</ArabicText>
             <p className="mt-3 border-t border-stone-800 pt-3 text-[13px] text-zinc-400">Illustrative rule and animation only; playback timing is not a network measurement.</p><ArabicText className="text-[13px] text-zinc-400 dark:text-zinc-400">القاعدة والحركة للتوضيح فقط؛ وتوقيت العرض مش قياسًا للشبكة.</ArabicText>

@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import { useState } from 'react';
 import { Binary, Braces, Cpu, Fingerprint, Type, Waypoints } from 'lucide-react';
 import ArabicText from '../ArabicText';
@@ -40,7 +41,7 @@ const groups: { id: GroupId; title: string; titleAr: string; icon: typeof Binary
   {
     id: 'text', title: 'Strings and text', titleAr: 'النصوص والـ Strings', icon: Type,
     types: [
-      { name: 'char', meaning: 'Narrow code unit; its encoding is not always ASCII.', meaningAr: 'وحدة نصية narrow؛ وترميزها مش دايمًا ASCII.', character: true },
+      { name: 'char', meaning: 'Narrow code unit; its encoding is not always ASCII.', meaningAr: 'وحدة نصية narrow؛ وترميزها مش دايمًا ASCII.', bits: 8, character: true },
       { name: 'wchar_t', meaning: '16-bit UTF-16 code unit on Windows.', meaningAr: 'وحدة UTF-16 حجمها 16-bit على Windows.', bits: 16 },
       { name: 'LPSTR / LPCSTR', meaning: 'Mutable / constant narrow-string pointer.', meaningAr: 'مؤشر نص narrow قابل للتعديل / ثابت.', pointer: true },
       { name: 'LPWSTR / LPCWSTR', meaning: 'Mutable / constant wide-string pointer.', meaningAr: 'مؤشر نص wide قابل للتعديل / ثابت.', pointer: true },
@@ -81,7 +82,7 @@ export function Win32TypesLab() {
   const selectedType = activeGroup.types.find((type) => type.name === selectedName) ?? activeGroup.types[0];
   const selectedBits = selectedType.pointer
     ? pointerBits[architecture]
-    : selectedType.character
+    : selectedType.name === 'TCHAR'
       ? textMode === 'unicode' ? 16 : 8
       : selectedType.bits;
   const pointerWidth = pointerBits[architecture];
@@ -166,13 +167,16 @@ export function Win32TypesLab() {
               {selectedType.structure ? 'الحجم بيتغير حسب الحقول والمعمارية ومحاذاة الـ compiler.' : selectedType.character ? 'حجم وحدة النص: ' + selectedBits + ' bit' : 'الحجم: ' + selectedBits + ' bit (' + (selectedBits ? selectedBits / 8 : 0) + ' bytes)'}
             </ArabicText>
             {selectedBits && !selectedType.structure && (
-              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8" aria-label={selectedBits + ' bit width'}>
+              <LabWorkbench title={selectedType.name+' · memory bytes'}
+ nodes={Array.from({length:selectedBits!/8},(_,index):WorkbenchNode=>({id:'byte-'+index,label:'B'+(index+1),kind:'byte',position:[(index%4-1.5)*1.3,0,Math.floor(index/4)*1.8-.9],tone:'info',detail:'Byte '+(index+1)+' represents bits '+(index*8)+'–'+(index*8+7)+'. This illustrates width, not an actual memory address or encoding.',detailAr:'البايت '+(index+1)+' بيمثل البتات من '+(index*8)+' لـ '+(index*8+7)+'. ده توضيح للحجم، مش عنوان ذاكرة فعلي ولا ترميز.'}))}>
+<div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8" aria-label={selectedBits + ' bit width'}>
                 {Array.from({ length: selectedBits / 8 }, (_, index) => (
                   <div key={index} className="rounded-lg border border-sky-300 bg-sky-100 px-2 py-2 text-center font-mono text-xs text-sky-900 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-200">
                     B{index + 1}
                   </div>
                 ))}
               </div>
+</LabWorkbench>
             )}
           </div>
           {groupId === 'text' && (

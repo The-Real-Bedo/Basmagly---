@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Layers, Send, RefreshCw } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 
 interface LayerInfo {
   number: number;
@@ -207,7 +208,12 @@ export const OsiTcpVisualizer: React.FC = () => {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Layer Stack */}
-        <div className="lg:col-span-5 space-y-2.5">
+        <div className="lg:col-span-5 min-w-0">
+<LabWorkbench title="OSI · exploded stack" motionKey={`${direction}-${simStage}`}
+ nodes={OSI_LAYERS.map<WorkbenchNode>((layer, i) => ({ id: String(layer.number), label: `L${layer.number} · ${layer.name.replace(' Layer', '')}`, sceneLabel: `Layer ${layer.number}`, showValue: false, labelOnSelect: true, kind: 'layer', position: [(i - 3) * .16, (6 - i) * .65, (i - 3) * .22], value: layer.pduShort, tone: selectedLayer === layer.number ? 'active' : 'neutral', detail: layer.keyFunction, detailAr: layer.explanationAr, action: () => setSelectedLayer(layer.number), actionLabel: 'Show layer details', disabled: isSimulating }))}
+ links={isSimulating && simStage !== null ? [{ id: 'pdu', from: String(simStage), to: String(direction === 'down' ? Math.max(1, simStage - 1) : Math.min(7, simStage + 1)), tone: 'active', moving: true }] : []}
+>
+<div className="lg:col-span-5 space-y-2.5">
           <div className="flex flex-wrap justify-between gap-x-3 text-sm text-stone-600 dark:text-zinc-400 font-semibold px-1 mb-1">
             <ArabicText as="span" className="text-sm font-semibold">الطبقة (Layer)</ArabicText>
             <ArabicText as="span" className="text-sm font-semibold">وحدة البيانات (PDU)</ArabicText>
@@ -221,6 +227,7 @@ export const OsiTcpVisualizer: React.FC = () => {
               <button
                 key={layer.number}
                 onClick={() => setSelectedLayer(layer.number)}
+                disabled={isSimulating}
                 aria-pressed={isSelected}
                 className={`w-full text-left p-3.5 rounded-2xl border transition-all flex flex-wrap items-center justify-between gap-x-3 gap-y-2 relative overflow-hidden ${
                   isSelected
@@ -257,6 +264,8 @@ export const OsiTcpVisualizer: React.FC = () => {
             );
           })}
         </div>
+</LabWorkbench>
+</div>
 
         {/* Layer Details Box */}
         <div className="lg:col-span-7 space-y-4">
