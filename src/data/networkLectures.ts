@@ -423,7 +423,7 @@ const lecture1: Lecture = {
     { en: 'Physical topology = arrangement; logical topology = data flow.', ar: 'الـPhysical topology = ترتيب الأجهزة؛ والـLogical topology = حركة البيانات.' },
     { en: 'Unicast: one destination; broadcast: all LAN devices; multicast: selected group.', ar: 'Unicast: وجهة واحدة؛ Broadcast: كل أجهزة الـLAN؛ Multicast: مجموعة مختارة.' },
   ],
-  interactiveTools: ['network-devices', 'topology-simulator', 'transmission-lab', 'network-media'],
+  interactiveTools: ['network-devices', 'network-3d', 'topology-simulator', 'transmission-lab', 'network-media'],
   questions: copyQuestions(existingLectures[0]),
 };
 
