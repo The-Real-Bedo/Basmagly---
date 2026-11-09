@@ -2,6 +2,7 @@ import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkb
 import { useState } from 'react';
 import { Binary, Braces, Cpu, Fingerprint, Type, Waypoints } from 'lucide-react';
 import ArabicText from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Architecture = 'x86' | 'x64';
 type TextMode = 'narrow' | 'unicode';
@@ -99,6 +100,12 @@ export function Win32TypesLab() {
     setArchitecture(next);
     setPointerChoice(null);
   };
+  const missions: ChallengeMission[] = [
+    { id: 'pointer-safe', title: 'Choose and inspect a pointer-safe type', titleAr: 'اختار وافحص نوع آمن لحجم المؤشر', goal: 'Target x64. In Pointer-width safety choose the portable pointer-sized unsigned type, then select that type in Message parameters and inspect its eight bytes.', goalAr: 'اختار x64. في أمان حجم المؤشر اختار النوع العام الـ unsigned بحجم المؤشر، وبعدها اختار نفس النوع من مجموعة الـ Message parameters وافحص بايتاته التمانية.', hint: 'DWORD remains 32-bit on x64. Look for the unsigned type whose width follows a pointer.', hintAr: 'الـ DWORD بيفضل 32-bit على x64. دوّر على النوع الـ unsigned اللي حجمه بيتبع المؤشر.', start: () => { setArchitecture('x64'); selectGroup('numbers'); setSelectedName('DWORD'); setPointerChoice('DWORD'); },
+      evaluate: () => architecture !== 'x64' ? feedback('retry', 'Use the x64 target for the eight-byte inspection.', 'استخدم هدف x64 لفحص البايتات التمانية.') : !choiceSafe ? feedback('retry', 'The safety selection must hold a pointer on both x86 and x64.', 'اختيار الأمان لازم يشيل مؤشر على x86 وx64.') : selectedType.name !== 'UINT_PTR' || selectedBits !== 64 ? feedback('pending', 'Now inspect the same type in Message parameters and count its bytes.', 'دلوقتي افحص نفس النوع في مجموعة الـ Message parameters وعدّ بايتاته.') : feedback('success', 'UINT_PTR is pointer-sized: 64 bits / 8 bytes on x64, and 32 bits on x86.', 'الـ UINT_PTR بحجم المؤشر: 64 بت، يعني 8 بايت على x64، و32 بت على x86.') },
+    { id: 'unicode-unit', title: 'Inspect a generic Unicode code unit', titleAr: 'افحص وحدة نص Unicode عامة', goal: 'Select TCHAR under Strings and text. Change the generic text build so its code unit occupies two bytes on Windows.', goalAr: 'اختار الـ TCHAR من النصوص والـ Strings. غيّر بناء النص العام عشان وحدة النص تشغل بايتين على Windows.', hint: 'The UNICODE build selects wchar_t for TCHAR; architecture does not decide a character code unit width.', hintAr: 'بناء الـ UNICODE بيختار wchar_t للـ TCHAR؛ والمعمارية مش هي اللي بتحدّد حجم وحدة النص.', start: () => { selectGroup('text'); setSelectedName('TCHAR'); setTextMode('narrow'); },
+      evaluate: () => selectedType.name === 'TCHAR' && textMode === 'unicode' && selectedBits === 16 ? feedback('success', 'TCHAR maps to wchar_t in the Unicode build: one Windows UTF-16 code unit uses 2 bytes.', 'الـ TCHAR بيتحوّل لـ wchar_t في بناء الـ Unicode: وحدة UTF-16 واحدة على Windows بتستخدم بايتين.') : feedback('retry', 'Inspect TCHAR and change the generic text build to a two-byte code unit.', 'افحص الـ TCHAR وغيّر بناء النص العام لوحدة نص من بايتين.') },
+  ];
 
   return (
     <section id="win32-types-lab" className="rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
@@ -110,6 +117,7 @@ export function Win32TypesLab() {
         </div>
       </header>
 
+      <LabChallenge missions={missions} />
       <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <p className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200">Target build · إعداد الـ Build</p>

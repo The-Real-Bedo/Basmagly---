@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, Pause, Play, RotateCcw, Sparkles, StepForward, Wind } from 'lucide-react';
 import ArabicText from '../ArabicText';
 import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Location = 'A' | 'B';
 type Room = 'clean' | 'dirty';
@@ -71,6 +72,7 @@ export function VacuumWorldAgentLab() {
   const [playing, setPlaying] = useState(false);
   const [view, setView] = useState<'world' | 'peas'>('world');
   const timerRef = useRef<number | null>(null);
+  const challengeEdited = useRef(false);
 
   useEffect(() => {
     if (!playing || state.done || view !== 'world') return;
@@ -92,12 +94,15 @@ export function VacuumWorldAgentLab() {
   }, [state.done]);
 
   const reset = () => {
+    if (timerRef.current !== null) window.clearInterval(timerRef.current);
+    timerRef.current = null;
     setPlaying(false);
     setState(initialState());
   };
 
   const editRoom = (room: Location) => {
     if (playing) return;
+    challengeEdited.current = true;
     setState((current) => ({
       ...current,
       rooms: { ...current.rooms, [room]: current.rooms[room] === 'dirty' ? 'clean' : 'dirty' },
@@ -108,6 +113,7 @@ export function VacuumWorldAgentLab() {
 
   const moveAgent = (location: Location) => {
     if (playing) return;
+    challengeEdited.current = true;
     setState((current) => ({ ...current, location, done: false, action: `Agent repositioned to room ${location}.` }));
   };
 
@@ -115,6 +121,12 @@ export function VacuumWorldAgentLab() {
     setPlaying(false);
     setView(next);
   };
+  const missions: ChallengeMission[] = [
+    { id: 'clean-two', title: 'Clean two dirty rooms by reflex', titleAr: 'نضّف غرفتين متّسختين بردّ الفعل', goal: 'Both rooms start dirty and the agent starts in A. Use Step or Auto play to clean both rooms without editing dirt or moving the agent by hand. Finish in 3 actions with score 4.', goalAr: 'الغرفتين بيبدأوا متّسخين والوكيل في A. استخدم Step أو Auto play لتنضيفهم من غير تغيير التراب أو تحريك الوكيل بإيدك. خلّص في 3 أفعال وبنقاط 4.', hint: 'A dirty percept causes Suck; a clean percept causes a move. Score counts clean rooms after each action.', hintAr: 'إدراك التراب بيختار Suck؛ وإدراك النضافة بيختار الحركة. النقاط بتعدّ الغرف النضيفة بعد كل فعل.', start: () => { reset(); setView('world'); challengeEdited.current = false; },
+      evaluate: () => challengeEdited.current ? feedback('retry', 'The environment or location was edited. Restart the mission and use agent actions only.', 'البيئة أو الموقع اتغيّروا يدويًا. أعد المهمة واستخدم أفعال الوكيل بس.') : state.done && state.steps === 3 && state.score === 4 ? feedback('success', 'Reflex mission complete: Suck A, Move B, Suck B. Three actions earned 1 + 1 + 2 = 4.', 'مهمة ردّ الفعل اكتملت: شفط A، حركة لـ B، شفط B. تلاتة أفعال جابوا 1 + 1 + 2 = 4.') : feedback('pending', `Continue agent actions. Current score ${state.score}; actions ${state.steps}.`, `كمّل أفعال الوكيل. النقاط الحالية ${state.score}؛ والأفعال ${state.steps}.`) },
+    { id: 'clean-one', title: 'React to a clean starting room', titleAr: 'استجيب لغرفة بداية نضيفة', goal: 'A starts clean, B dirty, and the agent starts in A. Let the reflex rule clean B without manual edits. Finish in 2 actions with score 3.', goalAr: 'A بتبدأ نضيفة، وB متّسخة، والوكيل في A. خلّي قاعدة ردّ الفعل تنضّف B من غير تغييرات يدوية. خلّص في فعلين وبنقاط 3.', hint: 'The first percept is clean, so the rule moves before it sucks.', hintAr: 'أول إدراك نضيف، فالقاعدة بتتحرّك قبل الشفط.', start: () => { reset(); setState({ ...initialState(), rooms: { A: 'clean', B: 'dirty' } }); setView('world'); challengeEdited.current = false; },
+      evaluate: () => challengeEdited.current ? feedback('retry', 'Restart and use agent actions without changing the environment.', 'أعد المهمة واستخدم أفعال الوكيل من غير تغيير البيئة.') : state.done && state.steps === 2 && state.score === 3 ? feedback('success', 'Move B then Suck B earned 1 + 2 = 3 in two actions.', 'الحركة لـ B وبعدها شفط B جابوا 1 + 2 = 3 في فعلين.') : feedback('pending', `Continue the reflex rule. Current score ${state.score}; actions ${state.steps}.`, `كمّل قاعدة ردّ الفعل. النقاط الحالية ${state.score}؛ والأفعال ${state.steps}.`) },
+  ];
 
   return (
     <section className="rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
@@ -136,6 +148,7 @@ export function VacuumWorldAgentLab() {
           PEAS examples <span className="font-arabic">أمثلة PEAS</span>
         </button>
       </div>
+      <LabChallenge missions={missions} busy={playing} />
 
       {view === 'world' ? (
         <>

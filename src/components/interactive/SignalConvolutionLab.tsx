@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AudioWaveform, RotateCcw, SkipForward } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type InputPreset = 'book' | 'pulse' | 'ramp';
 type KernelPreset = 'average' | 'impulse' | 'weighted';
@@ -94,6 +95,12 @@ export const SignalConvolutionLab: React.FC = () => {
   const updateInput = (value: InputPreset) => { setInputPreset(value); setSteppedThrough(-1); setInspectedIndex(0); };
   const updateKernel = (value: KernelPreset) => { setKernelPreset(value); setSteppedThrough(-1); setInspectedIndex(0); };
   const selectClass = 'w-full rounded-xl border border-beige-300 bg-white px-3 py-2 text-sm text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100';
+  const missions: ChallengeMission[] = [
+    { id: 'average-peak', title: 'Compute and inspect the average peak', titleAr: 'احسب وافحص قمة المتوسط', goal: 'Use input [3, 0, 6] with the three-sample moving average. Step through the full output, then inspect n = 2 and its aligned products.', goalAr: 'استخدم المدخل [3, 0, 6] مع المتوسط المتحرك من تلات عينات. امشي في الخرج كامل بالـ Step، وبعدها افحص n = 2 ونواتج ضربه المتحاذية.', hint: 'Full convolution has input length + response length − 1 outputs. The middle output sums every overlapping pair.', hintAr: 'الالتفاف الكامل فيه عدد مخارج يساوي طول المدخل زائد طول الاستجابة ناقص 1. الخرج الأوسط بيجمع كل الأزواج المتداخلة.', start: () => { reset(); setKernelPreset('impulse'); },
+      evaluate: () => inputPreset !== 'book' || kernelPreset !== 'average' ? feedback('retry', 'Use [3, 0, 6] and the three-sample moving average.', 'استخدم [3, 0, 6] والمتوسط المتحرك من تلات عينات.') : steppedThrough !== output.length - 1 ? feedback('pending', 'Step through every output sample before inspecting the peak.', 'امشي بالـ Step في كل عينات الخرج قبل فحص القمة.') : active !== 2 ? feedback('pending', 'Move the inspection slider to n = 2.', 'حرّك مؤشر الفحص لـ n = 2.') : feedback('success', 'Peak verified: y[2] = 1 + 0 + 2 = 3. Full output is [1, 1, 3, 2, 2].', 'القمة اتأكدت: y[2] = 1 + 0 + 2 = 3. الخرج الكامل هو [1, 1, 3, 2, 2].') },
+    { id: 'weighted-middle', title: 'Inspect an asymmetric response', titleAr: 'افحص استجابة غير متماثلة', goal: 'Use pulse [1, 2, 1] and asymmetric response [1, 2, 0.5]. Compute through n = 2, then inspect that position and the reversed response.', goalAr: 'استخدم النبضة [1, 2, 1] والاستجابة غير المتماثلة [1, 2, 0.5]. احسب لحد n = 2، وبعدها افحص الموضع ده والاستجابة المعكوسة.', hint: 'At n = 2, response indices decrease across k = 0, 1, 2; do not multiply the two sequences in their original order.', hintAr: 'عند n = 2، مؤشرات الاستجابة بتقلّ عند k = 0 و1 و2؛ ما تضربش التسلسلين بترتيبهم الأصلي.', start: () => { reset(); setInputPreset('pulse'); },
+      evaluate: () => inputPreset !== 'pulse' || kernelPreset !== 'weighted' ? feedback('retry', 'Choose pulse [1, 2, 1] and the asymmetric response.', 'اختار النبضة [1, 2, 1] والاستجابة غير المتماثلة.') : steppedThrough < 2 || active !== 2 ? feedback('pending', 'Compute through n = 2 and inspect that same position.', 'احسب لحد n = 2 وافحص نفس الموضع.') : feedback('success', 'Reversal verified: [0.5, 2, 1] faces the pulse, giving y[2] = 0.5 + 4 + 1 = 5.5.', 'العكس اتأكد: [0.5, 2, 1] بتقابل النبضة، وبتدي y[2] = 0.5 + 4 + 1 = 5.5.') },
+  ];
 
   return (
     <section className="rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6" aria-labelledby="signal-convolution-title">
@@ -103,6 +110,7 @@ export const SignalConvolutionLab: React.FC = () => {
         <button type="button" onClick={reset} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-beige-300 px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#FAF7F2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800" aria-label="Reset convolution lab"><RotateCcw size={15} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
       </header>
 
+      <LabChallenge missions={missions} />
       <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950 sm:grid-cols-2">
         <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">Input x[n] · index starts at 0
           <select value={inputPreset} onChange={(event) => updateInput(event.target.value as InputPreset)} className={selectClass}>

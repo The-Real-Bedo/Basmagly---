@@ -2,6 +2,7 @@ import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkb
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Cloud, Cpu, Droplets, Flame, Play, RotateCcw, Thermometer, Wifi, WifiOff } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type ProcessingMode = 'edge' | 'cloud';
 type RunState = 'idle' | 'running' | 'success' | 'failure';
@@ -78,6 +79,12 @@ export const EdgeVsCloudLab: React.FC = () => {
   };
 
   const modeText = mode === 'edge' ? 'Edge processing' : 'Cloud processing';
+  const missions: ChallengeMission[] = [
+    { id: 'offline-fire', title: 'Respond while internet is offline', titleAr: 'استجيب والإنترنت مفصول', goal: 'Keep the sensor at 70°C and internet disconnected. Choose where the rule runs and activate the sprinkler without reconnecting.', goalAr: 'خلّي الحساس عند 70 درجة مئوية والإنترنت مفصول. اختار مكان تشغيل القاعدة وشغّل الرشاش من غير ما توصل الإنترنت.', hint: 'Which processing location can evaluate a local rule without a cloud round trip?', hintAr: 'أي مكان معالجة يقدر يحلل قاعدة محلية من غير رحلة للـ Cloud؟', start: () => { clearResult(); setMode('cloud'); setTemperature(70); setOnline(false); },
+      evaluate: () => temperature !== 70 || online ? feedback('retry', 'Keep 70°C and internet disconnected for the offline mission.', 'خلّي الحرارة 70 درجة مئوية والإنترنت مفصول للمهمة دي.') : runState === 'success' && mode === 'edge' && sprinklerActive ? feedback('success', 'Offline response succeeded: the Edge rule commanded the sprinkler locally.', 'الاستجابة من غير إنترنت نجحت: قاعدة الـ Edge بعتت أمر الرشاش محليًا.') : feedback('pending', runState === 'failure' ? 'The cloud path failed. Change the processing location and run again.' : 'Run the response using a location that can work offline.', runState === 'failure' ? 'مسار الـ Cloud فشل. غيّر مكان المعالجة وشغّل تاني.' : 'شغّل الاستجابة من مكان يقدر يشتغل من غير إنترنت.') },
+    { id: 'restore-cloud', title: 'Restore the cloud response path', titleAr: 'رجّع مسار استجابة الـ Cloud', goal: 'Keep Cloud processing and 70°C. Repair the disconnected internet route, then run and confirm a sprinkler command.', goalAr: 'خلّي المعالجة على الـ Cloud والحرارة 70 درجة مئوية. صلّح مسار الإنترنت المفصول، وبعدها شغّل واتأكد من أمر الرشاش.', hint: 'Cloud processing needs a working internet route before its command can return.', hintAr: 'معالجة الـ Cloud محتاجة مسار إنترنت شغّال قبل ما أمرها يرجع.', start: () => { clearResult(); setMode('cloud'); setTemperature(70); setOnline(false); },
+      evaluate: () => mode !== 'cloud' || temperature !== 70 ? feedback('retry', 'Use Cloud processing at the required 70°C.', 'استخدم معالجة الـ Cloud عند الحرارة المطلوبة: 70 درجة مئوية.') : runState === 'success' && online && sprinklerActive ? feedback('success', 'Cloud path restored: the returned command activated the sprinkler.', 'مسار الـ Cloud رجع: الأمر اللي رجع شغّل الرشاش.') : feedback('pending', online ? 'Run the scenario to confirm the repaired path.' : 'Restore internet connectivity, then run the scenario.', online ? 'شغّل السيناريو عشان تثبت إن المسار اتصلّح.' : 'رجّع اتصال الإنترنت، وبعدها شغّل السيناريو.') },
+  ];
 
   return (
     <section className="space-y-6 rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
@@ -89,6 +96,7 @@ export const EdgeVsCloudLab: React.FC = () => {
         </div>
       </header>
 
+      <LabChallenge missions={missions} busy={runState === 'running'} />
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
         <div className="space-y-5 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950 sm:p-5">
           <div>

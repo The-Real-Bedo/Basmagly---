@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Radio, Send, CheckCircle2 } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
 import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type TransmissionType = 'unicast' | 'broadcast' | 'multicast';
 
@@ -106,16 +107,19 @@ export const TransmissionModesLab: React.FC = () => {
   };
 
   const handleMode = (next: TransmissionType) => {
+    if (isTransmitting) return;
     setMode(next);
     resetResult();
   };
 
   const handleUnicastTarget = (id: number) => {
+    if (isTransmitting) return;
     setUnicastTarget(id);
     resetResult();
   };
 
   const toggleMulticastNode = (id: number) => {
+    if (isTransmitting) return;
     setMulticastGroup(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
     resetResult();
   };
@@ -126,6 +130,13 @@ export const TransmissionModesLab: React.FC = () => {
     { en: 'Build frame', ar: 'تجهيز الـFrame' },
     { en: 'Switch forwards', ar: 'الـSwitch بيحوّل' },
     { en: 'Recipients receive', ar: 'الأجهزة بتستقبل' },
+  ];
+  const missions: ChallengeMission[] = [
+    { id: 'unicast-recipients', title: 'Predict a unicast delivery', titleAr: 'توقّع استقبال الـ Unicast', goal: 'Keep Unicast targeting PC-3. Predict the receiving PCs, transmit a frame, then compare your prediction with actual delivery.', goalAr: 'خلّي الـ Unicast رايح لـ PC-3. توقّع الأجهزة اللي هتستقبل، وابعت الـ Frame، وبعدها قارن توقّعك بالتوصيل الفعلي.', hint: 'The sender port is excluded. A learned unicast destination uses one output port.', hintAr: 'بورت الراسل مش ضمن الاستقبال. وجهة الـ Unicast المعروفة بتستخدم بورت خرج واحد.', start: () => { resetResult(); setMode('unicast'); setUnicastTarget(3); },
+      prediction: { label: 'Your predicted recipients', labelAr: 'الأجهزة اللي متوقّع تستقبل', options: DESTINATIONS.map(id => ({ id: String(id), label: `PC-${id}` })) },
+      evaluate: prediction => mode !== 'unicast' || unicastTarget !== 3 ? feedback('retry', 'Restore Unicast to PC-3 and send again for this mission.', 'رجّع الـ Unicast لـ PC-3 وابعت تاني للمهمة دي.') : receivedNodes === null ? feedback('pending', isTransmitting ? 'Frame in flight. Wait for delivery.' : 'Choose recipients, then transmit a frame.', isTransmitting ? 'الـ Frame في الطريق. استنى التوصيل.' : 'اختار المستقبِلين، وبعدها ابعت الـ Frame.') : prediction.length === receivedNodes.length && receivedNodes.every(id => prediction.includes(String(id))) ? feedback('success', 'Prediction matched: only PC-3 received the unicast frame.', 'توقّعك صح: PC-3 بس استقبل الـ Unicast Frame.') : feedback('retry', 'Compare the green receivers with your selection. Unicast did not deliver to every PC.', 'قارن الأجهزة الخضرا باختيارك. الـ Unicast ما وصلش لكل الأجهزة.') },
+    { id: 'multicast-members', title: 'Deliver only to a group', titleAr: 'وصّل لمجموعة بس', goal: 'Use Multicast to deliver to PC-2 and PC-5 only. Change membership in the scene, transmit, then check the receiving PCs.', goalAr: 'استخدم الـ Multicast عشان توصّل لـ PC-2 وPC-5 بس. غيّر العضوية في المشهد، وابعت، وبعدها افحص الأجهزة المستقبِلة.', hint: 'Inspect a PC to join or leave the group. This model assumes IGMP snooping.', hintAr: 'افحص أي PC عشان تضمه للمجموعة أو تطلّعه منها. النموذج بيفترض تشغيل الـ IGMP Snooping.', start: () => { resetResult(); setMode('multicast'); setMulticastGroup([2, 4]); },
+      evaluate: () => mode !== 'multicast' ? feedback('retry', 'Select Multicast for group delivery.', 'اختار الـ Multicast للتوصيل للمجموعة.') : receivedNodes === null ? feedback('pending', 'Set the group and transmit before checking delivery.', 'اضبط المجموعة وابعت قبل ما تفحص التوصيل.') : receivedNodes.length === 2 && receivedNodes.includes(2) && receivedNodes.includes(5) ? feedback('success', 'Only PC-2 and PC-5 received the frame; other PCs stayed outside the group.', 'PC-2 وPC-5 بس استقبلوا الـ Frame؛ وباقي الأجهزة فضلت برّه المجموعة.') : feedback('retry', 'Delivery differs from the requested group. Change membership and transmit again.', 'التوصيل مختلف عن المجموعة المطلوبة. غيّر العضوية وابعت تاني.') },
   ];
 
   return (
@@ -153,6 +164,7 @@ export const TransmissionModesLab: React.FC = () => {
           {MODES.map(m => (
             <button
               key={m.id}
+              disabled={isTransmitting}
               onClick={() => handleMode(m.id)}
               aria-pressed={mode === m.id}
               className={`flex-1 px-3 py-1.5 rounded-xl text-center font-mono transition-all ${
@@ -168,6 +180,7 @@ export const TransmissionModesLab: React.FC = () => {
       </div>
 
       {/* Control Strip */}
+      <LabChallenge missions={missions} busy={isTransmitting} />
       <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
           {mode === 'unicast' && (
@@ -180,6 +193,7 @@ export const TransmissionModesLab: React.FC = () => {
                   <button
                     key={id}
                     onClick={() => handleUnicastTarget(id)}
+                    disabled={isTransmitting}
                     aria-pressed={unicastTarget === id}
                     className={`px-3 py-1.5 rounded-xl font-mono font-bold text-xs transition-all ${
                       unicastTarget === id
@@ -263,7 +277,8 @@ export const TransmissionModesLab: React.FC = () => {
                 <div
                   key={id}
                   role={isMulticast ? 'button' : undefined}
-                  tabIndex={isMulticast ? 0 : undefined}
+                  tabIndex={isMulticast ? isTransmitting ? -1 : 0 : undefined}
+                  aria-disabled={isMulticast ? isTransmitting : undefined}
                   aria-pressed={isMulticast ? inGroup : undefined}
                   onClick={() => isMulticast && toggleMulticastNode(id)}
                   onKeyDown={e => {

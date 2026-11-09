@@ -74,7 +74,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   }
   async function select(index, value) {
     await page.$$eval(
-      `${root} select`,
+      `${root} select:not([data-challenge-select])`,
       (elements, { index, value }) => {
         const element = elements[index];
         if (!element || element.disabled) throw new Error('Select unavailable');
