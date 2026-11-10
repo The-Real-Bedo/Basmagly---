@@ -134,7 +134,8 @@ export function LabWorkbench({
       {view === '2d' ? (
         <div className="p-3">{children}</div>
       ) : (
-        <>
+        <div data-workbench-layout>
+          <div data-workbench-stage className="min-w-0">
           <div
             className="flex flex-wrap gap-2 p-3"
             role="group"
@@ -246,7 +247,9 @@ export function LabWorkbench({
               ? 'Scroll the page normally. Enable touch orbit to explore the scene.'
               : 'Drag to orbit · Scroll to zoom · Camera buttons also work with a keyboard.'}
           </p>
-          <div className="space-y-3 p-3">
+          </div>
+          <div data-workbench-inspector className="min-w-0 space-y-3 p-3">
+            <p className="flex items-center justify-between gap-2 text-xs font-semibold text-stone-700 dark:text-zinc-300"><span>Object inspector</span><span className="font-mono font-normal text-stone-500 dark:text-zinc-400">{nodes.filter(n => !n.decorative).length} objects</span></p>
             <div
               className="flex flex-wrap gap-2"
               role="group"
@@ -328,7 +331,7 @@ export function LabWorkbench({
               <span>Rose · fault / collision</span>
             </div>
           </div>
-        </>
+        </div>
       )}
     </section>
   );

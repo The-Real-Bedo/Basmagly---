@@ -129,6 +129,27 @@
 }
 
 /* Expanded experiments keep one mounted lab, with room for its scene and inspector. */
+[data-testid="lab-workbench"] {
+  container-type: inline-size;
+}
+/* Respond to the bench width, including narrow lecture columns, not the window. */
+@container (min-width: 900px) {
+  [data-workbench-layout] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+  [data-workbench-inspector] {
+    border-left: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+  }
+  [data-workbench-inspector] [aria-label="Inspect scene objects"] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  [data-workbench-inspector] [aria-label="Inspect scene objects"] button {
+    overflow-wrap: anywhere;
+  }
+}
 .lab-expanded .grid:has([data-testid="lab-workbench"]) {
   grid-template-columns: minmax(0, 1fr);
 }

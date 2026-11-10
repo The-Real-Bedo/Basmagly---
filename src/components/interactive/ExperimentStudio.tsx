@@ -1,5 +1,5 @@
 import React, { Component, lazy, Suspense, useEffect, useState } from 'react';
-import { FlaskConical, ArrowDownRight, RotateCcw, Maximize2 } from 'lucide-react';
+import { FlaskConical, ArrowDownRight, ArrowUpRight, RotateCcw, Maximize2 } from 'lucide-react';
 import { LAB_CATALOG, LabId } from '../../data/labCatalog';
 import { LAB_GUIDES } from '../../data/labGuides';
 import { ArabicText } from '../ArabicText';
@@ -58,10 +58,16 @@ export const Experiment: React.FC<{ id: string }> = ({ id }) => {
   if (!Lab) return <p className="text-sm text-stone-600 dark:text-zinc-400">This experiment is not registered.</p>;
   return <ExpandedLab title={LAB_CATALOG.find(lab => lab.id === id)?.title ?? 'Experiment'}>{expand => <div data-testid={`experiment-${id}`} className="min-w-0 space-y-4">
     <section aria-label="Guided comparison" className="overflow-hidden rounded-2xl border border-beige-300 bg-white dark:border-stone-800 dark:bg-stone-900">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-beige-300 px-4 py-3 dark:border-stone-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-beige-300 px-4 py-3 dark:border-stone-800">
         <h4 className="text-sm font-bold text-stone-900 dark:text-stone-100">Try this comparison</h4>
-        <button type="button" data-testid="expand-experiment" onClick={expand} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 bg-white px-3 text-[13px] font-semibold text-stone-800 hover:bg-beige-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-200 dark:hover:bg-stone-800 dark:focus-visible:ring-amber-400"><Maximize2 className="h-4 w-4" />Expand lab</button>
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+        <button type="button" data-testid="expand-experiment" onClick={expand} className="group inline-flex min-h-16 w-full items-center justify-center gap-3 rounded-2xl border border-amber-400 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 px-4 py-2.5 text-stone-950 shadow-md shadow-amber-900/10 transition-colors hover:border-amber-600 hover:from-amber-200 hover:to-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 dark:border-amber-500 dark:from-amber-200 dark:via-amber-300 dark:to-amber-500 dark:text-stone-950 dark:shadow-amber-500/10 dark:hover:border-amber-300 dark:hover:from-amber-100 dark:hover:to-amber-400 dark:focus-visible:ring-amber-300 dark:focus-visible:ring-offset-stone-900 sm:w-auto">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-700/20 bg-white/45 shadow-sm dark:border-amber-900/20 dark:bg-white/35"><Maximize2 className="h-5 w-5" /></span>
+          <span className="text-left"><span className="block text-[15px] font-extrabold">Expand lab</span><span className="block text-[13px] font-medium text-amber-950 dark:text-amber-950">Full-screen workspace</span></span>
+          <ArrowUpRight className="ml-2 h-4 w-4 shrink-0" />
+        </button>
         <button type="button" data-testid="restart-experiment" onClick={() => setRevision(value => value + 1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 bg-[#FAF7F2] px-3 text-[13px] font-semibold text-stone-800 hover:bg-beige-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:border-stone-700 dark:bg-stone-950 dark:text-zinc-200 dark:hover:bg-stone-800 dark:focus-visible:ring-amber-400"><RotateCcw className="h-4 w-4" />Start again</button>
+        </div>
       </div>
       <div className="grid lg:grid-cols-2">
         <p className="p-4 text-[15px] text-stone-700 dark:text-zinc-300">{guide.tryEn}</p>

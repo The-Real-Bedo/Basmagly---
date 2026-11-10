@@ -5,6 +5,7 @@ import { Box, Camera, Layers3, MousePointer2, Network, Play, RotateCcw, StepForw
 import * as THREE from 'three';
 import { ArabicText } from '../ArabicText';
 import { SceneLabel } from './SceneLabel';
+import { fitSceneCamera } from './sceneFraming';
 
 type Device = 'hub' | 'switch' | 'router';
 type Scenario = 'unicast' | 'broadcast' | 'pair';
@@ -28,16 +29,15 @@ function CameraControls({ top, resetKey, touchOrbit }: { top: boolean; resetKey:
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const { camera, size, gl, invalidate } = useThree();
   useEffect(() => {
-    const fit = size.width / size.height < 1 ? 1.45 : 1;
-    camera.position.set(...(top ? [0, 9.5 * fit, 0.01] : [7.5 * fit, 6.5 * fit, 8.5 * fit]) as Point);
-    camera.lookAt(0, 0, 0);
-    controls.current?.target.set(0, 0.2, 0);
+    const bounds = new THREE.Box3(new THREE.Vector3(-3.9, 0, -2.7), new THREE.Vector3(3.9, 1.9, 2.7));
+    const target = fitSceneCamera(camera as THREE.PerspectiveCamera, bounds, top ? new THREE.Vector3(0, 1, 0.001) : new THREE.Vector3(0.45, 0.8, 1), size.width, size.height);
+    controls.current?.target.copy(target);
     controls.current?.update();
     invalidate();
   }, [camera, size.width, size.height, top, resetKey, invalidate]);
   useEffect(() => { gl.domElement.style.touchAction = touchOrbit ? 'none' : 'pan-y'; }, [gl, touchOrbit]);
   useFrame(() => { gl.domElement.style.touchAction = touchOrbit ? 'none' : 'pan-y'; });
-  return <OrbitControls ref={controls} makeDefault enablePan={false} enableRotate={touchOrbit} enableZoom={touchOrbit} minDistance={6} maxDistance={24} maxPolarAngle={Math.PI / 2.05} />;
+  return <OrbitControls ref={controls} makeDefault enablePan={false} enableRotate={touchOrbit} enableZoom={touchOrbit} minDistance={4} maxDistance={40} maxPolarAngle={Math.PI / 2.05} />;
 }
 
 function PCNode({ index, device, status }: { index: number; device: Device; status: NodeStatus }) {
@@ -111,8 +111,8 @@ function NetworkScene({ device, stage, paths, collision, statuses, top, resetKey
     <Canvas shadows frameloop="demand" dpr={[1, 1.5]} camera={{ position: [7.5, 6.5, 8.5], fov: 42 }} gl={{ antialias: true, alpha: true }} fallback={<div className="flex h-full items-center justify-center p-6 text-center"><div><p className="text-sm font-semibold text-stone-800 dark:text-zinc-200">The 3D view needs WebGL. Open the 2D Network Devices lab for the same forwarding rules.</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">المشهد ثلاثي الأبعاد محتاج WebGL. تقدر تفتح معمل الأجهزة ثنائي الأبعاد وتتعلّم نفس قواعد التوجيه.</ArabicText></div></div>}>
       <ambientLight intensity={1.2} />
       <directionalLight position={[4, 9, 6]} intensity={2.2} castShadow shadow-mapSize={[1024, 1024]} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[18, 18]} /><meshStandardMaterial color="#44403c" transparent opacity={0.22} /></mesh>
-      <gridHelper args={[16, 16, '#a8a29e', '#78716c']} position={[0, 0.01, 0]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[10, 8]} /><meshStandardMaterial color="#44403c" transparent opacity={0.22} /></mesh>
+      <gridHelper args={[10, 10, '#a8a29e', '#78716c']} position={[0, 0.01, 0]} scale={[1, 1, 0.8]} />
       {PCS.map((pc, index) => (
         <Line key={pc.id} points={[pc.position, CENTER]} color={collision ? '#f43f5e' : stage > 0 ? '#d6d3d1' : '#78716c'} lineWidth={collision ? 3 : 1.5} />
       ))}
@@ -218,7 +218,7 @@ export const Network3DLab: React.FC = () => {
         <div className="h-[430px] sm:h-[500px]" aria-label="Interactive 3D network topology">
           <NetworkScene device={device} stage={stage} paths={paths} collision={collision} statuses={statuses} top={top} resetKey={resetKey} touchOrbit={touchOrbit} />
         </div>
-        <div className="absolute bottom-3 left-3 right-3 flex flex-wrap justify-center gap-x-4 gap-y-1 rounded-xl bg-white/90 dark:bg-stone-900/90 border border-beige-300 dark:border-stone-700 px-3 py-2 text-[13px] font-semibold text-stone-700 dark:text-zinc-300"><span className="text-amber-700 dark:text-amber-300">● Source</span><span className="text-emerald-700 dark:text-emerald-300">● Accepted</span><span className="text-stone-500 dark:text-zinc-400">● Discarded / idle</span><span className="text-rose-700 dark:text-rose-300">● Collision</span></div>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 border-t border-beige-300 bg-white/90 px-3 py-2 text-[13px] font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-900/90 dark:text-zinc-300"><span className="text-amber-700 dark:text-amber-300">● Source</span><span className="text-emerald-700 dark:text-emerald-300">● Accepted</span><span className="text-stone-500 dark:text-zinc-400">● Discarded / idle</span><span className="text-rose-700 dark:text-rose-300">● Collision</span></div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2" aria-label="Endpoint details">

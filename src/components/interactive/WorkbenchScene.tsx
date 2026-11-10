@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Line, OrbitControls, RoundedBox } from '@react-three/drei';
-import { Mesh, Vector3 } from 'three';
+import { Box3, Mesh, PerspectiveCamera, Vector3 } from 'three';
 import { ProjectedLabel } from './ProjectedLabel';
+import { fitSceneCamera } from './sceneFraming';
 
 export type WorkbenchTone = 'neutral' | 'active' | 'success' | 'error' | 'info';
 export type WorkbenchKind =
@@ -356,6 +357,7 @@ function Model({
         !node.hideLabel &&
         (!node.labelOnSelect || selected) && (
           <ProjectedLabel
+            priority={selected ? 1 : 0}
             position={node.labelPosition ?? [0, h + 0.38, 0]}
             title={node.sceneLabel ?? node.label}
             detail={node.showValue !== false ? node.value : undefined}
@@ -424,8 +426,7 @@ function CameraRig({
   zoom,
   reduced,
   touchOrbit,
-  extent,
-  height,
+  boundsKey,
   onUnavailable,
 }: {
   top?: boolean;
@@ -434,26 +435,22 @@ function CameraRig({
   zoom: number;
   reduced: boolean;
   touchOrbit: boolean;
-  extent: number;
-  height: number;
+  boundsKey: string;
   onUnavailable?: () => void;
 }) {
   const ref = useRef<ComponentRef<typeof OrbitControls>>(null);
   const { camera, size, gl, invalidate } = useThree();
   const previousZoom = useRef(zoom);
   useEffect(() => {
-    const fit = Math.max(1, 0.95 / (size.width / size.height));
-    const distance = Math.max(8.5, extent * 2.3, height * 2.4) * fit;
-    const centerY = height / 2;
-    camera.position.set(
-      Math.sin(turn + 0.55) * distance,
-      centerY + (top ? distance * 1.5 : distance * 0.85),
-      top ? 0.01 : Math.cos(turn + 0.55) * distance,
-    );
-    if (top) camera.position.x = 0.01;
-    ref.current?.target.set(0, centerY, 0);
+    const [min, max] = JSON.parse(boundsKey) as [Point, Point];
+    const bounds = new Box3(new Vector3(...min), new Vector3(...max));
+    // Long pipelines use the portrait height instead of shrinking across its width.
+    const portraitPipeline = size.width < size.height && max[0] - min[0] > (max[2] - min[2]) * 1.8;
+    const angle = turn + (portraitPipeline ? 1.3 : 0.55);
+    const direction = top ? (portraitPipeline ? new Vector3(0.001, 1, 0) : new Vector3(0, 1, 0.001)) : new Vector3(Math.sin(angle), 0.7, Math.cos(angle));
+    const target = fitSceneCamera(camera as PerspectiveCamera, bounds, direction, size.width, size.height);
+    ref.current?.target.copy(target);
     ref.current?.update();
-    camera.lookAt(0, centerY, 0);
     invalidate();
   }, [
     camera,
@@ -462,8 +459,7 @@ function CameraRig({
     top,
     turn,
     reset,
-    extent,
-    height,
+    boundsKey,
     invalidate,
   ]);
   useEffect(() => {
@@ -538,22 +534,20 @@ export default function WorkbenchScene({
         .filter((link) => link.points.length >= 2),
     [links, nodes],
   );
-  const extent = Math.max(
-    4,
-    ...nodes.map(
-      (node) =>
-        Math.max(Math.abs(node.position[0]), Math.abs(node.position[2])) + 1,
-    ),
-  );
-  const height = Math.max(
-    1,
-    ...nodes.map(
-      (node) =>
-        node.position[1] +
-        (node.size?.[1] ?? defaultSizes[node.kind ?? 'chip'][1]) +
-        0.5,
-    ),
-  );
+  const bounds = new Box3();
+  nodes.forEach(node => {
+    const [w, h, d] = node.size ?? defaultSizes[node.kind ?? 'chip'];
+    const [x, y, z] = node.position;
+    bounds.expandByPoint(new Vector3(x - w * 0.65, y, z - d * 0.65));
+    bounds.expandByPoint(new Vector3(x + w * 0.65, y + h + 0.45, z + d * 0.65));
+  });
+  resolved.forEach(link => link.points.forEach(point => bounds.expandByPoint(new Vector3(...point))));
+  if (bounds.isEmpty()) bounds.set(new Vector3(-1, 0, -1), new Vector3(1, 1, 1));
+  const boundsKey = JSON.stringify([bounds.min.toArray(), bounds.max.toArray()]);
+  const center = bounds.getCenter(new Vector3());
+  const floorWidth = Math.max(3, bounds.max.x - bounds.min.x + 1.6);
+  const floorDepth = Math.max(3, bounds.max.z - bounds.min.z + 1.6);
+  const floorSize = Math.max(floorWidth, floorDepth);
   return (
     <Canvas
       frameloop="demand"
@@ -570,8 +564,8 @@ export default function WorkbenchScene({
     >
       <ambientLight intensity={dark ? 1.1 : 1.5} />
       <directionalLight position={[4, 9, 6]} intensity={dark ? 1.5 : 2} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.035, 0]}>
-        <planeGeometry args={[extent * 2 + 2, extent * 2 + 2]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[center.x, -0.035, center.z]}>
+        <planeGeometry args={[floorWidth, floorDepth]} />
         <meshStandardMaterial
           color={dark ? '#1c1917' : '#f3ede3'}
           roughness={1}
@@ -579,12 +573,13 @@ export default function WorkbenchScene({
       </mesh>
       <gridHelper
         args={[
-          extent * 2 + 2,
-          Math.ceil(extent * 2 + 2),
+          floorSize,
+          Math.ceil(floorSize),
           dark ? '#57534e' : '#d6cbb8',
           dark ? '#292524' : '#e2d8c7',
         ]}
-        position={[0, -0.02, 0]}
+        position={[center.x, -0.02, center.z]}
+        scale={[floorWidth / floorSize, 1, floorDepth / floorSize]}
       />
       {resolved.map((link) => (
         <group key={link.id}>
@@ -625,8 +620,7 @@ export default function WorkbenchScene({
         reset={cameraReset}
         zoom={cameraZoom}
         reduced={reduced}
-        extent={extent}
-        height={height}
+        boundsKey={boundsKey}
         touchOrbit={touchOrbit}
         onUnavailable={onUnavailable}
       />
