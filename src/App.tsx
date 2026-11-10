@@ -57,7 +57,8 @@ export const App: React.FC = () => {
   const [labFilter, setLabFilter] = useState<'all' | LabCategory>('all');
 
   const [isDark, setIsDark] = useState<boolean>(() => {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    try { return localStorage.getItem('basmagly-theme') === 'dark'; }
+    catch { return false; }
   });
 
   useEffect(() => {
@@ -66,6 +67,8 @@ export const App: React.FC = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    try { localStorage.setItem('basmagly-theme', isDark ? 'dark' : 'light'); }
+    catch { /* Theme switching still works when browser storage is unavailable. */ }
   }, [isDark]);
 
   const toggleDarkMode = () => setIsDark(prev => !prev);

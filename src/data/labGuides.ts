@@ -8,6 +8,24 @@ export interface LabGuide {
 }
 
 export const LAB_GUIDES = {
+  'ai-perceptron': {
+    tryEn: 'Train AND from zero weights, then switch to XOR and compare the errors. Move the weights and bias to inspect the boundary.',
+    tryAr: 'درّب AND من أوزان صفر، وبعدها بدّل لـ XOR وقارن الأخطاء. حرّك الأوزان والـ Bias عشان تشوف الحد الفاصل.',
+    observeEn: 'One threshold neuron separates a half-plane. AND and OR are linearly separable; XOR is not. Extra training cannot remove that architectural limit.',
+    observeAr: 'عصبون واحد بعتبة بيفصل نصف مستوى. AND وOR ينفع فصلهم بخط؛ XOR ما ينفعش. التدريب الزيادة مش بيشيل القيد ده من البنية.',
+  },
+  'ai-eight-puzzle': {
+    tryEn: 'Move a tile beside the blank, then solve the board with BFS. Compare the move count with the shortest solution and try the parity trap.',
+    tryAr: 'حرّك بلاطة جنب الفراغ، وبعدها حل اللوحة بالـ BFS. قارن عدد الحركات بأقصر حل وجرّب فخ الـ Parity.',
+    observeEn: 'Each action slides one neighboring tile into the blank. With unit move costs, BFS finds a shortest solution. Swapping two numbered tiles changes solvability on this 3×3 board.',
+    observeAr: 'كل فعل بيزحلق بلاطة مجاورة للفراغ. مع تكلفة واحدة لكل حركة، الـ BFS بتلاقي أقصر حل. تبديل بلاطتين مرقّمتين بيغيّر قابلية الحل في لوحة 3×3 دي.',
+  },
+  'ai-search-states': {
+    tryEn: 'Expand S, A and B in tree search and inspect the two paths to C. Reset into graph search and compare the rejected duplicates.',
+    tryAr: 'وسّع S وA وB في بحث الشجرة وراجع المسارين لـ C. صفّر وبدّل لبحث الرسم وقارن التكرارات اللي اتشالت.',
+    observeEn: 'A state describes the world; a search node also records a path, parent, depth and cost. Graph BFS tracks generated states, avoiding duplicate frontier entries and cycles.',
+    observeAr: 'الـ State بتوصف العالم؛ وعقدة البحث بتسجّل كمان مسار وأب وعمق وتكلفة. الـ Graph BFS بتتابع الحالات اللي اتولدت، فبتتجنب تكرار الـ Frontier والدورات.',
+  },
   'ai-fuel': {
     tryEn:
       'Load the data-poor preset. Increase data, then compare with increasing compute alone.',

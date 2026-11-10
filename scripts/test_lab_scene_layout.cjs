@@ -38,6 +38,10 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
   const page = await browser.newPage(), errors = [];
   const captures = process.env.BASMAGLY_CAPTURE_DIR;
   if (captures) fs.mkdirSync(captures, { recursive: true });
+  // The app follows a saved choice, so seed matrix themes explicitly.
+  await page.evaluateOnNewDocument(() => {
+    localStorage.setItem('basmagly-theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
   let root, labelChecks = 0, sceneChecks = 0, actionChecks = 0;

@@ -148,6 +148,33 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       await open(lab.id);
       const before = await text();
       switch (lab.id) {
+        case 'ai-perceptron':
+          await button(/Step sample/);
+          await expect(/New weights: \[0, 0, -1\]/);
+          await button(/^XOR$/);
+          await button(/Run training/);
+          await page.waitForFunction(root => document.querySelector(`${root} [data-testid="perceptron-status"]`)?.textContent.includes('80 samples'), { timeout: 30000 }, root);
+          await expect(/80 samples/);
+          await expect(/cannot be separated/);
+          break;
+        case 'ai-eight-puzzle':
+          await button(/Find shortest path/);
+          await expect(/2 moves/);
+          await button(/Step solution/);
+          await button(/Step solution/);
+          await expect(/Goal reached/);
+          await select(0, 'parity');
+          await button(/Find shortest path/);
+          await expect(/Unsolvable for this goal/);
+          break;
+        case 'ai-search-states':
+          for (let i = 0; i < 3; i++) await button(/Step BFS/);
+          assert.equal(await page.$$eval(`${root} [data-testid="search-records"] tr[data-state="C"]`, rows => rows.length), 2);
+          await button(/^Graph search$/);
+          for (let i = 0; i < 4; i++) await button(/Step BFS/);
+          await expect(/Goal generated: S → A → C → G/);
+          await expect(/3 duplicates skipped/);
+          break;
         case 'ai-fuel':
           await button(/Data-poor/);
           await button(/Run check/);

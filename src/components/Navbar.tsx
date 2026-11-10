@@ -64,11 +64,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Theme Toggle Button */}
           <button
             onClick={onToggleDark}
-            className="w-10 h-10 rounded-xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 flex items-center justify-center text-stone-800 dark:text-zinc-200 hover:bg-beige-50 dark:hover:bg-stone-800 transition-colors shadow-sm"
-            title="Toggle Soft Beige / Dark Mode"
+            className="w-11 h-11 rounded-xl border border-beige-300 dark:border-stone-800 bg-white dark:bg-stone-900 flex items-center justify-center text-stone-800 dark:text-zinc-200 hover:bg-beige-50 dark:hover:bg-stone-800 transition-colors shadow-sm"
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             aria-label="Toggle theme"
+            aria-pressed={isDark}
           >
-            {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-stone-700" />}
+            {isDark ? <Sun className="w-5 h-5 text-amber-500 dark:text-amber-400" /> : <Moon className="w-5 h-5 text-stone-700 dark:text-zinc-300" />}
           </button>
         </div>
       </div>

@@ -100,6 +100,7 @@ export const AI_LECTURE_ONE: Lecture = {
     },
     {
       title: '3. A Brief History & AI Winters',
+      experimentIds: ['ai-perceptron'],
       titleAr: '3. لمحة تاريخية وفترات شتاء الذكاء الاصطناعي',
       content:
         'AI history is a sequence of advances and setbacks, not a smooth march toward today’s systems. The lecture links “AI winters” to cycles of optimistic claims followed by disappointment and reduced support; historical milestones mark particular developments, not a single cause for every cycle.',
@@ -547,6 +548,7 @@ export const AI_LECTURE_ONE: Lecture = {
     'ai-approaches',
     'turing-test',
     'ai-rationality',
+    'ai-perceptron',
   ],
   questions: [
     {

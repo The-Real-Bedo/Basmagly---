@@ -10,6 +10,10 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
   const browser = await puppeteer.launch({ executablePath: process.env.BASMAGLY_BROWSER_PATH || '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser', headless: true, pipe: true });
   const page = await browser.newPage();
   const errors = [];
+  // The app follows a saved choice, so seed matrix themes explicitly.
+  await page.evaluateOnNewDocument(() => {
+    localStorage.setItem('basmagly-theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
   let root;

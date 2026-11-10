@@ -123,6 +123,7 @@ const ai3Sections: SummarySection[] = [
   },
   {
     title: '2. Formulate the Search Problem',
+    experimentIds: ['ai-eight-puzzle'],
     titleAr: '٢. صياغة مشكلة البحث',
     content: 'A search problem makes the state space and the rules for reaching a goal explicit. Its core components are an initial state, actions, a transition model, a goal test, and a path-cost function.',
     contentAr: 'مشكلة البحث بتوضح فضاء الحالات والقواعد اللي بتوصل للهدف. مكوّناتها الأساسية هي الحالة الابتدائية، والأفعال، ونموذج الانتقال، واختبار الهدف، ودالة تكلفة المسار.',
@@ -143,6 +144,7 @@ const ai3Sections: SummarySection[] = [
   },
   {
     title: '3. State-Space Graphs & Search Trees',
+    experimentIds: ['ai-search-states'],
     titleAr: '٣. رسم فضاء الحالات وشجرة البحث',
     content: 'A state-space graph represents possible world states and transitions. A search tree records the paths an algorithm has generated; distinct tree nodes may refer to the same underlying state.',
     contentAr: 'رسم فضاء الحالات بيمثل حالات العالم والانتقالات الممكنة بينها. شجرة البحث بتسجل المسارات اللي الخوارزمية ولّدتها؛ وممكن عقد مختلفة في الشجرة تشير لنفس الحالة الفعلية.',
@@ -357,7 +359,7 @@ export const AI_REMAINING_LECTURES: Lecture[] = [
     'إزاي الوكلاء بيدركوا وبيتصرفوا، والعقلانية، وتصميمات رد الفعل والهدف، وPEAS، وأبعاد بيئة المهمة.',
   ),
   makeLecture(
-    'ai-lec-3', ai3Sections, ai3Terms, ai3Cheats, ['search-visualizer'],
+    'ai-lec-3', ai3Sections, ai3Terms, ai3Cheats, ['search-visualizer', 'ai-eight-puzzle', 'ai-search-states'],
     'Problem-solving agents, search formulation, state spaces versus search trees, frontiers, and DFS.',
     'وكلاء حل المشكلات، وصياغة البحث، والفرق بين فضاء الحالات وشجرة البحث، والـ Frontier، وDFS.',
   ),

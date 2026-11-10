@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      try { document.documentElement.classList.toggle('dark', localStorage.getItem('basmagly-theme') === 'dark'); }
+      catch { /* The default theme is light when storage is unavailable. */ }
+    </script>
     <title>Basmagly | Turn the page. See the idea.</title>
     <!-- Google Fonts: Manrope for English, Tajawal for Arabic, Changa for the brand and JetBrains Mono for code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

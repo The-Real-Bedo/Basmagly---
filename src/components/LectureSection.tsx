@@ -155,19 +155,20 @@ interface LectureSectionProps {
   section: SummarySection;
   index: number;
   total: number;
+  anchorId?: string;
 }
 
 /**
  * Approved explanation-section layout (see AGENTS.md §4):
  * dark numbered side rail → title → Definition | الفكرة ببساطة cards → English | Arabic columns.
  */
-export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, total }) => {
+export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, total, anchorId }) => {
   const number = String(index + 1).padStart(2, '0');
   const points = section.bulletPoints ?? [];
 
   return (
     <section
-      id={sectionAnchorId(index)}
+      id={anchorId ?? sectionAnchorId(index)}
       className="scroll-mt-28 bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-[88px,1fr]"
     >
       {/* Side rail (horizontal strip below lg) */}
