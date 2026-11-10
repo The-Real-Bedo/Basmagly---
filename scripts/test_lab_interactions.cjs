@@ -236,12 +236,30 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
               new RegExp('Expanded: ' + expectedExpansions + ' · Goal: O'),
             );
           }
+          await button(/^Weighted routes/);
+          await toggleView('2D');
+          assert.equal(await page.$$eval(`${root} [data-search-node]`,nodes=>nodes.every(node=>{const frame=node.closest('svg').parentElement.getBoundingClientRect(),r=node.getBoundingClientRect();return r.left>=frame.left && r.right<=frame.right;})),true,'All weighted-route nodes must be visible together on mobile');
+          await toggleView('3D');
+          for (const [algorithm, cost, path, steps] of [['BFS',9,'S → A → G',2], ['UCS',4,'S → B → G',4], ['DFS',9,'S → A → G',3]]) {
+            await button(new RegExp('^'+algorithm));
+            for(let i=0;i<steps;i++)await button(/^Step/);
+            await expect(new RegExp('Path: '+path+' · Cost: '+cost));
+            assert.equal(await page.$eval(`${root} [data-testid="search-frontier"]`,e=>/Expand /.test(e.parentElement.innerText)),false,'Finished search must not advertise another expansion');
+            await button(/^G$/,true);
+            await expect(/On the solution path/);
+          }
           break;
         case 'network-devices':
           await button(/إرسال عادي/);
           await unlocked(/إرسال عادي/);
           await expect(/discard|drop/i);
           await button(/Switch/);
+          await button(/إرسال متزامن/);
+          assert.equal(await page.$$eval(`${root} select:not([data-challenge-select])`,elements=>elements.every(e=>e.disabled)),true,'Network inputs must lock during transmission');
+          await button(/Reset simulation/);
+          await delay(4500);
+          await expect(/Choose a device, sender/);
+          assert.equal(await page.$$eval(`${root} select:not([data-challenge-select])`,elements=>elements.every(e=>!e.disabled)),true,'Reset must unlock the network inputs');
           await button(/إرسال متزامن/);
           await restart();
           await delay(4500);
@@ -297,11 +315,17 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         case 'packet-journey':
           await button(/الخطوة الجاية/);
           await button(/الخطوة الجاية/);
-          await expect(/CC:33:CC:33:CC:33/);
+          await expect(/02:33:CC:33:CC:33/);
           await expect(/192\.168\.1\.10/);
           await expect(/10\.0\.0\.50/);
           await toggleView('2D');
-          await expect(/CC:33:CC:33:CC:33/);
+          await expect(/02:33:CC:33:CC:33/);
+          assert.equal(await page.$eval(root,e=>[...e.querySelectorAll('span')].find(s=>s.textContent==='IPv4 TTL').parentElement.parentElement.children[1].textContent.trim()),'63');
+          await button(/تشغيل تلقائي/);
+          await button(/إيقاف مؤقت/);
+          const pausedPacket = await text();
+          await delay(3300);
+          assert.equal(await text(),pausedPacket,'Paused routing must retain the current hop');
           break;
         case 'osi-visualizer':
           await button(/^L3/, true);
@@ -405,11 +429,41 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           await expect(/1 handled/);
           break;
         case 'signal-sampling':
-          await input('input[aria-label="Input frequency in hertz"]', 4);
-          await input(
-            'input[aria-label="Sampling rate in samples per second"]',
-            4,
-          );
+          await button(/Show folded candidate/);
+          for(const frequency of [1,4,7,8]) for(const rate of [2,8,14,24]) for(const phase of [0,90]) for(const bits of [2,6]) {
+            await input('input[aria-label="Input frequency in hertz"]',frequency);
+            await input('input[aria-label="Sampling rate in samples per second"]',rate);
+            await input('input[aria-label="Quantization bit depth"]',bits);
+            await button(new RegExp('^'+phase+'°$'));
+            assert.equal(await page.$(`${root} [data-testid="sample-inspector"]`),null,'Editing the ADC must clear its result');
+            await button(/Run sampling/);
+            const plotted = await page.$eval(root,e=>{
+              const svg=e.querySelector('svg[aria-label="Sine wave with sample points and quantized sample levels"]');
+              const points=svg.querySelector('[data-testid="alias-candidate"]').getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number);
+              const curve=Array.from({length:points.length/2},(_,i)=>({x:points[2*i],y:points[2*i+1]}));
+              return [...svg.querySelectorAll('circle[data-sample-index]')].map(marker=>{
+                const x=Number(marker.getAttribute('cx'));
+                const after=Math.max(1,curve.findIndex(p=>p.x>=x));
+                const a=curve[after-1],b=curve[after];
+                return {n:Number(marker.dataset.sampleIndex),raw:(137-Number(marker.getAttribute('cy')))/88,q:(137-Number(marker.parentElement.querySelector('rect').getAttribute('y'))-3.5)/88,alias:(137-(a.y+(b.y-a.y)*(x-a.x)/(b.x-a.x)))/88};
+              });
+            });
+            assert.equal(plotted.length,rate*2+1);
+            const step=2/(2**bits-1);
+            for(const sample of plotted) {
+              const expected=Math.sin(2*Math.PI*frequency*sample.n/rate+phase*Math.PI/180);
+              assert.ok(Math.abs(sample.raw-expected)<1e-10,'Ideal samples must match the selected sine and phase');
+              assert.ok(Math.abs(sample.raw-sample.q)<=step/2+1e-10,'Every rounding error must satisfy Δ/2');
+              assert.ok(Math.abs((sample.q+1)/step-Math.round((sample.q+1)/step))<1e-9,'Quantized values must lie on a valid level');
+              assert.ok(Math.abs(sample.alias-sample.raw)<0.009,'The rendered folded candidate must meet the ideal sample instants');
+            }
+            if(frequency===7 && rate===14 && phase===0) assert.ok(plotted.every(s=>s.raw===0),'Zero-phase Nyquist sine samples must be zero');
+            if(frequency===7 && rate===14 && phase===90) assert.ok(plotted.every(s=>Math.abs(s.raw-((-1)**s.n))<1e-10),'90-degree Nyquist samples alternate ±1');
+          }
+          await input('#sample-inspector-index',48);
+          assert.equal(await page.$eval(`${root} circle[data-sample-index="48"]`,e=>{const p=e.closest('[role="region"]').getBoundingClientRect(),r=e.getBoundingClientRect();return r.left>=p.left && r.right<=p.right;}),true,'The inspected sample must be visible on mobile');
+          await button(/Reset/);
+          assert.equal(await page.$(`${root} [data-testid="sample-inspector"]`),null);
           await button(/Run sampling/);
           break;
         case 'discrete-signals':
@@ -420,6 +474,16 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           await button(/^Press A/);
           await button(/Run all/);
           await expect(/WM_CHAR/);
+          assert.match(await page.$$eval(`${root} [data-highlighted="true"] code`,els=>els.map(e=>e.textContent).join('\n')),/case WM_CHAR:/);
+          await button(/^Close and quit/);
+          await button(/Run trace/);
+          for(let i=0;i<3;i++) await button(/Step/);
+          await expect(/GetMessage = 0/);
+          await expect(/message loop exited/);
+          assert.equal(await page.$eval(`${root} [aria-label="Queued messages"]`,e=>e.innerText.includes('WM_QUIT')),false);
+          const lines = await page.$$eval(`${root} [data-highlighted="true"] code`,els=>els.map(e=>e.textContent));
+          assert.equal(lines.length,1);
+          assert.match(lines[0],/while.*GetMessageW/);
           break;
         case 'win32-types-lab':
           await button(/^DWORD$/);
@@ -451,6 +515,16 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
             );
             assert.ok(match && Number(match[1]) <= Number(match[2]));
           }
+          await button(/^Fiber/);
+          await expect(/1140 Mbps modeled throughput/);
+          assert.equal(await page.$eval(`${root} [aria-label="Inspect scene objects"] button[aria-pressed="true"]`,e=>e.innerText),'Fiber','Media controls and scene inspection must agree');
+          await button(/Clear/);
+          await expect(/1140 Mbps modeled throughput/);
+          await button(/^Wireless$/,true);
+          await expect(/Wireless: 360 Mbps modeled throughput/);
+          await toggleView('2D');
+          await toggleView('3D');
+          await expect(/Wireless: 360 Mbps modeled throughput/);
           break;
         case 'ai-environments':
           await button(/Advance one traffic/);

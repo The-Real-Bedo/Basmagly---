@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const puppeteer = require('puppeteer-core');
 const { LAB_CATALOG } = require('./test_curriculum.cjs');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-const practice = new Set(['transmission-lab', 'topology-simulator', 'subnet-calculator', 'vacuum-world', 'edge-vs-cloud', 'iot-simulator', 'signal-convolution', 'win32-types-lab']);
+const practice = new Set(['transmission-lab', 'topology-simulator', 'subnet-calculator', 'vacuum-world', 'edge-vs-cloud', 'iot-simulator', 'signal-convolution', 'win32-types-lab', 'network-devices', 'packet-journey', 'network-media', 'search-visualizer', 'signal-sampling', 'win32-code-lab']);
 const captures = process.env.BASMAGLY_CAPTURE_DIR;
 (async () => {
   const browser = await puppeteer.launch({ executablePath: process.env.BASMAGLY_BROWSER_PATH || '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser', headless: true, pipe: true });
@@ -144,6 +144,36 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
               case 'win32-types-lab':
                 if(index===0){await button(/^Message parameters/);await button(/^UINT_PTR$/,false,-1);}else await button(/^Unicode build/);
                 break;
+              case 'network-devices':
+                await button(index===0?/Hub/:/Switch/);
+                if(index===1) await click('[data-testid="lab-challenge"] input[value="pca"]');
+                await button(index===0?/إرسال متزامن/:/إرسال عادي/);await delay(index===0?4000:3000);
+                if(index===1){await status('retry');await click('[data-testid="lab-challenge"] input[value="pca"]');await click('[data-testid="lab-challenge"] input[value="pcc"]');}
+                break;
+              case 'packet-journey':
+                await button(/الخطوة الجاية/);
+                if(index===1){await button(/الخطوة الجاية/);for(const value of ['sourceMac','destMac','ttl'])await click(`[data-testid="lab-challenge"] input[value="${value}"]`);}
+                else {await click('[data-testid="lab-challenge"] input[value="ttl"]');await status('retry');await click('[data-testid="lab-challenge"] input[value="ttl"]');}
+                break;
+              case 'network-media':
+                if(index===0) await button(/^Fiber/);
+                else await button(/Clear/);
+                break;
+              case 'search-visualizer':
+                await button(index===0?/^UCS/:/^BFS/);
+                for(let i=0;i<(index===0?4:2);i++)await button(/^Step/);
+                break;
+              case 'signal-sampling':
+                await input(index===0?'input[aria-label="Sampling rate in samples per second"]':'input[aria-label="Quantization bit depth"]',index===0?14:5);
+                await button(/Run sampling/);await status('retry');
+                await input(index===0?'input[aria-label="Sampling rate in samples per second"]':'input[aria-label="Quantization bit depth"]',index===0?15:6);
+                await button(/Run sampling/);
+                break;
+              case 'win32-code-lab':
+                await button(index===0?/^Press A/:/^Close and quit/);
+                await button(/Run trace/);
+                for(let i=0;i<(index===0?5:3);i++)await button(/Step/);
+                break;
             }
             await status('success');
             missionChecks++;
@@ -162,6 +192,12 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
                 case 'iot-simulator':await input('#iot-reading',29);break;
                 case 'signal-convolution':await select(1,'impulse');break;
                 case 'win32-types-lab':await button(/^Narrow build/);break;
+                case 'network-devices':await select(1,'pcb');break;
+                case 'packet-journey':await button(/الخطوة الجاية/);break;
+                case 'network-media':await button(/Interference/);break;
+                case 'search-visualizer':await button(/^UCS/);break;
+                case 'signal-sampling':await input('input[aria-label="Quantization bit depth"]',5);break;
+                case 'win32-code-lab':await button(/^Press A/);break;
               }
               assert.notEqual(await page.$eval(`${root} [data-testid="challenge-feedback"]`,e=>e.dataset.status),'success','Changed state retained a stale pass');
             }

@@ -2,6 +2,7 @@ import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkb
 import { useState } from 'react';
 import { Activity, Cable, Radio, RotateCcw } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Medium = 'copper' | 'fiber' | 'wireless';
 type Distance = 'short' | 'long';
@@ -20,7 +21,7 @@ const distanceFactor = (medium: Medium, distance: Distance) => {
 
 const environmentFactor = (medium: Medium, environment: Environment) => {
   if (environment === 'clear') return 1;
-  return { copper: 0.9, fiber: 0.95, wireless: 0.55 }[medium];
+  return { copper: 0.9, fiber: 1, wireless: 0.55 }[medium];
 };
 
 const mediaNote: Record<Medium, { en: string; ar: string }> = {
@@ -56,8 +57,8 @@ function SignalPath({ medium }: { medium: Medium }) {
           {medium === 'fiber' && <path d="M72 46H288" className="stroke-amber-200 dark:stroke-amber-200" strokeWidth="2" />}
         </g>
       )}
-      <circle cx="110" cy="46" r="4" className="fill-amber-500" />
-      <circle cx="250" cy="46" r="4" className="fill-amber-500" />
+      <circle cx="110" cy="46" r="4" className="fill-amber-500 dark:fill-amber-400" />
+      <circle cx="250" cy="46" r="4" className="fill-amber-500 dark:fill-amber-400" />
     </svg>
   );
 }
@@ -81,47 +82,52 @@ export function NetworkMediaLab() {
     setRequiredMbps(250);
     setSelected('copper');
   };
+  const missions: ChallengeMission[] = [
+    { id: 'long-interference', title: 'Meet a long-link target under interference', titleAr: 'حقّق معدل وصلة طويلة مع التشويش', goal: 'Keep a long distance, interference, and a 600 Mbps target. Select a medium whose modeled throughput reaches the target.', goalAr: 'خلّي المسافة طويلة والبيئة فيها تشويش والهدف 600 Mbps. اختار وسيط الـ Throughput الممثّلة بتاعته توصل للهدف.', hint: 'Optical fiber is immune to electromagnetic interference; compare the modeled throughput, not just capacity.', hintAr: 'الألياف الضوئية مش بتتأثر بالتشويش الكهرومغناطيسي؛ قارن الـ Throughput الممثّلة، مش السعة بس.', start: () => { setDistance('long'); setEnvironment('interference'); setRequiredMbps(600); setSelected('copper'); }, evaluate: () => distance !== 'long' || environment !== 'interference' || requiredMbps !== 600 ? feedback('retry', 'Keep the long, interference, 600 Mbps conditions.', 'خلّي الظروف: مسافة طويلة وتشويش و600 Mbps.') : current.meetsTarget ? feedback('success', 'Fiber reaches 1140 Mbps: 1200 × 0.95 × 1. These are teaching-model rates, not measured guarantees.', 'الألياف وصلت لـ 1140 Mbps: السعة 1200 في معامل مسافة 0.95 في معامل تشويش 1. دي معدلات نموذج تعليمي، مش ضمانات مقاسة.') : feedback('retry', 'This medium falls below the target. Compare all three modeled rates.', 'الوسيط ده أقل من الهدف. قارن المعدلات الممثّلة للتلات وسائط.') },
+    { id: 'wireless-recovery', title: 'Recover a short wireless link', titleAr: 'حسّن وصلة لاسلكية قصيرة', goal: 'Keep Wireless, short distance, and a 500 Mbps target. Change the interference condition until the modeled link meets the target.', goalAr: 'خلّي الوسيط لاسلكي والمسافة قصيرة والهدف 500 Mbps. غيّر حالة التشويش لحد ما الوصلة الممثّلة تحقق الهدف.', hint: 'At short distance, compare the wireless environment factors 0.55 and 1.', hintAr: 'مع المسافة القصيرة، قارن معاملي البيئة اللاسلكية 0.55 و1.', start: () => { setDistance('short'); setEnvironment('interference'); setRequiredMbps(500); setSelected('wireless'); }, evaluate: () => selected !== 'wireless' || distance !== 'short' || requiredMbps !== 500 ? feedback('retry', 'Keep Wireless, short distance, and 500 Mbps.', 'خلّي الوسيط لاسلكي والمسافة قصيرة والهدف 500 Mbps.') : environment === 'clear' && current.meetsTarget ? feedback('success', 'The clear wireless example reaches 600 Mbps, versus 330 Mbps under interference.', 'المثال اللاسلكي في البيئة الهادية وصل لـ 600 Mbps، مقابل 330 Mbps مع التشويش.') : feedback('retry', 'Change the interference condition and compare throughput again.', 'غيّر حالة التشويش وقارن الـ Throughput تاني.') },
+  ];
 
   return (
     <section className="rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
-      <header className="mb-5 flex items-start justify-between gap-3">
-        <div className="flex gap-3">
+      <header className="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 gap-3">
           <span className="rounded-xl bg-amber-100 p-2 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"><Activity size={20} /></span>
           <div>
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">Network Media Match Lab</h3>
             <ArabicText className="text-sm text-stone-600 dark:text-zinc-400">محاكاة اختيار وسيط الشبكة</ArabicText>
           </div>
         </div>
-        <button type="button" onClick={reset} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-beige-300 px-3 text-sm text-stone-700 hover:bg-[#FAF7F2] dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800" aria-label="Reset media choices">
+        <button type="button" onClick={reset} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 px-3 text-sm text-stone-700 hover:bg-[#FAF7F2] dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800" aria-label="Reset media choices">
           <RotateCcw size={16} /><span>Reset</span>
         </button>
       </header>
 
-      <div className="grid gap-4 lg:grid-cols-[0.9fr,1.1fr]">
+      <LabChallenge missions={missions} />
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,0.9fr),minmax(0,1.1fr)]">
         <div className="space-y-4 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <fieldset>
-            <legend className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200">المسافة (Distance)</legend>
+            <legend className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200"><ArabicText as="span" className="text-inherit">المسافة (Distance)</ArabicText></legend>
             <div className="grid grid-cols-2 gap-2">
               {(['short', 'long'] as const).map((value) => (
                 <button key={value} type="button" onClick={() => setDistance(value)} aria-pressed={distance === value} className={`min-h-11 rounded-xl border px-3 text-sm font-medium ${distance === value ? 'border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900' : 'border-beige-300 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200'}`}>
-                  {value === 'short' ? 'قصير (Short)' : 'طويل (Long)'}
+                  <ArabicText as="span" className="text-inherit">{value === 'short' ? 'قصير (Short)' : 'طويل (Long)'}</ArabicText>
                 </button>
               ))}
             </div>
           </fieldset>
           <fieldset>
-            <legend className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200">البيئة (Environment)</legend>
+            <legend className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200"><ArabicText as="span" className="text-inherit">البيئة (Environment)</ArabicText></legend>
             <div className="grid grid-cols-2 gap-2">
               {(['clear', 'interference'] as const).map((value) => (
                 <button key={value} type="button" onClick={() => setEnvironment(value)} aria-pressed={environment === value} className={`min-h-11 rounded-xl border px-2 text-sm font-medium ${environment === value ? 'border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900' : 'border-beige-300 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200'}`}>
-                  {value === 'clear' ? 'هادئة (Clear)' : 'تشويش (Interference)'}
+                  <ArabicText as="span" className="text-inherit">{value === 'clear' ? 'هادئة (Clear)' : 'تشويش (Interference)'}</ArabicText>
                 </button>
               ))}
             </div>
           </fieldset>
           <label className="block text-sm font-semibold text-stone-800 dark:text-stone-200" htmlFor="media-rate">
-            معدل البيانات المطلوب (Required rate): <span className="font-mono">{requiredMbps} Mbps</span>
-            <input id="media-rate" type="range" min="50" max="1200" step="50" value={requiredMbps} onChange={(event) => setRequiredMbps(Number(event.target.value))} className="mt-3 w-full accent-amber-600" />
+            <ArabicText as="span" className="text-inherit">معدل البيانات المطلوب (Required rate):</ArabicText> <span className="font-mono">{requiredMbps} Mbps</span>
+            <input id="media-rate" type="range" min="50" max="1200" step="50" value={requiredMbps} onChange={(event) => setRequiredMbps(Number(event.target.value))} className="mt-3 w-full accent-amber-600 dark:accent-amber-400" />
             <span className="mt-1 flex justify-between text-[13px] font-normal text-stone-600 dark:text-zinc-400"><span>50 Mbps</span><span>1,200 Mbps</span></span>
           </label>
         </div>
@@ -145,18 +151,21 @@ export function NetworkMediaLab() {
             })}
           </div>
 
-          <LabWorkbench title="Media · modeled throughput" motionKey={distance+'-'+environment+'-'+selected}
+          <LabWorkbench title="Media · modeled throughput" motionKey={distance+'-'+environment+'-'+selected} selectedId={selected} onSelect={id => setSelected(id as Medium)}
  nodes={results.map<WorkbenchNode>((result,index)=>({id:result.medium,label:MEDIA[result.medium].name,showValue:false,kind:'bar',position:[(index-1)*2.2,0,index===1?-1.6:1],size:[.85,Math.max(.15,result.throughput/350),.85],tone:result.meetsTarget?'success':'error',value:result.throughput+' Mbps',detail:'Illustrative capacity: '+result.capacity+' Mbps. '+mediaNote[result.medium].en,detailAr:'السعة التوضيحية: '+result.capacity+' Mbps. '+mediaNote[result.medium].ar,action:()=>setSelected(result.medium),actionLabel:'Inspect this medium'}))}>
 <div className="overflow-hidden rounded-2xl border border-beige-300 bg-[#FAF7F2] px-3 py-2 dark:border-stone-800 dark:bg-stone-950">
             <SignalPath medium={selected} />
             <p className="text-center text-[13px] font-medium text-stone-700 dark:text-stone-300">{MEDIA[selected].name} signal path · select a medium to switch it</p>
-            <ArabicText className="text-center text-[13px] text-stone-600 dark:text-zinc-400">مسار الإشارة · اختار وسيطًا لتغييره</ArabicText>
+            <ArabicText className="text-center text-[13px] text-stone-600 dark:text-zinc-400">مسار إشارة {MEDIA[selected].nameAr} · اختار وسيط عشان تغيّره</ArabicText>
           </div>
 </LabWorkbench>
 
           <div className="rounded-2xl border border-beige-300 bg-white p-4 dark:border-stone-800 dark:bg-stone-900" aria-live="polite">
             <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{MEDIA[selected].name}: {current.throughput} Mbps modeled throughput / {current.capacity} Mbps modeled capacity</p>
             <p className="mt-1 text-[13px] text-stone-600 dark:text-zinc-400">{mediaNote[selected].en}</p>
+            <p className="mt-2 break-words font-mono text-xs text-stone-700 dark:text-zinc-300">{current.capacity} × {distanceFactor(selected, distance)} × {environmentFactor(selected, environment)} = {current.throughput} Mbps</p>
+            <p className="mt-1 text-xs text-stone-600 dark:text-zinc-400">Capacity × distance factor × electromagnetic interference factor. Fiber carries light; this interference factor is 1.</p>
+            <ArabicText className="mt-1 text-xs text-stone-600 dark:text-zinc-400">السعة في معامل المسافة في معامل التشويش الكهرومغناطيسي. الألياف بتنقل ضوء؛ فمعامل التشويش ده بيساوي 1.</ArabicText>
             <ArabicText className="mt-1 text-[13px] text-stone-600 dark:text-zinc-400">{mediaNote[selected].ar}</ArabicText>
             <div className="mt-3 h-3 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800" role="img" aria-label={`Modeled throughput ${current.throughput} of ${current.capacity} Mbps capacity`}>
               <div className="h-full rounded-full bg-amber-500 dark:bg-amber-400" style={{ width: `${Math.min(100, (current.throughput / current.capacity) * 100)}%` }} />
@@ -171,7 +180,7 @@ export function NetworkMediaLab() {
 
       <div className="mt-4 rounded-xl bg-sky-50 p-3 text-[13px] leading-relaxed text-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
         Teaching model only: the Mbps capacities and condition factors are illustrative, not certified medium limits or measured performance. Actual selection also considers installation, cost, and equipment. Throughput is capped at modeled capacity by construction.
-        <ArabicText className="mt-1 text-[13px] leading-relaxed text-sky-900 dark:text-sky-200">النموذج للتعليم فقط: سعات Mbps ومعاملات الظروف توضيحية، مش حدود معيارية للوسيط ولا قياسات أداء فعلية. الاختيار الحقيقي بيراعي كمان التركيب والتكلفة والأجهزة. الـThroughput ما بيعدّيش السعة الممثلة في النموذج.</ArabicText>
+        <ArabicText className="mt-1 text-[13px] leading-relaxed text-sky-900 dark:text-sky-200">النموذج للتعليم فقط: سعات Mbps ومعاملات الظروف توضيحية، مش حدود معيارية للوسيط ولا قياسات أداء فعلية. الاختيار الحقيقي بيراعي كمان التركيب والتكلفة والأجهزة. الـ Throughput ما بيعدّيش السعة الممثلة في النموذج.</ArabicText>
       </div>
     </section>
   );

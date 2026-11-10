@@ -1,5 +1,28 @@
 # Current study-platform handoff
 
+## Latest handoff — lab logic, layout and additional practice (2026-11-10)
+
+**Start here.** Continue on `feat/interactive-labs-3d`. This completes the user's request to recheck all labs and improve/add useful interactions. The six unfinished component edits left by the previous model were reviewed, completed and verified. GitHub main is still `2a68d5227657a2cf0a27b5f534ee9d788e636da2`; the 13-PR inventory is unchanged. No publication was requested.
+
+**Improvements:**
+- Network devices now use valid locally administered unicast MACs, lock device/endpoint controls during transmission, and expose a native Reset that cancels playback. Two missions check shared-medium hub collisions and known switch unicast acceptance. The model explicitly states its prelearned tables, single VLAN and full-duplex switch assumptions.
+- Packet journey now displays IPv4 TTL 64 → 63 at router forwarding, alongside rewritten MACs and constant endpoint IP addresses. It supports explicit Pause/Resume with timer cancellation. Two missions compare transparent switch forwarding and router field changes. English/Arabic explanations agree; server delivery includes TCP processing. The model omits NAT, checksum/FCS calculation and live ARP exchange.
+- Search adds a clearly supplementary, positive-cost directed acyclic graph: S → A → G costs 9; S → B → G costs 4. BFS/DFS choose the first branch; UCS finds cost 4. Two missions expose the distinction. The source lecture and binary trees stay intact. The new graph fits mobile width, solution edges are highlighted in 2D/3D, duplicate frontier paths have visible routes, successful goal inspection is accurate, and completed searches stop advertising a next expansion.
+- Sampling adds phase 0°/90°, a folded candidate curve and an individual sample inspector that scrolls the plot to its selected sample on mobile. Two missions cover a rate strictly above twice a 7 Hz sine and the smallest endpoint-quantizer depth meeting a 0.02 error bound: six bits. The signed folded curve matches ideal samples; it is explicitly not a reconstruction of quantized data. The Nyquist boundary, finite display, noise-free sine and endpoint quantizer remain qualified.
+- Media no longer applies electromagnetic interference loss to optical fiber. Formula factors are visible; long fiber gives 1140 Mbps in this illustrative model. Selection is synchronized between main controls and the 3D inspector. Desktop controls keep their natural height. Two missions cover long-link medium choice and wireless interference recovery.
+- Win32 trace adds close/destruction/quit: WM_CLOSE dispatch, WM_DESTROY and PostQuitMessage, followed by GetMessage returning 0 without dispatching WM_QUIT. API highlights resolve from code content rather than fragile line offsets. Two missions cover translated WM_CHAR delivery and normal thread shutdown. Code stays LTR; Arabic controls and signed numeric endpoints have proper isolation. The sketch explicitly omits window creation, helper definitions and error recovery and does not execute native Windows code.
+
+**Counts and scope:** 12 new missions, bringing practical practice to **28 missions in 14 labs**. There are still **32 registered labs**, with existing **19/32 3D coverage**. This pass adds interactions/scenarios to existing labs; no standalone lab IDs, curriculum/source-sheet IDs, source coverage, fonts or Pages settings changed.
+
+**Verified:**
+- TypeScript, curriculum checks and production build pass. Vite's existing large-chunk warning remains visible.
+- All 32 interaction flows passed. Targeted final reruns cover native network reset/unlocking, synchronized media inspection/view changes and the compact weighted graph after their last edits.
+- All 128 expanded-layout checks (32 labs × 375/1280px × light/dark) passed. The six changed labs were rechecked in 24 additional panels with all **48 new completed-mission checks**, including wrong attempts, restart and changed inputs revoking success. The original 64 mission checks also pass; combined mission coverage is **112 completed checks**. Final media/search and bilingual-copy adjustments received targeted theme/width reruns.
+- Sampling checks 64 frequency/rate/phase/bit-depth combinations, every plotted sample and quantized level, the Δ/2 rounding bound, agreement of the rendered folded candidate with sample instants, both Nyquist phase cases and mobile inspector visibility. Search retains lecture path A → B → G → L → O, cost 4, with BFS/UCS/DFS expansion counts 12/15/7, and checks all three weighted results separately.
+- A further 24 changed-scene checks cover light/dark × mobile/desktop with reduced motion, no document overflow and no application/console errors. Screenshots were visually inspected; theme was explicitly asserted after correcting a private capture script's hash-only navigation. Browser evidence and review exports remain private in `.hoplite/repo-review/`.
+
+**Publication:** save locally on the existing task branch. No push, PR, merge or production deployment is implied. No known required check remains for this request. On explicit publication authorization, push the task branch and open a scoped PR without merging or force-pushing.
+
 ## Latest handoff — practical challenges and expanded labs (2026-11-10)
 
 **Start here.** The user approved suggestion items 3 and 4: practical challenges and an expanded lab view. Continue on `feat/interactive-labs-3d`; the first implementation checkpoint for this pass is `b2c02d5`. GitHub main was checked again and remains `2a68d5227657a2cf0a27b5f534ee9d788e636da2`. The earlier lab and chapter work is preserved. No push, PR or merge was requested.
