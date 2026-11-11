@@ -343,4 +343,64 @@ export const LAB_GUIDES = {
     observeAr:
       'للمدخل التعليمي [3,0,6] والمعاملات [1/3,1/3,1/3]، الـ Convolution الكامل هو [1,1,3,2,2].',
   },
+  'bfs-queue-lab': {
+    tryEn:
+      'Step through the 1–15 binary tree. Compare early goal testing on generation versus late testing on dequeue for Goal 11 and Goal 13.',
+    tryAr:
+      'تتبّع شجرة 1–15 الثنائية خطوة بخطوة. قارن فحص الهدف المبكر عند التوليد بالفحص المتأخر عند السحب للهدف 11 والهدف 13.',
+    observeEn:
+      'BFS enqueues children at the back (FIFO) and traverses level by level. Early testing saves generating the remaining nodes of the deepest tier.',
+    observeAr:
+      'الـ BFS بتضيف الأبناء في نهاية الطابور (FIFO) وتتوسّع مستوى بمستوى. الفحص المبكر يوفّر توليد باقي عقد المستوى الأخير.',
+  },
+  'dfs-stack-lab': {
+    tryEn:
+      'Trace left-first branch exploration down to leaf 8. Watch the call stack push children and unwind during backtracking.',
+    tryAr:
+      'تتبّع استكشاف الفرع الأيسر أولاً حتى الورقة 8. راقب المكدس أثناء إضافة الأبناء ثم تفريغ الإطارات عند التراجع.',
+    observeEn:
+      'DFS plunges down the deepest path via LIFO stack frames. Memory is O(bm), requiring only the active path and sibling frontiers.',
+    observeAr:
+      'الـ DFS بتغوص في أعمق مسار عبر إطارات مكدس LIFO. الذاكرة O(bm) فقط لأنها تحتفظ بالمسار النشط وأشقاء العقد غير الموسعة.',
+  },
+  'ucs-priority-lab': {
+    tryEn:
+      'Run the Romania 418 km vs BFS 450 km preset. Compare the direct trap edge with the multi-step optimal route and test goal-on-removal.',
+    tryAr:
+      'شغّل إعداد رومانيا 418 كم مقابل 450 كم لـ BFS. قارن الحافة المباشرة الخادعة بالمسار المتعدد الأمثل واختبر فحص الهدف عند السحب.',
+    observeEn:
+      'UCS orders nodes by path cost g(n) in a Min-Heap. Testing goal on removal guarantees optimality; early testing would settle for expensive edges.',
+    observeAr:
+      'الـ UCS بترتب العقد حسب تكلفة المسار g(n) في Min-Heap. فحص الهدف عند السحب يضمن الأمثلية، بينما الفحص المبكر يقع في فخ الحواف المكلفة.',
+  },
+  'ipv6-compress': {
+    tryEn:
+      'Load 2041:0000:140F:0000:0000:0000:875B:131B, apply Rule 1 then Rule 2, and compare with the deck output. Then switch to Expand for fd00:0:0:4100::.',
+    tryAr:
+      'حمّل العنوان 2041:0000:140F:0000:0000:0000:875B:131B، وطبّق القاعدة الأولى ثم التانية، وقارن بناتج الديك. بعدها بدّل لوضع Expand مع fd00:0:0:4100::.',
+    observeEn:
+      'Rule 1 shortens each hextet; Rule 2 replaces only one contiguous all-0 run with a single double colon. Expanding rewrites all eight groups.',
+    observeAr:
+      'القاعدة الأولى بتقصّر كل hextet؛ والتانية بتستبدل مجموعة أصفار متتالية واحدة بنقطتين واحدة. والتوسيع بيكتب المجموعات الثمانية كلها.',
+  },
+  'eui-64-lab': {
+    tryEn:
+      'Run the deck MAC FC-99-47-75-CE-E0 through all three steps, then load 00-1A-2B-3C-4D-5E and watch the 00 OUI become 02.',
+    tryAr:
+      'مرّر الـ MAC بتاع الديك FC-99-47-75-CE-E0 على الخطوات التلاتة، وبعدها حمّل 00-1A-2B-3C-4D-5E وشوف الـ OUI من 00 لـ 02.',
+    observeEn:
+      'Split the MAC, insert FFFE in the middle, and flip the U/L bit: FC (1111 1100) becomes FE (1111 1110), giving FE99:47FF:FE75:CEE0.',
+    observeAr:
+      'قسّم الـ MAC، وأدرج FFFE في النص، واقلب بتة الـ U/L: ‏FC (1111 1100) بتقوى FE (1111 1110)، فيطلع ‏FE99:47FF:FE75:CEE0.',
+  },
+  'ipv6-structure-3d': {
+    tryEn:
+      'Click each block to inspect its role and bits, then take the ordered tour: prefix, subnet, interface.',
+    tryAr:
+      'دوس على كل قطعة عشان تراجع دورها وعدد بتاتها، وبعدها اعمل الجولة بالترتيب: البادئة، الـ Subnet، الواجهة.',
+    observeEn:
+      'The /48 provider prefix, the 16-bit subnet ID and the 64-bit interface ID map to the lecture Country, Street and Home analogy.',
+    observeAr:
+      'البادئة /48 من المزود ومعرّف الـ subnet بـ 16 بت ومعرّف الواجهة بـ 64 بت بيمثّلوا تشبيه المحاضرة: الدولة والشارع والبيت.',
+  },
 } satisfies Record<LabId, LabGuide>;

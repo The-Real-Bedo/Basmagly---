@@ -41,6 +41,12 @@ const experiments = {
   'signal-periodicity': lazy(() => import('./SignalPeriodicityLab').then(m => ({ default: m.SignalPeriodicityLab }))),
   'signal-systems': lazy(() => import('./SignalSystemsLab').then(m => ({ default: m.SignalSystemsLab }))),
   'signal-convolution': lazy(() => import('./SignalConvolutionLab').then(m => ({ default: m.SignalConvolutionLab }))),
+  'bfs-queue-lab': lazy(() => import('./BfsQueueLab').then(m => ({ default: m.BfsQueueLab }))),
+  'dfs-stack-lab': lazy(() => import('./DfsStackLab').then(m => ({ default: m.DfsStackLab }))),
+  'ucs-priority-lab': lazy(() => import('./UcsPriorityLab').then(m => ({ default: m.UcsPriorityLab }))),
+  'ipv6-compress': lazy(() => import('./Ipv6CompressionLab').then(m => ({ default: m.Ipv6CompressionLab }))),
+  'eui-64-lab': lazy(() => import('./Eui64Lab').then(m => ({ default: m.Eui64Lab }))),
+  'ipv6-structure-3d': lazy(() => import('./Ipv6Structure3DLab').then(m => ({ default: m.Ipv6Structure3DLab }))),
 } satisfies Record<LabId, React.LazyExoticComponent<React.ComponentType>>;
 
 class ExperimentBoundary extends Component<{ children: React.ReactNode }, { failed: boolean }> {
@@ -120,7 +126,17 @@ export const ExperimentStudio: React.FC<{ ids: string[]; initialExperiment?: str
           return <button key={lab.id} type="button" data-testid={`open-${lab.id}`} aria-pressed={selectedId === lab.id}
             onClick={() => { setActiveId(lab.id); document.getElementById('active-experiment')?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}
             className={`min-w-0 rounded-2xl border p-4 text-left transition-colors ${selectedId === lab.id ? 'bg-stone-900 dark:bg-stone-100 border-stone-900 dark:border-stone-100 text-white dark:text-stone-900' : 'bg-[#FAF7F2] dark:bg-stone-950 border-beige-300 dark:border-stone-800 text-stone-800 dark:text-zinc-200 hover:border-stone-400 dark:hover:border-stone-600'}`}>
-            <span className="flex justify-between mb-3"><Icon className="w-5 h-5" /><span className="font-mono text-[13px] opacity-70">{String(index + 1).padStart(2, '0')}</span></span>
+            <span className="flex justify-between items-center mb-3">
+              <Icon className="w-5 h-5" />
+              <div className="flex items-center gap-1.5">
+                {lab.isImportant && (
+                  <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-200 text-amber-950 dark:bg-amber-900/60 dark:text-amber-200">
+                    ★ Important
+                  </span>
+                )}
+                <span className="font-mono text-[13px] opacity-70">{String(index + 1).padStart(2, '0')}</span>
+              </div>
+            </span>
             <span className="block text-sm font-semibold">{lab.title}</span>
             <ArabicText className="text-inherit text-[13px] mt-1 opacity-80">{lab.subtitleAr}</ArabicText>
           </button>;
