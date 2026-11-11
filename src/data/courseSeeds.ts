@@ -6,8 +6,8 @@ export const COURSES_DATA: Course[] = [
     "id": "networks",
     "title": "CCNA",
     "titleAr": "شبكات الحاسب (CCNA)",
-    "description": "Comprehensive coverage of network fundamentals, the OSI 7-layer and TCP/IP reference models, devices, topologies, transmission modes, and IPv4 addressing and subnetting.",
-    "descriptionAr": "تغطية شاملة لأساسيات الشبكات، والنماذج المرجعية OSI (7 طبقات) و TCP/IP، والأجهزة، والطوبولوجيا، وأنماط الإرسال، وعنونة IPv4 وتقسيم الشبكات (Subnetting).",
+    "description": "Comprehensive coverage of network fundamentals, the OSI 7-layer and TCP/IP reference models, devices, topologies, transmission modes, IPv4 addressing and subnetting, and IPv6 addressing.",
+    "descriptionAr": "تغطية شاملة لأساسيات الشبكات، والنماذج المرجعية OSI (7 طبقات) و TCP/IP، والأجهزة، والطوبولوجيا، وأنماط الإرسال، وعنونة IPv4 وتقسيم الشبكات (Subnetting)، وعنونة IPv6.",
     "term": 1,
     "icon": "Network",
     "isAvailable": true,
@@ -183,74 +183,7 @@ export const COURSES_DATA: Course[] = [
         ]
       }
     ],
-    "sheets": [
-      {
-        "id": "net-sheet-1",
-        "courseId": "networks",
-        "sheetNumber": 1,
-        "title": "Sheet 1: Network Fundamentals & Topologies",
-        "titleAr": "شيت 1: أساسيات الشبكات والتخطيط الطوبولوجي (Topologies)",
-        "brief": "Fundamental questions on LAN vs WAN, star/mesh topologies, and OSI model layers.",
-        "briefAr": "تمارين عملية ومسائل مقارنة على شبكات LAN و WAN، طوبولوجيا النجمة والشبكة الكاملة (Star vs Mesh)، وطبقات نموذج OSI.",
-        "problemsCount": 3,
-        "hasSolution": true,
-        "problems": [
-          {
-            "id": "p-net1-1",
-            "problemNumber": 1,
-            "question": "Calculate the total number of physical duplex links required to build a Fully-Connected Mesh topology containing N = 8 host nodes.",
-            "questionAr": "احسب عدد الكابلات (Physical Links) المطلوبة لعمل شبكة كاملة التوصيل (Full Mesh Topology) بين 8 أجهزة.",
-            "solution": "Formula: Links = N * (N - 1) / 2. For N = 8: Links = 8 * 7 / 2 = 28 full-duplex cables.",
-            "solutionAr": "القانون: Links = N * (N - 1) / 2. تعويض مباشر لـ 8 أجهزة: 8 × 7 ÷ 2 = 28 كابل اتصال مباشر."
-          },
-          {
-            "id": "p-net1-2",
-            "problemNumber": 2,
-            "question": "Compare Star topology with Bus topology regarding single-point of failure and ease of troubleshooting.",
-            "questionAr": "قارن بين طوبولوجيا النجمة (Star) والخط الناقل (Bus) من حيث نقطة الانهيار الفردية (Single Point of Failure) وسهولة تحديد الأعطال.",
-            "solution": "In Star topology, central switch/hub is a single point of failure; cable failure only affects one node. In Bus topology, cable break halts the whole network; Star is much easier to isolate and troubleshoot.",
-            "solutionAr": "في شبكة Star: نقطة العطل الوحيدة هي السويتش المركزي (لو وقع الشبكة كلها تفصل، بس لو سلك جهاز اتقطع الباقي شغال). في شبكة Bus: لو الكابل الرئيسي اتقطع من أي مكان الشبكة كلها بتقع فوراً. بالتالي Star أسهل بكتير في تتبع الأعطال وعزلها."
-          },
-          {
-            "id": "p-net1-3",
-            "problemNumber": 3,
-            "question": "Which OSI layers add headers and which layer adds both a header and a trailer to data packets?",
-            "questionAr": "أنهي طبقات في نموذج OSI بتضيف Header (ترويسة)، وأنهي طبقة بالذات بتضيف Header و Trailer معاً؟",
-            "solution": "Layers 6 down to 3 add specific headers (Presentation, Session, Transport, Network). The Data Link Layer (Layer 2) adds both a Frame Header and a Frame Trailer (FCS / CRC checksum).",
-            "solutionAr": "الطبقات من 6 لحد 3 بتضيف Headers خاصة بيها. الطبقة الوحيدة اللي بتضيف ترويسة وخاتمة (Header & Trailer) هي طبقة ربط البيانات (Data Link Layer - Layer 2)، والـ Trailer بيكون فيه كود فحص الأخطاء (CRC/FCS)."
-          }
-        ]
-      },
-      {
-        "id": "net-sheet-2",
-        "courseId": "networks",
-        "sheetNumber": 2,
-        "title": "Sheet 2: IPv4 Subnetting & CIDR Calculation",
-        "titleAr": "شيت 2: تقسيم الشبكات وحسابات الـ Subnetting و CIDR",
-        "brief": "Practical problems calculating network ID, broadcast address, valid host range, and VLSM designs.",
-        "briefAr": "مسائل حسابية على استخراج عنوان الشبكة، عنوان البث (Broadcast)، نطاق العناوين الصالحة للأجهزة، وقناع الشبكة بالبادئة /CIDR.",
-        "problemsCount": 2,
-        "hasSolution": true,
-        "problems": [
-          {
-            "id": "p-net2-1",
-            "problemNumber": 1,
-            "question": "For IP 172.16.45.10 / 20: Determine (a) Subnet Mask in dotted decimal, (b) Network Address, and (c) Directed Broadcast Address.",
-            "questionAr": "للعنوان 172.16.45.10 / 20: اوجد (أ) قناع الشبكة (Subnet Mask)، (ب) عنوان الشبكة (Network Address)، (ج) عنوان البث (Broadcast Address).",
-            "solution": "(a) Mask: /20 = 255.255.240.0. (b) Block size = 256 - 240 = 16. In 3rd octet: 45 / 16 gives interval 32..47. Network Address = 172.16.32.0. (c) Broadcast Address = 172.16.47.255.",
-            "solutionAr": "(أ) القناع: /20 يعني 255.255.240.0. (ب) حجم القفزة (Block size) = 256 - 240 = 16 في الخانة التالتة. مضاعفات الـ 16 الأقرب لـ 45 هي 32، يبقى عنوان الشبكة 172.16.32.0. (ج) عنوان الـ Broadcast هو آخر عنوان في النطاق = 172.16.47.255."
-          },
-          {
-            "id": "p-net2-2",
-            "problemNumber": 2,
-            "question": "An organization needs 5 subnets, each requiring at least 25 usable host IP addresses. Which CIDR mask should be chosen starting from a Class C /24 network?",
-            "questionAr": "مؤسسة محتاجة تقسم شبكة Class C (/24) لـ 5 شبكات فرعية على الأقل، وكل شبكة تستوعب 25 جهاز على الأقل. ما هو قناع الـ CIDR المناسب؟",
-            "solution": "Need 5 subnets -> borrow 3 subnet bits (2^3 = 8 >= 5). Remaining host bits = 8 - 3 = 5. Usable hosts = 2^5 - 2 = 30 >= 25. Thus, new mask is /24 + 3 = /27 (255.255.255.224).",
-            "solutionAr": "محتاجين 5 شبكات -> نستلف 3 بتات للشبكات (2³ = 8 شبكات، تكفي وزيادة). يتبقى للأجهزة 5 بتات (2⁵ - 2 = 30 جهاز صالح لكل شبكة). إذن القناع هو /24 + 3 = /27 (255.255.255.224)."
-          }
-        ]
-      }
-    ]
+    "sheets": []
   },
   {
     "id": "ai",
@@ -1173,8 +1106,8 @@ export const COURSES_DATA: Course[] = [
         "sheetNumber": 1,
         "title": "Lecture 1 Sheet",
         "titleAr": "شيت المحاضرة الأولى",
-        "brief": "Official faculty section quiz for Lecture 1 (Dr. Nesma Mahmoud) covering the 3 AI fuel pillars, Turing Test operational intelligence, and Rational Agent formal definitions with comprehensive model solutions and slide citations.",
-        "briefAr": "شيت المحاضرة الأولى الرسمي لدكتورة نسمة محمود؛ يشمل أسئلة الأركان الثلاثة للذكاء الاصطناعي، اختبار تورينج، والوكيل العقلاني مع الحل النموذجي والتعليل الأكاديمي المستند إلى السلايدات.",
+        "brief": "Lecture 1 practice exercises.",
+        "briefAr": "تمارين وتطبيقات المحاضرة الأولى.",
         "problemsCount": 4,
         "hasSolution": true,
         "problems": [
@@ -1240,8 +1173,8 @@ export const COURSES_DATA: Course[] = [
         "sheetNumber": 2,
         "title": "Lecture 2 Sheet",
         "titleAr": "شيت المحاضرة الثانية",
-        "brief": "Official faculty section quiz for Lecture 2 (Dr. Nesma Mahmoud) covering Intelligent Agent capacities, the Agent architecture formula, automated taxi PEAS formalization, and environment observability classifications.",
-        "briefAr": "شيت المحاضرة الثانية الرسمي لدكتورة نسمة محمود؛ يشمل قدرات الوكيل الذكي، معادلة المعمارية، التوصيف الكامل لبيئة PEAS للتاكسي ذاتي القيادة، وأبعاد البيئات مع الحل النموذجي ومراجع السلايدات.",
+        "brief": "Lecture 2 practice exercises.",
+        "briefAr": "تمارين وتطبيقات المحاضرة الثانية.",
         "problemsCount": 6,
         "hasSolution": true,
         "problems": [
@@ -1325,8 +1258,8 @@ export const COURSES_DATA: Course[] = [
         "sheetNumber": 3,
         "title": "Lecture 3 Sheet",
         "titleAr": "شيت المحاضرة الثالثة",
-        "brief": "Official faculty section quiz for Lecture 3 (Dr. Nesma Mahmoud) covering abstraction in problem-solving agents, the 5 formal components of a search problem, State vs Node definitions, Transition Models, and the Frontier.",
-        "briefAr": "شيت المحاضرة الثالثة الرسمي لدكتورة نسمة محمود؛ يشمل مفهوم التجريد (Abstraction)، المكونات الخمسة الرسمية لمسألة البحث، الفرق بين الحالة والعقدة، دور دالة الانتقال، وجبهة البحث مع الحل النموذجي ومراجع السلايدات.",
+        "brief": "Lecture 3 practice exercises.",
+        "briefAr": "تمارين وتطبيقات المحاضرة الثالثة.",
         "problemsCount": 5,
         "hasSolution": true,
         "problems": [
@@ -1402,8 +1335,8 @@ export const COURSES_DATA: Course[] = [
         "sheetNumber": 4,
         "title": "Lecture 4 Sheet",
         "titleAr": "شيت المحاضرة الرابعة",
-        "brief": "Official faculty section quiz for Lecture 4 (Dr. Nesma Mahmoud) covering uninformed search roles, DFS LIFO queues, linear space complexity proofs, tree traversal orders (BFS, DFS, UCS), and binary state space traces.",
-        "briefAr": "شيت المحاضرة الرابعة الرسمي لدكتورة نسمة محمود؛ يشمل دور خوارزميات البحث، مكدس DFS، إثبات التعقيد المكاني الخطي، مسائل تتبع ترتيب زيارة العقد في الأشجار لـ BFS و DFS و UCS، وشجرة فضاء الحالات الثنائية مع الحل النموذجي والخطوات.",
+        "brief": "Lecture 4 practice exercises.",
+        "briefAr": "تمارين وتطبيقات المحاضرة الرابعة.",
         "problemsCount": 5,
         "hasSolution": true,
         "problems": [

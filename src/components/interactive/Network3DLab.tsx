@@ -5,6 +5,7 @@ import { Box, Camera, Layers3, MousePointer2, Network, Play, RotateCcw, StepForw
 import * as THREE from 'three';
 import { ArabicText } from '../ArabicText';
 import { SceneLabel } from './SceneLabel';
+import { fitSceneCamera } from './sceneFraming';
 
 type Device = 'hub' | 'switch' | 'router';
 type Scenario = 'unicast' | 'broadcast' | 'pair';
@@ -24,23 +25,24 @@ const statusColors: Record<NodeStatus, string> = {
   idle: '#78716c', source: '#f59e0b', accepted: '#10b981', discarded: '#78716c', collision: '#f43f5e',
 };
 
-function CameraControls({ top, resetKey }: { top: boolean; resetKey: number }) {
+function CameraControls({ top, resetKey, touchOrbit }: { top: boolean; resetKey: number; touchOrbit: boolean }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
-  const { camera, size } = useThree();
+  const { camera, size, gl, invalidate } = useThree();
   useEffect(() => {
-    const fit = size.width / size.height < 1 ? 1.45 : 1;
-    camera.position.set(...(top ? [0, 9.5 * fit, 0.01] : [7.5 * fit, 6.5 * fit, 8.5 * fit]) as Point);
-    camera.lookAt(0, 0, 0);
-    controls.current?.target.set(0, 0.2, 0);
+    const bounds = new THREE.Box3(new THREE.Vector3(-3.9, 0, -2.7), new THREE.Vector3(3.9, 1.9, 2.7));
+    const target = fitSceneCamera(camera as THREE.PerspectiveCamera, bounds, top ? new THREE.Vector3(0, 1, 0.001) : new THREE.Vector3(0.45, 0.8, 1), size.width, size.height);
+    controls.current?.target.copy(target);
     controls.current?.update();
-  }, [camera, size.width, size.height, top, resetKey]);
-  return <OrbitControls ref={controls} makeDefault enablePan={false} minDistance={6} maxDistance={17} maxPolarAngle={Math.PI / 2.05} />;
+    invalidate();
+  }, [camera, size.width, size.height, top, resetKey, invalidate]);
+  useEffect(() => { gl.domElement.style.touchAction = touchOrbit ? 'none' : 'pan-y'; }, [gl, touchOrbit]);
+  useFrame(() => { gl.domElement.style.touchAction = touchOrbit ? 'none' : 'pan-y'; });
+  return <OrbitControls ref={controls} makeDefault enablePan={false} enableRotate={touchOrbit} enableZoom={touchOrbit} minDistance={4} maxDistance={40} maxPolarAngle={Math.PI / 2.05} />;
 }
 
 function PCNode({ index, device, status }: { index: number; device: Device; status: NodeStatus }) {
   const pc = PCS[index];
   const color = statusColors[status];
-  const ip = device === 'router' ? `192.168.${index + 1}.10` : `192.168.1.${(index + 1) * 10}`;
   return (
     <group position={pc.position}>
       <RoundedBox args={[1.35, 0.12, 0.9]} radius={0.04} position={[0, 0.25, 0]}>
@@ -54,7 +56,7 @@ function PCNode({ index, device, status }: { index: number; device: Device; stat
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={status === 'idle' ? 0.08 : 0.5} />
       </mesh>
       <mesh position={[0, 0.47, 0]}><boxGeometry args={[0.12, 0.35, 0.12]} /><meshStandardMaterial color="#78716c" /></mesh>
-      <SceneLabel position={[0, 1.65, 0]} title={`PC-${pc.id} · ${status.toUpperCase()}`} detail={ip} accent={color} />
+      <SceneLabel position={[0, 1.65, 0]} title={`PC-${pc.id} · ${status.toUpperCase()}`} accent={color} />
     </group>
   );
 }
@@ -81,13 +83,17 @@ function Packet({ from, to, tone, motionKey }: { from: Point; to: Point; tone: n
   const mesh = useRef<THREE.Mesh>(null);
   const started = useRef(0);
   const reducedMotion = useRef(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  useEffect(() => { started.current = performance.now(); }, [motionKey]);
+  const { invalidate } = useThree();
+  const start = useMemo(() => new THREE.Vector3(...from), [from]);
+  const end = useMemo(() => new THREE.Vector3(...to), [to]);
+  useEffect(() => { started.current = performance.now(); invalidate(); }, [motionKey, invalidate]);
   useFrame(() => {
     if (!mesh.current) return;
     const progress = reducedMotion.current ? 1 : Math.min((performance.now() - started.current) / 900, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
-    mesh.current.position.lerpVectors(new THREE.Vector3(...from), new THREE.Vector3(...to), eased);
+    mesh.current.position.lerpVectors(start, end, eased);
     mesh.current.position.y += 0.55 + Math.sin(progress * Math.PI) * 0.45;
+    if (progress < 1) invalidate();
   });
   return (
     <mesh ref={mesh} castShadow>
@@ -97,23 +103,23 @@ function Packet({ from, to, tone, motionKey }: { from: Point; to: Point; tone: n
   );
 }
 
-function NetworkScene({ device, stage, paths, collision, statuses, top, resetKey }: {
+function NetworkScene({ device, stage, paths, collision, statuses, top, resetKey, touchOrbit }: {
   device: Device; stage: number; paths: { from: Point; to: Point; tone: number }[]; collision: boolean;
-  statuses: NodeStatus[]; top: boolean; resetKey: number;
+  statuses: NodeStatus[]; top: boolean; resetKey: number; touchOrbit: boolean;
 }) {
   return (
-    <Canvas shadows dpr={[1, 1.5]} camera={{ position: [7.5, 6.5, 8.5], fov: 42 }} gl={{ antialias: true, alpha: true }} fallback={<div className="flex h-full items-center justify-center p-6 text-center"><div><p className="text-sm font-semibold text-stone-800 dark:text-zinc-200">The 3D view needs WebGL. Open the 2D Network Devices lab for the same forwarding rules.</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">المشهد ثلاثي الأبعاد محتاج WebGL. تقدر تفتح معمل الأجهزة ثنائي الأبعاد وتتعلّم نفس قواعد التوجيه.</ArabicText></div></div>}>
+    <Canvas shadows frameloop="demand" dpr={[1, 1.5]} camera={{ position: [7.5, 6.5, 8.5], fov: 42 }} gl={{ antialias: true, alpha: true }} fallback={<div className="flex h-full items-center justify-center p-6 text-center"><div><p className="text-sm font-semibold text-stone-800 dark:text-zinc-200">The 3D view needs WebGL. Open the 2D Network Devices lab for the same forwarding rules.</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">المشهد ثلاثي الأبعاد محتاج WebGL. تقدر تفتح معمل الأجهزة ثنائي الأبعاد وتتعلّم نفس قواعد التوجيه.</ArabicText></div></div>}>
       <ambientLight intensity={1.2} />
       <directionalLight position={[4, 9, 6]} intensity={2.2} castShadow shadow-mapSize={[1024, 1024]} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[18, 18]} /><meshStandardMaterial color="#44403c" transparent opacity={0.22} /></mesh>
-      <gridHelper args={[16, 16, '#a8a29e', '#78716c']} position={[0, 0.01, 0]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[10, 8]} /><meshStandardMaterial color="#44403c" transparent opacity={0.22} /></mesh>
+      <gridHelper args={[10, 10, '#a8a29e', '#78716c']} position={[0, 0.01, 0]} scale={[1, 1, 0.8]} />
       {PCS.map((pc, index) => (
         <Line key={pc.id} points={[pc.position, CENTER]} color={collision ? '#f43f5e' : stage > 0 ? '#d6d3d1' : '#78716c'} lineWidth={collision ? 3 : 1.5} />
       ))}
       <CentralDevice device={device} collision={collision} />
       {PCS.map((pc, index) => <PCNode key={pc.id} index={index} device={device} status={statuses[index]} />)}
       {paths.map((path, index) => <Packet key={`${stage}-${index}-${path.to.join(',')}`} {...path} motionKey={`${stage}-${index}`} />)}
-      <CameraControls top={top} resetKey={resetKey} />
+      <CameraControls top={top} resetKey={resetKey} touchOrbit={touchOrbit} />
     </Canvas>
   );
 }
@@ -127,6 +133,7 @@ export const Network3DLab: React.FC = () => {
   const [running, setRunning] = useState(false);
   const [top, setTop] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [touchOrbit, setTouchOrbit] = useState(() => !window.matchMedia('(pointer: coarse)').matches);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearTimers = () => { timers.current.forEach(clearTimeout); timers.current = []; };
@@ -176,6 +183,8 @@ export const Network3DLab: React.FC = () => {
     if (stage === 1) return [scenario === 'pair' ? 'PC-A and PC-B transmit at the same time.' : 'PC-A sends its frame to the central device.', scenario === 'pair' ? 'PC-A وPC-B بيبعتوا في نفس الوقت.' : 'PC-A بيبعت الـFrame للجهاز اللي في النص.'];
     if (collision) return ['Collision: the hub repeats both signals on one shared medium. No frame is delivered.', 'تصادم: الـHub كرر الإشارتين على وسيط واحد مشترك، ومفيش أي Frame وصل سليم.'];
     if (scenario === 'broadcast' && device === 'router') return ['The router stops the broadcast. It does not forward it between IP networks.', 'الـRouter وقف الـBroadcast وماعدّاهوش بين الشبكات المختلفة.'];
+    if (stage === 2 && device === 'switch' && scenario === 'pair') return ['The switch forwards A → C and B → D on separate known-destination ports.', 'الـ Switch بيبعث A لـ C وB لـ D على منافذ منفصلة لوجهات معروفة.'];
+    if (stage === 2 && device === 'hub' && scenario === 'broadcast') return ['The hub repeats the broadcast bits to every other port; every other endpoint accepts.', 'الـ Hub بيكرر Bits بتاعة الـ Broadcast لكل المنافذ التانية؛ وكل الأجهزة التانية بتقبل.'];
     if (stage === 2 && device === 'hub') return ['The hub repeats bits out of every other port. Only the unicast target accepts; other NICs discard.', 'الـHub بيكرر الإشارة على كل المنافذ التانية. في الـUnicast الجهاز المطلوب بس بيقبل والباقي بيتجاهل.'];
     if (stage === 2 && device === 'switch') return [knownDestination && scenario === 'unicast' ? 'The switch finds the destination MAC and forwards only to its port.' : 'The switch floods except the ingress port: the destination is unknown or the frame is broadcast.', knownDestination && scenario === 'unicast' ? 'الـSwitch لقى الـMAC المطلوب في الجدول وبعت على المنفذ بتاعه بس.' : 'الـSwitch عمل Flood على كل المنافذ ماعدا منفذ الاستقبال، لأن الوجهة مجهولة أو الـFrame Broadcast.'];
     if (stage === 2 && device === 'router') return ['The router checks the destination IP, selects an interface and rewrites the Layer-2 header.', 'الـRouter بص على الـIP المطلوب واختار الواجهة المناسبة، وغيّر الـLayer-2 header للـHop الجديدة.'];
@@ -200,15 +209,16 @@ export const Network3DLab: React.FC = () => {
       </div>
 
       <div className="relative overflow-hidden rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950">
-        <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-2">
+        <div className="relative z-10 flex flex-wrap gap-2 border-b border-beige-300 p-3 dark:border-stone-800">
+          <button type="button" onClick={() => setTouchOrbit(value => !value)} aria-pressed={touchOrbit} className="min-h-11 rounded-xl border border-beige-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 text-[13px] font-semibold text-stone-800 dark:text-zinc-200">{touchOrbit ? 'Pause orbit' : 'Enable orbit'}</button>
           <button onClick={() => setTop(value => !value)} className="min-h-11 inline-flex items-center gap-2 rounded-xl border border-beige-300 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 px-3 text-[13px] font-semibold text-stone-800 dark:text-zinc-200 shadow-sm"><Camera className="h-4 w-4" />{top ? 'Orbit view' : 'Top view'}</button>
           <button onClick={() => setResetKey(value => value + 1)} aria-label="Reset 3D camera" className="min-h-11 rounded-xl border border-beige-300 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 px-3 text-stone-800 dark:text-zinc-200 shadow-sm"><RotateCcw className="h-4 w-4" /></button>
         </div>
-        <div className="absolute right-3 top-3 z-10 hidden sm:flex items-center gap-1.5 rounded-xl bg-white/95 dark:bg-stone-900/95 border border-beige-300 dark:border-stone-700 px-3 py-2 text-[13px] text-stone-600 dark:text-zinc-400"><MousePointer2 className="h-4 w-4" />Drag to orbit · Scroll to zoom</div>
+        <div className="hidden items-center gap-1.5 rounded-xl bg-white/95 dark:bg-stone-900/95 border border-beige-300 dark:border-stone-700 px-3 py-2 text-[13px] text-stone-600 dark:text-zinc-400"><MousePointer2 className="h-4 w-4" />Drag to orbit · Scroll to zoom</div>
         <div className="h-[430px] sm:h-[500px]" aria-label="Interactive 3D network topology">
-          <NetworkScene device={device} stage={stage} paths={paths} collision={collision} statuses={statuses} top={top} resetKey={resetKey} />
+          <NetworkScene device={device} stage={stage} paths={paths} collision={collision} statuses={statuses} top={top} resetKey={resetKey} touchOrbit={touchOrbit} />
         </div>
-        <div className="absolute bottom-3 left-3 right-3 flex flex-wrap justify-center gap-x-4 gap-y-1 rounded-xl bg-white/90 dark:bg-stone-900/90 border border-beige-300 dark:border-stone-700 px-3 py-2 text-[13px] font-semibold text-stone-700 dark:text-zinc-300"><span className="text-amber-700 dark:text-amber-300">● Source</span><span className="text-emerald-700 dark:text-emerald-300">● Accepted</span><span className="text-stone-500 dark:text-zinc-400">● Discarded / idle</span><span className="text-rose-700 dark:text-rose-300">● Collision</span></div>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 border-t border-beige-300 bg-white/90 px-3 py-2 text-[13px] font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-900/90 dark:text-zinc-300"><span className="text-amber-700 dark:text-amber-300">● Source</span><span className="text-emerald-700 dark:text-emerald-300">● Accepted</span><span className="text-stone-500 dark:text-zinc-400">● Discarded / idle</span><span className="text-rose-700 dark:text-rose-300">● Collision</span></div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2" aria-label="Endpoint details">
@@ -223,9 +233,9 @@ export const Network3DLab: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr,1.2fr] gap-4">
         <div className="overflow-x-auto rounded-2xl border border-beige-300 dark:border-stone-800">
           <div className="bg-[#FAF7F2] dark:bg-stone-950 px-4 py-3 border-b border-beige-300 dark:border-stone-800"><h4 className="text-sm font-bold text-stone-900 dark:text-stone-100">{device === 'router' ? 'Routing view' : device === 'switch' ? 'MAC table view' : 'Hub behavior'}</h4></div>
-          {device === 'hub' ? <div className="p-4 space-y-2"><p className="text-sm text-stone-700 dark:text-zinc-300">No MAC table. No forwarding decision. One shared collision domain.</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400">مفيش جدول ولا قرار توجيه؛ الجهاز بيكرر Bits وكل المنافذ في نطاق تصادم واحد.</ArabicText></div> : <table className="w-full text-left font-mono text-[13px] text-stone-700 dark:text-zinc-300"><thead className="bg-[#FAF7F2] dark:bg-stone-950"><tr>{(device === 'router' ? ['Network', 'Interface'] : ['Destination MAC', 'Port']).map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>{PCS.filter((_, index) => device === 'router' || knownDestination || index !== target).map((pc, index) => <tr key={pc.id} className="border-t border-beige-200 dark:border-stone-800"><td className="p-3">{device === 'router' ? `192.168.${PCS.indexOf(pc) + 1}.0/24` : `${pc.id}${pc.id}:11:${pc.id}${pc.id}:11:${pc.id}${pc.id}`}</td><td className="p-3">{device === 'router' ? `Gi0/${PCS.indexOf(pc)}` : `Fa0/${PCS.indexOf(pc) + 1}`}</td></tr>)}</tbody></table>}
+          {device === 'hub' ? <div className="p-4 space-y-2"><p className="text-sm text-stone-700 dark:text-zinc-300">No MAC table. No forwarding decision. One shared collision domain.</p><ArabicText className="text-sm text-stone-600 dark:text-zinc-400">مفيش جدول ولا قرار توجيه؛ الجهاز بيكرر Bits وكل المنافذ في نطاق تصادم واحد.</ArabicText></div> : <table className="w-full text-left font-mono text-[13px] text-stone-700 dark:text-zinc-300"><thead className="bg-[#FAF7F2] dark:bg-stone-950"><tr>{(device === 'router' ? ['Network', 'Interface'] : ['Destination MAC', 'Port']).map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>{PCS.filter((_, index) => device === 'router' || scenario !== 'unicast' || knownDestination || index !== target).map((pc, index) => <tr key={pc.id} className="border-t border-beige-200 dark:border-stone-800"><td className="p-3">{device === 'router' ? `192.168.${PCS.indexOf(pc) + 1}.0/24` : `02:11:${pc.id}${pc.id}:11:${pc.id}${pc.id}:11`}</td><td className="p-3">{device === 'router' ? `Gi0/${PCS.indexOf(pc)}` : `Fa0/${PCS.indexOf(pc) + 1}`}</td></tr>)}</tbody></table>}
         </div>
-        <div className="rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 p-4 space-y-2"><div className="flex items-center gap-2 text-stone-800 dark:text-zinc-200"><Network className="h-4 w-4" /><h4 className="text-sm font-bold">What the 3D scene proves</h4></div><p className="text-sm leading-relaxed text-stone-700 dark:text-zinc-300">{device === 'hub' ? 'A hub has no intelligence: it repeats electrical signals. A switch reads MAC addresses; a router reads IP addresses.' : device === 'switch' ? 'Known unicast uses one port. Unknown unicast and broadcast flood, but each switch port remains a separate collision domain.' : 'A router separates broadcast domains. The destination IP stays end-to-end; Layer-2 headers change at each routed hop.'}</p><ArabicText className="text-sm leading-relaxed text-stone-600 dark:text-zinc-400">{device === 'hub' ? 'الـHub بيكرر الإشارة من غير فهم. الـSwitch بيقرأ MAC، أما الـRouter فبيقرأ IP.' : device === 'switch' ? 'الـUnicast المعروف بيخرج على منفذ واحد، لكن المجهول والـBroadcast بيعملوا Flood. وكل منفذ Switch نطاق تصادم مستقل.' : 'الـRouter بيفصل نطاقات الـBroadcast. الـIP النهائي ثابت، لكن ترويسة الـLayer 2 بتتغير عند كل Hop.'}</ArabicText><p className="text-[13px] text-stone-500 dark:text-zinc-400">Teaching model: playback timing is illustrative, not measured network latency.</p></div>
+        <div className="rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 p-4 space-y-2"><div className="flex items-center gap-2 text-stone-800 dark:text-zinc-200"><Network className="h-4 w-4" /><h4 className="text-sm font-bold">What to observe</h4></div><p className="text-sm leading-relaxed text-stone-700 dark:text-zinc-300">{device === 'hub' ? 'A hub has no intelligence: it repeats electrical signals. A switch reads MAC addresses; a router reads IP addresses.' : device === 'switch' ? 'Known unicast uses one port. Unknown unicast and broadcast flood, but each switch port remains a separate collision domain.' : 'A router separates broadcast domains. The destination IP stays end-to-end; Layer-2 headers change at each routed hop.'}</p><ArabicText className="text-sm leading-relaxed text-stone-600 dark:text-zinc-400">{device === 'hub' ? 'الـHub بيكرر الإشارة من غير فهم. الـSwitch بيقرأ MAC، أما الـRouter فبيقرأ IP.' : device === 'switch' ? 'الـUnicast المعروف بيخرج على منفذ واحد، لكن المجهول والـBroadcast بيعملوا Flood. وكل منفذ Switch نطاق تصادم مستقل.' : 'الـRouter بيفصل نطاقات الـBroadcast. الـIP النهائي ثابت، لكن ترويسة الـLayer 2 بتتغير عند كل Hop.'}</ArabicText><p className="text-[13px] text-stone-500 dark:text-zinc-400">Teaching model: playback timing is illustrative, not measured network latency.</p></div>
       </div>
     </section>
   );

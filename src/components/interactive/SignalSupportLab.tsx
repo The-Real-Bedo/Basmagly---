@@ -34,6 +34,11 @@ export const SignalSupportLab: React.FC = () => {
         <button type="button" onClick={reset} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-beige-300 px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#FAF7F2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800" aria-label="Reset signal support lab"><RotateCcw size={15} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
       </header>
 
+      <div className="mb-4 rounded-2xl border border-amber-300 bg-amber-50/80 p-3.5 text-xs text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2">
+        <span className="font-semibold">★ Important Lab (SIG File) · معمل أساسي مبني على سلايدات د. مسعد حسن الرسمية</span>
+        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-900/60 font-bold">Guaranteed Zeros & Support (Slide 26)</span>
+      </div>
+
       <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3" role="group" aria-label="Choose an index transformation">
         {(Object.keys(TRANSFORMS) as TransformKey[]).map((key) => {
           const option = TRANSFORMS[key];

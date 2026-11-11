@@ -101,12 +101,14 @@ const eventDrivenSections: SummarySection[] = [
       'The OS routes events to the appropriate application and window; applications do not poll every device themselves.',
       'Queued notifications help avoid losing pending work while a thread is temporarily busy.',
       'The OS also schedules CPU time and manages memory and other shared resources.',
+      'Source diagram: Foundation I pp. 13–21 and book Figure 1.1 show input detection → queued notification → application loop → matching handler → UI response → waiting. The framework diagram is conceptual; native Win32 queues belong to threads, not one queue per window or necessarily one per application.',
     ],
     [
       'إشارات الـ hardware بتتفسر كإدخال مفهوم، زي مكان المؤشر أو ضغطة مفتاح.',
       'الـ OS بيوجّه الأحداث للتطبيق والنافذة المناسبين؛ والبرنامج مش بيفحص كل جهاز بنفسه طول الوقت.',
       'الرسائل اللي في الـ queue بتساعد إن الشغل المنتظر مايضيعش لو الـ thread مشغول مؤقتًا.',
       'الـ OS كمان بينظم وقت المعالج ويدير الذاكرة والموارد المشتركة.',
+      'رسم المصدر: صفحات 13–21 في Foundation I والشكل 1.1 في الكتاب بيعرضوا رصد الإدخال ← إشعار منتظر ← حلقة التطبيق ← المعالج المناسب ← استجابة الواجهة ← الانتظار. رسم الـ Framework تصوري؛ الـ Queues في Win32 الأصلي بتخص الـ Threads، مش Queue لكل نافذة أو بالضرورة واحدة لكل تطبيق.',
     ],
     'Hardware input → OS interpretation and routing → application response.',
     'إدخال من الـ Hardware ← تفسير وتوجيه من الـ OS ← استجابة البرنامج.',
@@ -120,11 +122,13 @@ const eventDrivenSections: SummarySection[] = [
       'C and C++ are commonly used with the Windows API in the book’s native-programming examples.',
       'The API is the boundary through which application code requests operating-system work.',
       'Calling an API does not mean the application bypasses the OS and talks directly to hardware.',
+      'Figure 1.2 (book p. 9; Foundation I p. 33): Application requests pass through Windows API services such as UI, files, networking, memory, and graphics to OS capabilities such as the kernel, drivers, and resource management. The return arrows represent results back to the application.',
     ],
     [
       'الكتاب بيستخدم C وC++ كتير في أمثلة البرمجة الأصلية مع الـ Windows API.',
       'الـ API هي الواجهة اللي كود التطبيق بيطلب من خلالها شغل من نظام التشغيل.',
       'استدعاء API مش معناه إن التطبيق بيتخطى الـ OS ويتعامل مباشرةً مع الـ hardware.',
+      'الشكل 1.2 في صفحة 9 من الكتاب وصفحة 33 في Foundation I: طلبات التطبيق بتعدّي على خدمات Windows API زي الواجهة والملفات والشبكات والذاكرة والرسم، لحد إمكانيات الـ OS زي الـ Kernel والـ Drivers وإدارة الموارد. الأسهم الراجعة بتمثل النتايج اللي بترجع للتطبيق.',
     ],
     'Language writes the program; API requests Windows services.',
     'اللغة بتكتب البرنامج؛ والـ API بتطلب خدمات Windows.',
@@ -139,12 +143,14 @@ const eventDrivenSections: SummarySection[] = [
       'Windows GUI flow is commonly event-driven: user actions select which handler runs next.',
       'Windows interfaces use windows, menus, buttons, scrollbars, and icons, so the application must respond to input and repaint when requested.',
       'A long-running handler can make a single-threaded interface appear unresponsive; keep message handling brief or move long work off the UI thread.',
+      'Resources and concurrency (book p. 11; Foundation II pp. 8–9): Windows preemptively schedules threads; a console application can also run on this multitasking OS. Release resources the program owns using the matching API; borrowed system resources do not all require explicit destruction.',
     ],
     [
       'التدفق التقليدي غالبًا تسلسلي: منطق البرنامج بيحدد التعليمة اللي بعدها.',
       'تدفق واجهة Windows غالبًا معتمد على الأحداث: تصرفات المستخدم بتحدد أنهي handler يشتغل بعد كده.',
       'واجهة Windows بتستخدم نوافذ وقوائم وأزرار وscrollbars وأيقونات؛ فالتطبيق لازم يستجيب للإدخال ويرسم الواجهة تاني وقت الطلب.',
       'الـ handler الطويل ممكن يخلّي واجهة شغالة على thread واحد تبان معلّقة؛ خلّي معالجة الرسائل قصيرة أو انقل الشغل الطويل بعيد عن UI thread.',
+      'الموارد والتزامن في صفحة 11 من الكتاب وصفحتَي 8–9 في Foundation II: Windows بتوزّع وقت المعالج على الـ Threads بأسلوب Preemptive؛ وتطبيق Console يقدر يشتغل على نفس النظام متعدد المهام. حرّر الموارد اللي البرنامج بيمتلكها بالـ API المناسبة؛ الموارد المستعارة من النظام مش كلها محتاجة تدمير صريح.',
     ],
     'Sequential code chooses the next step; events choose the next response.',
     'الكود التسلسلي بيختار الخطوة الجاية؛ والأحداث بتحدد الاستجابة الجاية.',
@@ -160,6 +166,7 @@ const eventDrivenSections: SummarySection[] = [
       'WndProc is the callback that handles messages for a window. Its parameters provide the window, message ID, and message-specific values.',
       'Messages not handled by an application should normally be passed to DefWindowProc so Windows can provide default behavior.',
       'Not every notification follows the same queued path: Windows also sends some messages synchronously.',
+      'Figure 1.3 is a simplified message-flow picture: WM_PAINT requests repainting, WM_SIZE reports resizing, WM_COMMAND reports a command, WM_LBUTTONDOWN a left click, and WM_KEYDOWN a key press. The application’s WndProc calls DefWindowProc for unhandled messages; the queue does not automatically forward them there.',
     ],
     [
       'الـ Message إشعار له نوع وparameters؛ وأسماء كتير بتبدأ بـ WM_، زي WM_PAINT وWM_SIZE وWM_COMMAND وWM_KEYDOWN.',
@@ -167,6 +174,7 @@ const eventDrivenSections: SummarySection[] = [
       'الـ WndProc هو الـ callback اللي بيعالج رسائل النافذة. parameters بتحدد النافذة ورقم الرسالة والقيم الخاصة بيها.',
       'الرسائل اللي التطبيق مش بيعالجها غالبًا لازم تتبعت لـ DefWindowProc عشان Windows تنفّذ السلوك الافتراضي.',
       'مش كل الإشعارات بتمشي في مسار queue واحد؛ Windows كمان بتبعت بعض الرسائل بشكل متزامن.',
+      'الشكل 1.3 رسم مبسّط لتدفق الرسائل: WM_PAINT بتطلب إعادة الرسم، وWM_SIZE بتبلّغ بتغيير الحجم، وWM_COMMAND بأمر، وWM_LBUTTONDOWN بضغطة شمال، وWM_KEYDOWN بضغطة مفتاح. الـ WndProc في التطبيق هي اللي بتنادي DefWindowProc للرسائل غير المعالجة؛ الـ Queue مش بتبعتهالها تلقائيًا.',
     ],
     'Window + HWND + message queue + WndProc form the core vocabulary.',
     'النافذة + HWND + الـ Message Queue + الـ WndProc هم المفاهيم الأساسية.',
@@ -239,12 +247,14 @@ const messageModelSections: SummarySection[] = [
     [
       'A Windows SDK or an IDE that includes it supplies headers and libraries needed to compile and link API calls.',
       'The SDK also provides build tools and reference documentation.',
+      'Toolchain clarification: Install a compatible C/C++ compiler and linker as well as the SDK; modern Visual Studio supplies the MSVC toolset through its C++ workload. Visual Studio is the book’s recommended environment, not the only compiler capable of building Win32 code.',
       'The API uses stable Windows typedefs and pointer-sized types so code can target 32-bit or 64-bit builds when written correctly.',
       'An SDK is not the same thing as an analytics or advertising library that may also be called an SDK.',
     ],
     [
       'الـ Windows SDK أو IDE فيها SDK بتوفر headers وlibraries اللازمة لترجمة وربط استدعاءات الـ API.',
       'الـ SDK كمان فيها أدوات build ووثائق مرجعية.',
+      'توضيح أدوات الترجمة: ثبّت C/C++ Compiler وLinker متوافقين مع الـ SDK؛ وVisual Studio الحديثة بتوفر أدوات MSVC ضمن C++ Workload. الـ Visual Studio هي البيئة اللي الكتاب بيرشحها، مش الـ Compiler الوحيد اللي يقدر يبني كود Win32.',
       'الـ API بتستخدم typedefs مستقرة وأنواع بحجم المؤشر عشان الكود يقدر يستهدف 32-bit أو 64-bit لو اتكتب صح.',
       'الـ SDK هنا مش هي نفس مكتبة analytics أو الإعلانات اللي ممكن اسمها برضه SDK.',
     ],
@@ -279,13 +289,13 @@ const messageModelSections: SummarySection[] = [
     [
       'BYTE is 8-bit unsigned; WORD is 16-bit unsigned; DWORD is 32-bit unsigned.',
       'LONG is 32-bit signed and LONGLONG is 64-bit signed in the Windows API.',
-      'BOOL is a 32-bit integer convention with FALSE equal to zero and TRUE nonzero; it is not the same typedef as C++ bool.',
+      'BOOL is a 32-bit integer type; FALSE is 0 and the TRUE constant is 1. A nonzero BOOL is interpreted as true in a Boolean test, but API return contracts still matter: GetMessage’s -1 is an error. BOOL is not C++ bool.',
       'Pointer-sized types such as UINT_PTR and LONG_PTR change width with the target architecture; fixed-width types do not.',
     ],
     [
       'BYTE عدد unsigned حجمه 8-bit؛ وWORD حجمه 16-bit؛ وDWORD حجمه 32-bit.',
       'LONG عدد signed حجمه 32-bit، وLONGLONG حجمه 64-bit في Windows API.',
-      'BOOL convention من integer حجمه 32-bit؛ وFALSE بتساوي صفر وTRUE أي قيمة غير صفرية، لكنه مش نفس النوع C++ bool.',
+      'BOOL نوع Integer حجمه 32-bit؛ وFALSE بتساوي 0 والثابت TRUE بيساوي 1. قيمة BOOL غير الصفرية بتتحسب صحيحة في اختبار Boolean، بس لازم تراجع عقد الـ API: القيمة -1 من GetMessage خطأ. الـ BOOL مش نوع C++ bool.',
       'الأنواع بحجم المؤشر زي UINT_PTR وLONG_PTR بيتغير حجمها حسب المعمارية؛ الأنواع ذات الحجم الثابت لأ.',
     ],
     'BYTE 8, WORD 16, DWORD 32; pointer-sized types follow x86/x64.',
@@ -332,13 +342,13 @@ const messageModelSections: SummarySection[] = [
     [
       'char is a narrow code unit; it is not guaranteed to mean ASCII for every encoding. On Windows, wchar_t is 16-bit and represents UTF-16 code units.',
       'LPSTR/LPCSTR are mutable/constant narrow-string pointers; LPWSTR/LPCWSTR are mutable/constant wide-string pointers.',
-      'TCHAR and LPTSTR/LPCTSTR map to narrow or wide types according to the UNICODE build setting.',
+      'Windows TCHAR and LPTSTR/LPCTSTR follow UNICODE; the C-runtime _T/_TEXT macros in tchar.h follow _UNICODE. Define both symbols for a consistent Unicode build, or leave both undefined for the narrow example. The book p. 32 merges these two settings.',
       '_T(\"text\") or _TEXT(\"text\") maps a literal to the matching generic character form; do not mix A and W API variants or pointer types.',
     ],
     [
       'char وحدة نصية narrow؛ ومش مضمون إنها تعني ASCII في كل encoding. في Windows، wchar_t حجمه 16-bit وبيمثل وحدات UTF-16.',
       'LPSTR وLPCSTR مؤشرات لنصوص narrow قابلة للتعديل أو ثابتة؛ وLPWSTR وLPCWSTR لنصوص wide.',
-      'TCHAR وLPTSTR/LPCTSTR بيتحولوا لأنواع narrow أو wide حسب إعداد UNICODE في الـ build.',
+      'أنواع Windows زي TCHAR وLPTSTR/LPCTSTR بتتبع UNICODE؛ والـ Macros المسماة _T و_TEXT في tchar.h بتتبع _UNICODE. عرّف الرمزين عشان تعمل Unicode Build متوافق، أو سيب الاتنين من غير تعريف للمثال Narrow. صفحة 32 في الكتاب بتجمع الإعدادين دول.',
       '_T(\"text\") أو _TEXT(\"text\") بيحوّل النص للصيغة العامة المناسبة؛ ماتخلطش بين A وW أو أنواع المؤشرات.',
     ],
     'Match the string pointer, literal, and API character variant.',
@@ -347,9 +357,9 @@ const messageModelSections: SummarySection[] = [
       title: 'Generic text mapping',
       titleAr: 'تحويل النص للنوع العام',
       language: 'C++ (TCHAR example)',
-      code: 'TCHAR text[] = _T(\"Hello\");\nLPCTSTR readOnlyText = _T(\"Windows\");',
-      explanation: 'These compile as narrow text without UNICODE or wide text with UNICODE. For a new Unicode-only program, explicit wide types and W-suffixed APIs make the choice clearer.',
-      explanationAr: 'الكود بيتحوّل لنص narrow من غير UNICODE، ولنص wide مع UNICODE. في برنامج جديد Unicode فقط، الأنواع الصريحة ودوال W بتوضح الاختيار أكتر.',
+      code: '#include <windows.h>\n#include <tchar.h>\n\nTCHAR text[] = _T(\"Hello\");\nLPCTSTR readOnlyText = _T(\"Windows\");',
+      explanation: 'These declarations compile as narrow text with both UNICODE and _UNICODE undefined, or wide text with both defined. windows.h supplies Windows text types; tchar.h supplies _T. For a new Unicode-only program, explicit wide types and W-suffixed APIs make the choice clearer.',
+      explanationAr: 'التعريفات دي بتتترجم كنص Narrow لما UNICODE و_UNICODE مش متعرّفين، أو Wide لما الاتنين متعرّفين. الـ windows.h بتوفر أنواع النص في Windows؛ والـ tchar.h بتوفر _T. في برنامج جديد Unicode فقط، الأنواع الصريحة ودوال W بتوضح الاختيار أكتر.',
       memoryCue: 'TCHAR follows the build; LPCTSTR is constant generic text.',
       memoryCueAr: 'TCHAR بيتبع إعداد الـ build؛ وLPCTSTR نص عام ثابت.',
       sourceReference: 'Chapter 2, §2.5, PDF pp. 31–32.',
@@ -365,12 +375,14 @@ const messageModelSections: SummarySection[] = [
       'Their width follows the target: typically 32 bits in a 32-bit build and 64 bits in a 64-bit build.',
       'The parameters are not always coordinates. Decode them only according to the specific message contract.',
       'Prefer pointer-sized API types when storing a pointer-like value; a DWORD remains 32-bit and can truncate a pointer in a 64-bit program.',
+      'Constants (book p. 34): WM_ identifies messages, WS_ window styles, MB_ message-box options, and IDC_ cursor IDs. GetLastError returns a DWORD error code when the failing API documents that mechanism; read it promptly rather than interpreting a stale value after any call.',
     ],
     [
       'WPARAM اسم بديل لـ UINT_PTR؛ وLPARAM اسم بديل لـ LONG_PTR؛ وLRESULT اسم بديل لـ LONG_PTR.',
       'حجمهم بيتبع المعمارية: غالبًا 32-bit في build 32-bit و64-bit في build 64-bit.',
       'الـ parameters مش دايمًا إحداثيات؛ فكّها حسب تعريف الرسالة نفسها.',
       'استخدم أنواع بحجم المؤشر لما تخزّن قيمة شبه pointer؛ أما DWORD بيفضل 32-bit وممكن يقصّ pointer في برنامج 64-bit.',
+      'الثوابت في صفحة 34 من الكتاب: WM_ للرسائل، وWS_ لأنماط النافذة، وMB_ لاختيارات MessageBox، وIDC_ لمعرّفات المؤشر. الـ GetLastError بترجع كود خطأ DWORD لما الـ API اللي فشلت بتوثّق الآلية دي؛ اقرأه فورًا بدل تفسير قيمة قديمة بعد أي استدعاء.',
     ],
     'Use fixed-width types for fixed-width data; pointer-width types for pointers.',
     'استخدم نوع ثابت الحجم للبيانات الثابتة؛ ونوع بحجم المؤشر للمؤشرات.',
@@ -382,17 +394,21 @@ const messageModelSections: SummarySection[] = [
     'نافذة Win32 الخام بتتحدد بwindow class، وبتتسجل عند Windows، وبعدها بننشئ instance منها. إظهار النافذة وتحديثها بيؤدي لشغل الرسم؛ والموارد زي GDI objects والـ handles لازم تلتزم بقواعد عمر كل API. المصدر: الفصل 2، §§2.3 و2.6، صفحات PDF من 27 لـ28 ومن 35 لـ40.',
     [
       'WNDCLASSEX stores the callback and class properties; RegisterClassEx registers the blueprint.',
-      'CreateWindowEx creates an HWND; ShowWindow makes it visible and UpdateWindow requests immediate painting.',
+      'CreateWindowEx creates an HWND; ShowWindow applies the requested display state. UpdateWindow sends WM_PAINT directly to WndProc only when the update region is nonempty, bypassing the queue.',
       'Handle WM_PAINT with BeginPaint and EndPaint around drawing operations.',
       'WM_DESTROY signals that a window is being destroyed; PostQuitMessage asks the loop to stop.',
       'If WndProc does not handle a message, return DefWindowProc rather than silently returning zero.',
+      'Resource pairs: BeginPaint/EndPaint, GetDC/ReleaseDC, and CreatePen or CreateSolidBrush/DeleteObject have different ownership rules. The complete sample uses a cached system-color brush and shared cursor, so it does not create objects requiring those extra releases.',
+      'Close path (Figure 2.1): WM_CLOSE → DestroyWindow → WM_DESTROY → PostQuitMessage → GetMessage returns 0 for WM_QUIT. WM_QUIT belongs to the thread loop and is not dispatched to WndProc. TranslateMessage may post a later WM_CHAR without replacing the original key message.',
     ],
     [
       'WNDCLASSEX بتخزن الـ callback وخصائص الـ class؛ وRegisterClassEx بتسجل المخطط.',
-      'CreateWindowEx بتنشيء HWND؛ وShowWindow بتظهرها وUpdateWindow بتطلب الرسم فورًا.',
+      'CreateWindowEx بتنشئ HWND؛ وShowWindow بتطبّق حالة العرض المطلوبة. الـ UpdateWindow بتبعت WM_PAINT مباشرةً للـ WndProc لما منطقة التحديث مش فاضية، من غير المرور بالـ Queue.',
       'عالج WM_PAINT باستخدام BeginPaint وEndPaint حوالين أوامر الرسم.',
       'WM_DESTROY معناها إن النافذة بتتدمر؛ وPostQuitMessage بتطلب من الـ loop إنه يوقف.',
       'لو WndProc مش بتعالج رسالة، رجّع نتيجة DefWindowProc بدل ما ترجع صفر من غير معالجة.',
+      'أزواج الموارد: BeginPaint مع EndPaint، وGetDC مع ReleaseDC، وCreatePen أو CreateSolidBrush مع DeleteObject؛ كل زوج له قواعد ملكية مختلفة. المثال الكامل بيستخدم فرشاة لون مخزّنة عند النظام ومؤشر مشترك، فمش بينشئ موارد محتاجة التحرير الإضافي ده.',
+      'مسار الإغلاق في الشكل 2.1: WM_CLOSE ← DestroyWindow ← WM_DESTROY ← PostQuitMessage ← GetMessage بترجع 0 لرسالة WM_QUIT. الـ WM_QUIT تخص حلقة الـ Thread ومش بتتوجّه للـ WndProc. الـ TranslateMessage ممكن تضيف WM_CHAR تتسحب بعدين من غير استبدال رسالة المفتاح الأصلية.',
     ],
     'Register class → create window → show → paint → destroy cleanly.',
     'سجّل الـ class ← أنشئ النافذة ← أظهرها ← ارسمها ← اقفلها بشكل سليم.',
@@ -414,8 +430,8 @@ const messageModelSections: SummarySection[] = [
       'الرسائل غير المعالجة بتروح لـ DefWindowProcW عشان سلوك النافذة الطبيعي يفضل شغال.',
       'GetMessageW بترجع -1 عند الخطأ، وصفر عند الخروج، وقيمة موجبة للرسالة.',
     ],
-    'Class first, window next, messages always return to WndProc.',
-    'الـ Class الأول، وبعدها النافذة، والرسائل بترجع دايمًا للـ WndProc.',
+    'Register the class, create the window, and dispatch window messages; handle WM_QUIT and retrieval errors in the loop.',
+    'سجّل الـ Class وأنشئ النافذة ووجّه رسائلها؛ وعالج WM_QUIT وأخطاء سحب الرسائل في الـ Loop.',
     [{
       title: 'Complete window and message loop',
       titleAr: 'نافذة كاملة وMessage Loop',
@@ -630,6 +646,29 @@ const question = (
   difficulty,
 });
 
+const essayQuestion = (
+  id: string,
+  lectureId: string,
+  prompt: string,
+  promptAr: string,
+  correctAnswer: string,
+  modelAnswer: string,
+  modelAnswerAr: string,
+  keyPoints: string[],
+): Question => ({
+  id,
+  courseId: 'windows-programming',
+  lectureId,
+  type: 'essay',
+  question: prompt,
+  questionAr: promptAr,
+  correctAnswer,
+  modelAnswer,
+  modelAnswerAr,
+  keyPoints,
+});
+
+
 const foundationQuestions: Question[] = [
   question('win-q1-1', 'win-lec-1', 'mcq', 'A button raises a click event. Which component raises the event?', 'زرار طلّع حدث ضغط. أنهي مكوّن هو اللي طلّع الحدث؟', ['Event handler', 'Button', 'Message queue'], ['الـ Event Handler', 'الزرار', 'الـ Message Queue'], 1, 'The button is the event source; its handler contains the response.', 'الزرار هو مصدر الحدث؛ والـ handler بتاعه فيه الاستجابة.'),
   question('win-q1-2', 'win-lec-1', 'mcq', 'Which is a system event from the chapter?', 'أنهي مثال لحدث من النظام حسب الفصل؟', ['Clicking a button', 'A timer expiring', 'Typing into a text box'], ['الضغط على زرار', 'انتهاء المؤقّت', 'الكتابة في مربع نص'], 1, 'A timer expiring is a system activity; the other examples are user actions.', 'انتهاء المؤقّت نشاط من النظام؛ والمثالان التانيان تصرفات من المستخدم.'),
@@ -637,6 +676,38 @@ const foundationQuestions: Question[] = [
   question('win-q1-4', 'win-lec-1', 'mcq', 'Which sequence best describes a user action reaching an application response?', 'أنهي ترتيب بيوصف وصول تصرف المستخدم لاستجابة التطبيق؟', ['Handler → source → OS → user', 'Input → OS routes notification → event loop dispatches → handler responds', 'API → hardware directly → handler'], ['الـ Handler ← المصدر ← OS ← المستخدم', 'إدخال ← الـ OS يوجّه الإشعار ← الـ Event Loop توجّهه ← الـ Handler تستجيب', 'الـ API ← الـ hardware مباشرةً ← الـ Handler'], 1, 'The OS interprets and routes input; the application loop dispatches it to the relevant handler.', 'الـ OS بيفسر الإدخال ويوجهه؛ والـ loop في التطبيق بتبعته للـ handler المناسبة.'),
   question('win-q1-5', 'win-lec-1', 'true_false', 'In an event-driven program, the user can choose the order of actions by generating different events.', 'في البرنامج المعتمد على الأحداث، المستخدم يقدر يختار ترتيب الأفعال عن طريق أحداث مختلفة.', undefined, undefined, true, 'True. User actions help determine which event handler runs next.', 'صح. تصرفات المستخدم بتحدد أنهي handler تشتغل بعد كده.'),
   question('win-q1-6', 'win-lec-1', 'mcq', 'Which statement best distinguishes the Windows API from a programming language?', 'أنهي عبارة بتوضح الفرق بين Windows API ولغة البرمجة؟', ['The API is a language used to write every application.', 'The API exposes Windows services that code can call.', 'The API is a message handler only.'], ['الـ API لغة لكتابة كل التطبيقات.', 'الـ API بتوفر خدمات Windows اللي الكود يقدر يستدعيها.', 'الـ API مجرد معالج رسائل.'], 1, 'A programming language expresses code; the Windows API is an interface for requesting OS services.', 'لغة البرمجة بتكتب الكود؛ أما Windows API فهي واجهة لطلب خدمات نظام التشغيل.'),
+  question('win-q1-7', 'win-lec-1', 'true_false', 'Conventional console applications execute a fixed sequential path, whereas event-driven GUI programs spend most of their lifecycle waiting in an event loop.', 'برامج الكونسول التقليدية تنفذ مساراً متسلسلاً ثابتاً، بينما تقضي برامج الواجهات الرسومية معظم دورة حياتها في انتظار الأحداث داخل حلقة الأحداث.', undefined, undefined, true, 'True: GUI applications wait passively in a message loop until user or system events trigger specific callbacks.', 'صح: برامج الواجهات الرسومية تظل في حالة انتظار خاملة داخل حلقة الرسائل حتى تقع أحداث المستخدم أو النظام.'),
+  question('win-q1-8', 'win-lec-1', 'mcq', 'What happens if a developer places a heavy, blocking 30-second computational loop directly inside a GUI button event handler?', 'ماذا يحدث إذا وضع المطور حلقة حسابية معقدة ومغلقة تستغرق 30 ثانية مباشرة داخل معالج حدث الزر في الواجهة؟', ['The window draws 30 times faster', 'The user interface freezes and stops responding to mouse clicks and window moving', 'The operating system automatically spawns 10 threads'], ['النافذة ترسم أسرع بـ 30 مرة', 'تتجمد واجهة المستخدم وتتوقف عن الاستجابة للنقرات وحركة النوافذ', 'نظام التشغيل يفتح تلقائياً 10 مسارات معالجة'], 1, 'The message loop runs on the same thread; blocking the handler blocks GetMessage from processing subsequent messages, causing UI freeze.', 'حلقة الرسائل تعمل على نفس المسار الرئيسي؛ وتجميد المعالج يمنع سحب ومعالجة الرسائل التالية فتتجمد الواجهة تماماً.'),
+  question('win-q1-9', 'win-lec-1', 'mcq', 'What are the three core conceptual components that compose an event-driven software architecture?', 'ما هي المكونات المفاهيمية الثلاثة الأساسية التي تبني معمارية البرمجة المعتمدة على الأحداث؟', ['Compiler, Linker, Loader', 'Event source, Event loop/queue, and Event handler', 'HTML, CSS, JavaScript'], ['المترجم والمربط والمحمل', 'مصدر الحدث (Source)، وحلقة/طابور الأحداث (Loop/Queue)، ومعالج الحدث (Handler)', 'HTML و CSS و JavaScript'], 1, 'Event sources raise notifications; event loops manage queuing and dispatching; handlers execute the response logic.', 'مصادر الأحداث تولد الإشعارات، وحلقات الأحداث تدير الطابور والتوجيه، والمعالجات تنفذ الاستجابة المطلوبة.'),
+  question('win-q1-10', 'win-lec-1', 'true_false', 'In Windows GUI programming, low-level hardware interrupts from mice and keyboards are handled directly by application user code without operating system mediation.', 'في برمجة واجهات Windows، يتم التعامل مع المقاطعات المادية المنخفضة للماوس والكيبورد مباشرة بواسطة كود التطبيق دون وساطة نظام التشغيل.', undefined, undefined, false, 'False: The operating system device drivers capture raw hardware interrupts and translate them into standard Windows messages queued for the application.', 'غلط! نظام تشغيل Windows عبر برامج تعريف العتاد (Drivers) هو الذي يلتقط المقاطعات ويحولها لرسائل ويدرجها في طابور التطبيق.'),
+  question('win-q1-11', 'win-lec-1', 'mcq', 'Which simple Win32 API function displays a standard modal dialog box with text and an OK button without requiring a full window class registration?', 'أي دالة بسيطة في Win32 API تتيح عرض صندوق حوار مشروط يحتوي على نص وزر OK دون الحاجة لتسجيل فئة نافذة كاملة؟', ['CreateWindowEx', 'MessageBox', 'RegisterClassEx', 'DefWindowProc'], ['CreateWindowEx', 'MessageBox', 'RegisterClassEx', 'DefWindowProc'], 1, 'MessageBox creates, displays, and operates a standard modal dialog box directly with minimal code.', 'دالة MessageBox تعرض نافذة رسالة قياسية للمستخدم وتنتظر رده بأقل سطر كود ممكن.'),
+  essayQuestion(
+    'win-q1-12', 'win-lec-1',
+    'Compare sequential task-based programming with event-driven GUI programming regarding program control flow, user autonomy, program lifecycle, and CPU utilization during idle periods.',
+    'قارن بين البرمجة المتسلسلة القائمة على المهام والبرمجة المعتمدة على الأحداث من حيث مسار التحكم، واستقلالية المستخدم، ودورة حياة البرنامج، واستهلاك المعالج في فترات الخمول.',
+    'Sequential vs Event-driven comparison.',
+    '1. Control Flow: Sequential programs enforce a rigid, predetermined path dictated by the developer from main() start to return. Event-driven programs surrender control to the user; execution branches dynamically based on which event triggers next. 2. User Autonomy: In sequential software, the user responds to prompts when asked. In event-driven software, the user initiates actions in arbitrary order (clicking buttons, resizing windows, opening menus). 3. Program Lifecycle: Sequential software executes its sequence and promptly terminates. Event-driven software initializes its UI and enters a persistent loop waiting indefinitely until an explicit quit event occurs. 4. CPU Idle Utilization: While waiting for input, sequential polling can waste CPU cycles in busy loops, whereas the Windows message loop blocks cooperatively on GetMessage with 0% CPU consumption until a hardware or system event arrives.',
+    '1. مسار التحكم (Control Flow): البرامج المتسلسلة تفرض مساراً صارماً محدداً مسبقاً من المطور يبدأ من main() وينتهي بالتسلسل. أما البرامج المعتمدة على الأحداث فتترك التحكم للمستخدم؛ ويتغير مسار التنفيذ ديناميكياً حسب الحدث الواقع. 2. استقلالية المستخدم (User Autonomy): في البرامج المتسلسلة يجيب المستخدم على ما يطلبه البرنامج في حينه فقط. أما في برامج GUI فيتحكم المستخدم في توقيت وترتيب الأوامر (الضغط، تغيير الحجم، القوائم). 3. دورة حياة البرنامج (Lifecycle): البرامج المتسلسلة تنتهي بمجرد انتهاء خطواتها. أما برامج GUI فتجهز الواجهة وتدخل في حلقة دائمة تنتظر الأوامر حتى يقرر المستخدم الخروج. 4. استهلاك المعالج وقت الخمول (Idle CPU): بينما قد تستهلك الحلقات المتسلسلة المعالج في الانتظار (Busy wait)، تستخدم حلقة رسائل Windows دالة GetMessage التي تضع المسار في حالة نوم تام (0% CPU) حتى يصل حدث جديد.',
+    ['Sequential enforces developer order vs Event-driven guided by user actions', 'Sequential terminates on completion vs GUI persists in event loop', 'GetMessage blocks cooperatively with 0% CPU during idle periods']
+  ),
+  essayQuestion(
+    'win-q1-13', 'win-lec-1',
+    'Trace the complete journey of a mouse button click from the physical hardware microswitch interrupt up to the execution of the user application event handler.',
+    'تتبع الرحلة الكاملة لنقرة زر الماوس بدءاً من مقاطعة المفتاح المادي وحتى تنفيذ دالة معالجة الحدث في كود التطبيق.',
+    'Mouse click hardware to handler trace.',
+    '1. Hardware Microswitch: Pressing the physical mouse button closes an electrical circuit, generating a hardware interrupt request (IRQ) sent to the interrupt controller. 2. Device Driver: The mouse device driver handles the interrupt, reads the packet data (button state, delta X, delta Y), and passes it to the Windows subsystem (win32k.sys). 3. Operating System Processing: The OS determines the cursor screen coordinates, identifies which window currently lies beneath the cursor, and translates the raw input into a WM_LBUTTONDOWN message. 4. Message Queuing: Windows posts the message into the specific target thread message queue. 5. Application Retrieval & Dispatch: The application message loop calls GetMessage to retrieve the MSG structure, calls TranslateMessage (optional for mouse), and calls DispatchMessage. 6. Window Procedure Execution: DispatchMessage invokes the target window callback (WndProc), matching case WM_LBUTTONDOWN and executing the developer event handler logic.',
+    '1. المفتاح المادي (Hardware): الضغط على زر الماوس يغلق دائرة كهربائية ويولد مقاطعة عتاد (IRQ) تُرسل لمتحكم المقاطعات. 2. برنامج تعريف العتاد (Driver): يلتقط المشغل الإشارة ويقرأ إحداثيات الحركة وحالة الزر ويمررها لنواة نظام Windows (win32k.sys). 3. معالجة نظام التشغيل: يحدد النظام موضع المؤشر والنافذة الواقعة تحته، ويحول الإدخال إلى رسالة ويندوز قياسية (WM_LBUTTONDOWN). 4. طابور الرسائل (Message Queue): يدرج نظام Windows الرسالة في طابور الرسائل الخاص بالمسار المسؤول عن تلك النافذة. 5. السحب والتوجيه (Message Loop): تسحب حلقة التطبيق الرسالة عبر GetMessage وتمررها لـ DispatchMessage. 6. تنفيذ معالج الحدث: تستدعي دالة DispatchMessage إجراء النافذة (WndProc) الذي يطابق حالة WM_LBUTTONDOWN وينفذ كود الاستجابة الخاص بالمطور.',
+    ['Hardware IRQ and device driver packet generation', 'win32k.sys coordinates check and WM_LBUTTONDOWN creation', 'Thread message queue posting', 'GetMessage retrieval and DispatchMessage forwarding to WndProc']
+  ),
+  essayQuestion(
+    'win-q1-14', 'win-lec-1',
+    'Explain the concept of GUI thread responsiveness in Windows applications and explain how developers should handle long-running background tasks without freezing the user interface.',
+    'اشرح مفهوم استجابة مسار واجهة المستخدم (GUI Thread Responsiveness) في تطبيقات Windows، وكيف يجب على المطورين معالجة المهام الخلفية الطويلة دون تجميد الواجهة.',
+    'GUI thread responsiveness and worker thread separation.',
+    'In Windows GUI architecture, a single main thread typically owns the message queue, runs the GetMessage loop, and executes WndProc callbacks. If a time-consuming computation (e.g. database query, network download, file encryption) executes synchronously on this UI thread, the thread is blocked and cannot return to the message loop. Consequently, subsequent user clicks, keystrokes, and operating-system WM_PAINT redraw requests remain queued and unserviced, turning the window white and displaying (Not Responding). To maintain a responsive interface, developers must delegate heavy tasks to asynchronous background worker threads (via std::thread, thread pools, or async/await). The worker thread performs the heavy computation and communicates progress or completion back to the main UI thread using thread-safe mechanisms (such as PostMessage or thread synchronization primitives), allowing the GUI thread to remain free to continuously process user interactions.',
+    'في معمارية واجهات Windows، يوجد مسار رئيسي وحيد (UI Thread) يدير طابور الرسائل ويشغل حلقة GetMessage وينفذ دوال WndProc. إذا قام المطور بتشغيل مهمة ثقيلة ومستهلكة للوقت (مثل استعلام قاعدة بيانات أو تنزيل ملف أو تشفير) بشكل تزامني على هذا المسار، فإن المسار ينشغل تماماً ويعجز عن العودة لحلقة الرسائل. ونتيجة لذلك، تتراكم نقرات الماوس ورسائل إعادة الرسم WM_PAINT في الطابور دون معالجة، فتتجمد النافذة وتظهر عبارة (Not Responding). للحفاظ على سلاسة واستجابة الواجهة، يجب فصل المهام الثقيلة ونقلها إلى مسارات معالجة خلفية (Worker Threads). يقوم المسار الخلفي بالحسابات في صمت، وعند الانتهاء يرسل النتيجة للمسار الرئيسي عبر آليات آمنة مثل PostMessage ليقوم المسار الرئيسي بتحديث الواجهة دون أن يتوقف لحظة عن خدمة المستخدم.',
+    ['UI thread runs message loop and WndProc synchronously', 'Blocking UI thread prevents GetMessage and WM_PAINT processing', 'Separation of heavy tasks to background worker threads', 'Safe communication back to UI thread via PostMessage']
+  )
 ];
 
 const messageModelQuestions: Question[] = [
@@ -646,6 +717,40 @@ const messageModelQuestions: Question[] = [
   question('win-q2-4', 'win-lec-2', 'mcq', 'Which order matches the Win32 message-loop API flow for a keyboard message?', 'أنهي ترتيب بيمثل تدفق Win32 للرسالة؟', ['DispatchMessage → GetMessage → WndProc → TranslateMessage', 'GetMessage → TranslateMessage → DispatchMessage → WndProc', 'WndProc → TranslateMessage → GetMessage → DefWindowProc'], ['DispatchMessage ← GetMessage ← WndProc ← TranslateMessage', 'GetMessage ← TranslateMessage ← DispatchMessage ← WndProc', 'WndProc ← TranslateMessage ← GetMessage ← DefWindowProc'], 1, 'GetMessage retrieves, TranslateMessage handles applicable keyboard translation, and DispatchMessage calls the target WndProc.', 'GetMessage بتسحب الرسالة، وTranslateMessage بتترجم رسائل الكيبورد عند اللزوم، وDispatchMessage بتنادي WndProc المقصودة.'),
   question('win-q2-5', 'win-lec-2', 'mcq', 'What is the role of DefWindowProc when an application does not handle a message?', 'إيه دور DefWindowProc لما التطبيق مايعالجش رسالة؟', ['It provides default window processing.', 'It starts a second message loop.', 'It registers a new window class.'], ['بتنفذ المعالجة الافتراضية للنافذة.', 'بتشغّل message loop تانية.', 'بتسجل window class جديدة.'], 0, 'DefWindowProc provides Windows default behavior for messages the application does not handle.', 'DefWindowProc بتوفر سلوك Windows الافتراضي للرسائل اللي التطبيق مش بيعالجها.'),
   question('win-q2-6', 'win-lec-2', 'mcq', 'Which language pairing matches the chapter overview?', 'أنهي وصف للغة مناسب حسب نظرة الفصل؟', ['C++ offers direct Win32 API access for performance-sensitive work.', 'PowerShell is the Windows message-loop callback.', 'C# is a C-style typedef for handles.'], ['C++ بيوفر وصول مباشر لـ Win32 للأعمال الحساسة للأداء.', 'PowerShell هو callback للـ message loop.', 'C# هو typedef بأسلوب C للـ handles.'], 0, 'The chapter presents C++ as a low-level choice with direct Win32 access and control.', 'الفصل بيعرض C++ كاختيار منخفض المستوى بوصول مباشر وتحكم في Win32.'),
+  question('win-q2-7', 'win-lec-2', 'mcq', 'In the Win32 SDK integer type hierarchy, what are the exact bit widths of BYTE, WORD, and DWORD respectively?', 'في تدرج أنواع البيانات الصحيحة لـ Win32 SDK، ما هي الأحجام الدقيقة بالبت لكل من BYTE و WORD و DWORD على الترتيب؟', ['8 bits, 16 bits, 32 bits', '16 bits, 32 bits, 64 bits', '8 bits, 32 bits, 64 bits', '32 bits, 32 bits, 64 bits'], ['8 بت، 16 بت، 32 بت', '16 بت، 32 بت، 64 بت', '8 بت، 32 بت، 64 بت', '32 بت، 32 بت، 64 بت'], 0, 'BYTE is an unsigned 8-bit char, WORD is an unsigned 16-bit short, and DWORD is an unsigned 32-bit long.', 'الـ BYTE حجمه 8 بت، والـ WORD حجمه 16 بت، والـ DWORD حجمه 32 بت.'),
+  question('win-q2-8', 'win-lec-2', 'mcq', 'What are the memory bit-widths of the fundamental message parameters WPARAM, LPARAM, and LRESULT on 32-bit (x86) and 64-bit (x64) Windows architectures?', 'ما هو الحجم في الذاكرة بالبت لمعاملات الرسائل الأساسية WPARAM و LPARAM و LRESULT على معماريات 32 بت (x86) و 64 بت (x64) في Windows؟', ['32 bits on x86, and 64 bits on x64', 'Always 32 bits on both platforms', 'Always 64 bits on both platforms', '16 bits on x86, and 32 bits on x64'], ['32 بت على x86، و 64 بت على x64', '32 بت دائماً على المعماريتين', '64 بت دائماً على المعماريتين', '16 بت على x86، و 32 بت على x64'], 0, 'WPARAM (UINT_PTR), LPARAM (LONG_PTR), and LRESULT (LONG_PTR) are pointer-sized types that scale automatically with the architecture.', 'الأنواع WPARAM و LPARAM و LRESULT هي أنواع بحجم المؤشر (Pointer-sized)، فتكون 32 بت في نظام 32-bit وتتوسع إلى 64 بت في نظام 64-bit.'),
+  question('win-q2-9', 'win-lec-2', 'mcq', 'What does the return value of GetMessage(&msg, NULL, 0, 0) indicate when it returns exactly 0?', 'ماذا تعني القيمة الراجعة من دالة GetMessage(&msg, NULL, 0, 0) عندما ترجع القيمة 0 بالضبط؟', ['A fatal error occurred in the message queue', 'The WM_QUIT message was retrieved, signaling message loop termination', 'The user moved the mouse over the title bar', 'A new window class was registered'], ['حدث خطأ فادح في طابور الرسائل', 'تم سحب رسالة WM_QUIT مما يشير إلى وجوب إنهاء حلقة الرسائل', 'قام المستخدم بتحريك الماوس فوق شريط العنوان', 'تم تسجيل فئة نافذة جديدة بنجاح'], 1, 'GetMessage returns >0 for normal messages, 0 when WM_QUIT is retrieved (terminating the while loop), and -1 on error.', 'ترجع دالة GetMessage قيمة أكبر من الصفر للرسائل العادية، وترجع 0 عند استلام رسالة WM_QUIT للخروج من الـ Loop، وترجع -1 عند الخطأ.'),
+  question('win-q2-10', 'win-lec-2', 'true_false', 'Writing while (GetMessage(&msg, NULL, 0, 0)) without checking for -1 is dangerous because GetMessage returns -1 on error, which evaluates as true in C/C++.', 'كتابة حلقة الرسائل بالشكل while (GetMessage(&msg, NULL, 0, 0)) دون فحص القيمة -1 أمر خطير لأن الدالة ترجع -1 عند الخطأ وتعتبر صحيحة منطقياً في C/C++.', undefined, undefined, true, 'True: If an invalid HWND or bad parameter is passed, GetMessage returns -1; testing strictly > 0 prevents infinite error loops.', 'صح: لو حدث خطأ ترجع الدالة -1، وفي C/C++ أي رقم غير الصفر يعتبر true فيتحول لحلقة لا نهائية؛ لذا يجب فحص > 0 دائماً.'),
+  question('win-q2-11', 'win-lec-2', 'mcq', 'During standard Windows application shutdown, what is the exact chronological sequence of messages and API calls initiated when the user clicks the window Close button?', 'أثناء إغلاق نافذة تطبيق Windows، ما هو الترتيب الزمني الدقيق للرسائل واستدعاءات الدوال بدءاً من نقر زر الإغلاق؟', [
+    'WM_DESTROY -> WM_CLOSE -> PostQuitMessage -> DestroyWindow',
+    'WM_CLOSE -> DestroyWindow -> WM_DESTROY -> PostQuitMessage(0) -> WM_QUIT',
+    'PostQuitMessage -> WM_QUIT -> DestroyWindow -> WM_CLOSE',
+    'WM_QUIT -> WM_DESTROY -> WM_CLOSE -> ExitProcess'
+  ], [
+    'WM_DESTROY -> WM_CLOSE -> PostQuitMessage -> DestroyWindow',
+    'WM_CLOSE -> DestroyWindow -> WM_DESTROY -> PostQuitMessage(0) -> WM_QUIT',
+    'PostQuitMessage -> WM_QUIT -> DestroyWindow -> WM_CLOSE',
+    'WM_QUIT -> WM_DESTROY -> WM_CLOSE -> ExitProcess'
+  ], 1, 'User click sends WM_CLOSE; default or custom handler calls DestroyWindow; DestroyWindow sends WM_DESTROY; handler calls PostQuitMessage(0); which posts WM_QUIT to exit GetMessage.', 'النقر يرسل WM_CLOSE؛ ويستدعي المعالج DestroyWindow؛ فترسل الويندوز WM_DESTROY؛ ويستدعي المعالج PostQuitMessage(0) التي تدرج WM_QUIT لإنهاء GetMessage.'),
+  question('win-q2-12', 'win-lec-2', 'mcq', 'Which function pair MUST enclose all GDI drawing operations inside the WM_PAINT message handler to validate the client area and acquire the device context?', 'أي زوج من الدوال يجب أن يغلف كافة عمليات الرسم داخل معالج رسالة WM_PAINT لتأكيد صحة المنطقة والحصول على سياق الرسم؟', ['GetDC and ReleaseDC', 'BeginPaint and EndPaint', 'CreateDC and DeleteDC', 'SelectObject and DeleteObject'], ['GetDC و ReleaseDC', 'BeginPaint و EndPaint', 'CreateDC و DeleteDC', 'SelectObject و DeleteObject'], 1, 'BeginPaint fills the PAINTSTRUCT and validates the invalid region; EndPaint releases the DC and completes the paint cycle.', 'دالة BeginPaint تجهز بنية PAINTSTRUCT وتزيل علامة عدم الصلاحية عن المنطقة المرسومة، ودالة EndPaint تنهي دورة الرسم وتحرر الموارد.'),
+  essayQuestion(
+    'win-q2-13', 'win-lec-2',
+    'Explain the fundamental difference between queued messages and non-queued messages in the Win32 message model, giving concrete examples of each and contrasting PostMessage with SendMessage and UpdateWindow.',
+    'اشرح الفرق الجوهري بين الرسائل المدرجة في الطابور (Queued Messages) والرسائل غير المدرجة في الطابور (Non-queued Messages) في Win32، مع ذكر أمثلة ومقارنة PostMessage مع SendMessage و UpdateWindow.',
+    'Queued vs Non-queued messages and PostMessage vs SendMessage.',
+    '1. Queued Messages: Messages placed into the thread message queue by the operating system or application calls. They represent asynchronous events that wait their turn until the application message loop calls GetMessage. Examples include user hardware input (WM_KEYDOWN, WM_KEYUP, WM_MOUSEMOVE, WM_LBUTTONDOWN) as well as timer events (WM_TIMER) and termination (WM_QUIT). The PostMessage API posts a queued message and returns immediately without waiting for processing. 2. Non-queued Messages: Messages sent directly to the destination window procedure (WndProc), completely bypassing the thread message queue. The sender calls SendMessage, which halts the calling thread until the target WndProc executes and returns a result code. Examples include window creation/activation (WM_CREATE, WM_SIZE, WM_ACTIVATE). 3. UpdateWindow Role: While WM_PAINT is a synthesized low-priority queued message, calling UpdateWindow checks if the window has any invalid regions; if so, it sends a non-queued WM_PAINT directly to WndProc, forcing immediate synchronous repainting without waiting for the queue to empty.',
+    '1. الرسائل في الطابور (Queued Messages): رسائل يضعها نظام التشغيل أو التطبيق داخل طابور رسائل المسار (Thread Message Queue). تمثل أحداثاً غير تزامنية تنتظر دورها حتى تسحبها حلقة الرسائل عبر GetMessage. أمثلة: مدخلات العتاد (WM_KEYDOWN، WM_MOUSEMOVE، WM_LBUTTONDOWN) والمؤقتات (WM_TIMER) والخروج (WM_QUIT). دالة PostMessage تضع الرسالة في الطابور وتعود فوراً دون انتظار المعالجة. 2. الرسائل المباشرة بدون طابور (Non-queued Messages): رسائل تُرسل مباشرة إلى دالة إجراء النافذة (WndProc) متجاوزة طابور الرسائل بالكامل. دالة SendMessage ترسل الرسالة مباشرة وتوقف المسار حتى ينتهي معالج النافذة من معالجتها ويرجع النتيجة. أمثلة: رسائل إنشاء النافذة وتغيير حجمها (WM_CREATE، WM_SIZE، WM_ACTIVATE). 3. دور UpdateWindow: رسالة الرسم WM_PAINT رسالة منخفضة الأولوية في الطابور، لكن استدعاء UpdateWindow يفحص إذا كانت هناك أجزاء تالفة في النافذة، فإن وجد أرسل رسالة WM_PAINT مباشرة وبشكل فوري لـ WndProc دون انتظار إفراغ الطابور.',
+    ['Queued messages posted to queue and retrieved by GetMessage (input, timer, quit)', 'Non-queued messages sent directly to WndProc via SendMessage bypassing queue', 'PostMessage is asynchronous vs SendMessage is synchronous blocking', 'UpdateWindow forces immediate synchronous painting if invalid region exists']
+  ),
+  essayQuestion(
+    'win-q2-14', 'win-lec-2',
+    'Describe the complete lifecycle of custom GDI drawing objects (pens, brushes, fonts) in Win32 programming, detailing the roles of CreatePen, SelectObject, and DeleteObject, and the critical consequences of failing to restore original GDI objects.',
+    'صف دورة الحياة الكاملة لكائنات الرسم المخصصة في GDI (الأقلام، والفرش، والخطوط) في Win32، موضحاً أدوار CreatePen و SelectObject و DeleteObject، والآثار الخطيرة لعدم استعادة الكائنات الأصلية.',
+    'GDI object lifecycle, SelectObject, DeleteObject, and handle leak prevention.',
+    '1. Object Creation: Custom drawing tools are allocated using GDI factory functions such as CreatePen(PS_SOLID, 2, RGB(255,0,0)) or CreateSolidBrush(color), which return opaque handles (HPEN, HBRUSH). 2. Selection into Device Context: A GDI device context (HDC) can only use one active pen or brush at a time. The program calls SelectObject(hdc, hNewPen). Crucially, SelectObject returns a handle to the previously active GDI object (the default pen), which the developer MUST save: HPEN hOldPen = (HPEN)SelectObject(hdc, hNewPen). 3. Drawing: The application calls GDI rendering functions (e.g. LineTo, Rectangle, TextOut) using the selected styles. 4. Restoration: Before destroying the custom object, the developer MUST restore the original object back into the DC by calling SelectObject(hdc, hOldPen). A GDI object that is currently selected into an active DC cannot be safely deleted. 5. Deletion & Resource Cleanup: The custom object must be explicitly deallocated using DeleteObject(hNewPen). 6. Consequences of Leaks: Windows allocates GDI handles from a strict per-process limit (typically 10,000 handles). Failing to delete created objects, or failing to deselect them so DeleteObject succeeds, causes a GDI Handle Leak. Over time, GDI resources exhaust, leading to blacked-out UI elements, failure to render text, and eventual application or desktop crash.',
+    '1. إنشاء الكائن (Creation): يتم حجز أداة الرسم المخصصة عبر دوال GDI مثل CreatePen أو CreateSolidBrush والتي ترجع معرّفاً مبهماً (HPEN أو HBRUSH). 2. التحديد في سياق الرسم (SelectObject): سياق الرسم (HDC) لا يستخدم إلا قلماً وفرشاة واحدة في اللحظة. يستدعي البرنامج SelectObject(hdc, hNewPen). والأمر الحاسم هندسياً أن SelectObject ترجع مؤشر الكائن القديم الافتراضي، والذي يجب حفظه حتماً: HPEN hOldPen = (HPEN)SelectObject(hdc, hNewPen). 3. الرسم (Drawing): استدعاء دوال الرسم كـ LineTo و Rectangle و TextOut بالألوان المحددة. 4. استعادة الكائن الأصلي (Restoration): قبل حذف القلم المخصص، يجب حتماً إعادة القلم الأصلي للـ DC عبر SelectObject(hdc, hOldPen)؛ لأن نظام Windows يمنع حذف أي كائن طالما هو قيد الاستخدام في DC نشط. 5. الحذف وتحرير الذاكرة (DeleteObject): حذف الكائن المخصص عبر DeleteObject(hNewPen). 6. عواقب تسريب الموارد (GDI Leaks): يخصص نظام Windows عدداً محدوداً من معرّفات GDI لكل عملية (10,000 كائن كحد أقصى). إهمال حذف الأقلام والفرش يسبب تسريب GDI Handles، ومع استمرار الرسم تنفد الموارد تماماً وتظهر النوافذ سوداء وتتوقف الواجهات عن الرسم وتنهار المنظومة بالكامل.',
+    ['CreatePen/CreateSolidBrush allocate GDI handles', 'SelectObject assigns new tool and returns previous tool handle which MUST be saved', 'Original object must be restored before deletion', 'DeleteObject deallocates GDI resource', 'GDI handle leak exhausts 10,000 per-process limit causing desktop rendering failure']
+  )
 ];
 
 const eventTerms: TermDefinition[] = [
@@ -698,10 +803,10 @@ const makeSheet = (chapter: number, problems: SheetProblem[]): CourseSheet => ({
   id: 'windows-programming-chapter-' + chapter + '-sheet',
   courseId: 'windows-programming',
   sheetNumber: chapter,
-  title: 'Chapter ' + chapter + ' — End-of-Chapter Exercises',
-  titleAr: 'الفصل ' + chapter + ' — أسئلة نهاية الفصل',
-  brief: 'Verbatim end-of-chapter exercise sheet in the original order, with generated full and concise study answers grounded in the textbook. These answers are educational aids, not publisher-issued solutions.',
-  briefAr: 'نص أسئلة نهاية الفصل كما وردت وبنفس ترتيبها، ومعاه إجابات تعليمية كاملة ومختصرة مستندة للكتاب. الإجابات دي للمذاكرة ومش حلول رسمية من الناشر.',
+  title: 'Chapter ' + chapter + ' Sheet',
+  titleAr: 'شيت الفصل ' + (chapter === 1 ? 'الأول' : 'الثاني'),
+  brief: 'Chapter ' + chapter + ' exercises.',
+  briefAr: 'تمارين الفصل ' + (chapter === 1 ? 'الأول.' : 'الثاني.'),
   problemsCount: problems.length,
   hasSolution: true,
   problems,

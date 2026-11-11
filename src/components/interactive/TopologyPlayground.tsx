@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Share2, Send, RotateCcw, CircleCheck, CircleX, Loader } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Topology = 'star' | 'bus' | 'ring' | 'mesh';
 type Phase = 'sending' | 'ok' | 'fail';
@@ -308,6 +310,7 @@ export const TopologyPlayground: React.FC = () => {
   };
 
   const selectTopology = (next: Topology) => {
+    if (isSending) return;
     resetAll();
     setTopology(next);
   };
@@ -469,6 +472,12 @@ export const TopologyPlayground: React.FC = () => {
   const hubFailed = failedNodes.has(HUB_ID);
   const tone = sim ? PHASE_TONE[sim.phase] : null;
   const StatusIcon = sim?.phase === 'ok' ? CircleCheck : sim?.phase === 'fail' ? CircleX : Loader;
+  const missions: ChallengeMission[] = [
+    { id: 'repair-star', title: 'Repair the star connection', titleAr: 'صلّح اتصال الـ Star', goal: 'PC-1 cannot reach PC-3 in the Star network. Find and repair the failed connection, keep all devices online, then prove delivery with a packet.', goalAr: 'PC-1 مش قادر يوصل لـ PC-3 في شبكة الـ Star. دوّر على الوصلة المتعطّلة وصلّحها، وخلي كل الأجهزة شغّالة، وبعدها أثبت التوصيل بحزمة.', hint: 'Inspect the red link state. A star uses separate cables through its central switch.', hintAr: 'افحص حالة الوصلة الحمرا. الـ Star بتستخدم كابلات منفصلة من خلال الـ Switch المركزي.', start: () => { resetAll(); setTopology('star'); setFailedLinks(new Set(['h3'])); },
+      evaluate: () => topology !== 'star' ? feedback('retry', 'Return to Star for this repair mission.', 'ارجع للـ Star عشان مهمة الإصلاح دي.') : sim?.phase !== 'ok' ? feedback('pending', sim?.phase === 'fail' ? 'Delivery still failed. Inspect faults, repair, and send again.' : 'Send a packet after repairing the connection.', sim?.phase === 'fail' ? 'التوصيل لسه فاشل. افحص الأعطال، وصلّح وابعت تاني.' : 'ابعت حزمة بعد ما تصلّح الوصلة.') : failedNodes.size || failedLinks.size ? feedback('retry', 'Delivery worked, but a device or cable is still disabled. Restore all of them and retest.', 'التوصيل نجح، بس لسه فيه جهاز أو كابل متعطّل. رجّعهم كلهم واختبر تاني.') : feedback('success', 'Star repaired: PC-1 reached PC-3 through the central switch with no remaining faults.', 'الـ Star اتصلّحت: PC-1 وصل لـ PC-3 من خلال الـ Switch المركزي من غير أعطال متبقّية.') },
+    { id: 'mesh-detour', title: 'Keep delivery through a detour', titleAr: 'خلّي التوصيل شغّال بمسار بديل', goal: 'The direct PC-1–PC-3 Mesh link is down. Keep that link down and all devices online. Send a packet that reaches PC-3 through a different PC.', goalAr: 'وصلة الـ Mesh المباشرة بين PC-1 وPC-3 متعطّلة. خلّيها متعطّلة وكل الأجهزة شغّالة. ابعت حزمة توصل لـ PC-3 من خلال PC تاني.', hint: 'Redundant mesh links can carry the frame around a broken direct link.', hintAr: 'وصلات الـ Mesh البديلة ممكن تنقل الـ Frame حوالين الوصلة المباشرة المقطوعة.', start: () => { resetAll(); setTopology('mesh'); setFailedLinks(new Set(['m13'])); },
+      evaluate: () => topology !== 'mesh' || !failedLinks.has('m13') || failedNodes.size ? feedback('retry', 'Use Mesh with the direct link disabled and every PC online.', 'استخدم الـ Mesh مع تعطيل الوصلة المباشرة وتشغيل كل PC.') : sim?.phase === 'ok' && sim.path.length >= 2 && !sim.path.includes('m13') ? feedback('success', 'Delivery survived: the frame followed an alternate path while the direct link remained down.', 'التوصيل فضل شغّال: الـ Frame مشي في مسار بديل والوصلة المباشرة فضلت متعطّلة.') : feedback('pending', 'Send and inspect the alternate path; restore any additional faults if delivery fails.', 'ابعت وافحص المسار البديل؛ وصلّح أي أعطال إضافية لو التوصيل فشل.') },
+  ];
 
   return (
     <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
@@ -495,6 +504,7 @@ export const TopologyPlayground: React.FC = () => {
           {TOPOLOGIES.map(t => (
             <button
               key={t.id}
+              disabled={isSending}
               onClick={() => selectTopology(t.id)}
               aria-pressed={topology === t.id}
               className={`px-3 py-1.5 rounded-xl transition-all ${
@@ -510,6 +520,7 @@ export const TopologyPlayground: React.FC = () => {
       </div>
 
       {/* Simulator Board */}
+      <LabChallenge missions={missions} busy={isSending} />
       <div className="bg-[#FAF7F2] dark:bg-stone-950 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 border border-beige-300 dark:border-stone-800 select-none">
         {/* Top Control Bar */}
         <div className="w-full flex flex-wrap items-center justify-between gap-3">
@@ -542,7 +553,14 @@ export const TopologyPlayground: React.FC = () => {
         </div>
 
         {/* Diagram: fixed-size canvas, scrolls sideways on narrow screens */}
-        <div className="w-full overflow-x-auto">
+        <LabWorkbench title={`${topology.toUpperCase()} · fault tolerance`} motionKey={sim?.phase}
+ nodes={[
+  ...[1, 2, 3, 4].map<WorkbenchNode>(n => ({ id: String(n), label: `PC-${n}`, kind: 'computer', position: [(PC_POS[topology][n].x - 170) / 35, 0, (PC_POS[topology][n].y - 150) / 35], tone: failedNodes.has(n) ? 'error' : sim?.phase === 'ok' && n === DST ? 'success' : isSending && (n === SRC || n === DST) ? 'active' : 'neutral', detail: failedNodes.has(n) ? 'This endpoint is offline.' : n === SRC ? 'Source endpoint.' : n === DST ? 'Destination endpoint.' : 'Neighboring endpoint.', detailAr: failedNodes.has(n) ? 'الجهاز ده متعطل.' : n === SRC ? 'الجهاز المرسل.' : n === DST ? 'الجهاز المستقبِل.' : 'جهاز مجاور.', action: () => toggleNode(n), actionLabel: failedNodes.has(n) ? 'Restore device' : 'Disable device', disabled: isSending })),
+  ...(topology === 'star' ? [{ id: '0', label: 'Central Switch', kind: 'switch' as const, position: [0, 0, 0] as [number, number, number], tone: hubFailed ? 'error' as const : 'info' as const, detail: 'Single point of failure: disabling the center disconnects the star.', detailAr: 'تعطيل الـ Switch المركزي بيفصل شبكة Star كلها.', action: () => toggleNode(0), actionLabel: hubFailed ? 'Restore switch' : 'Disable switch', disabled: isSending }] : []),
+ ]}
+ links={LINKS[topology].map<WorkbenchLink>(link => ({ id: link.id, label: link.label, points: [[(link.from.x - 170) / 35, .04, (link.from.y - 150) / 35], [(link.to.x - 170) / 35, .04, (link.to.y - 150) / 35]], tone: failedLinks.has(link.id) ? 'error' : sim?.path.includes(link.id) ? isSending ? 'active' : 'success' : 'neutral', moving: isSending && !!sim?.path.includes(link.id) && !failedLinks.has(link.id), action: link.cuttable ? () => toggleLink(link.id) : undefined, disabled: isSending }))}
+>
+<div className="w-full overflow-x-auto">
           <div className="relative mx-auto shrink-0" style={{ width: W, height: H }}>
             <svg
               width={W}
@@ -612,6 +630,7 @@ export const TopologyPlayground: React.FC = () => {
             {[1, 2, 3, 4].map(renderPc)}
           </div>
         </div>
+</LabWorkbench>
 
         {/* Legend */}
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">

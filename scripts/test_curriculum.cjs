@@ -22,6 +22,7 @@ function readModule(filename) {
 
 const { COURSES_DATA } = readModule('src/data/coursesData.ts');
 const { LAB_CATALOG } = readModule('src/data/labCatalog.ts');
+const { LAB_GUIDES } = readModule('src/data/labGuides.ts');
 const studio = fs.readFileSync('src/components/interactive/ExperimentStudio.tsx', 'utf8');
 const seen = new Set();
 function unique(id) {
@@ -103,11 +104,15 @@ for (const course of COURSES_DATA) {
 }
 for (const lab of LAB_CATALOG) {
   unique(lab.id);
+  assert.ok(LAB_GUIDES[lab.id], `${lab.id}: missing guided comparison`);
+  pair(LAB_GUIDES[lab.id].tryEn, LAB_GUIDES[lab.id].tryAr, `${lab.id}: comparison`);
+  pair(LAB_GUIDES[lab.id].observeEn, LAB_GUIDES[lab.id].observeAr, `${lab.id}: observation`);
   const lecture = COURSES_DATA.find(c => c.id === lab.courseId)?.lectures.find(l => l.id === lab.lectureId);
   assert.ok(lecture, `${lab.id}: directory destination missing`);
   assert.ok(lecture.interactiveTools.includes(lab.id), `${lab.id}: destination does not include lab`);
   assert.ok(studio.includes(`'${lab.id}': lazy(`), `${lab.id}: missing lazy component`);
 }
+assert.deepEqual(Object.keys(LAB_GUIDES).sort(), LAB_CATALOG.map(lab => lab.id).sort(), 'Guides must match the registered labs');
 const windows = COURSES_DATA.find(course => course.id === 'windows-programming');
 const signals = COURSES_DATA.find(course => course.id === 'signal-processing');
 assert.equal(windows.lectures.length, 2, 'Windows requires the two requested book chapters');

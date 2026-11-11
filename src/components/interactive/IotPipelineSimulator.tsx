@@ -1,6 +1,8 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import React, { useEffect, useRef, useState } from 'react';
 import { Activity, Cpu, Factory, LucideIcon, Play, Radio, RotateCcw, Sprout, Thermometer, Zap } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 interface Scenario {
   id: string;
@@ -131,6 +133,12 @@ export const IotPipelineSimulator: React.FC = () => {
   const valuePosition = ((reading - scenario.min) / (scenario.max - scenario.min)) * 100;
   const thresholdPosition = ((scenario.threshold - scenario.min) / (scenario.max - scenario.min)) * 100;
   const SensorGlyph = SensorIcon;
+  const missions: ChallengeMission[] = [
+    { id: 'irrigate-dry', title: 'Irrigate only when soil is dry', titleAr: 'اروِ لما التربة تكون جافة', goal: 'Use Smart agriculture. Lower the moisture reading until its rule matches, run the complete flow, and confirm irrigation at the Act stage.', goalAr: 'استخدم الزراعة الذكية. قلّل قراءة الرطوبة لحد ما القاعدة تتحقق، وشغّل التدفق كامل، واتأكد من الري عند مرحلة Act.', hint: 'The example rule uses a strict comparison with the 25% threshold. Setting exactly 25% does not trigger it.', hintAr: 'القاعدة الافتراضية بتستخدم مقارنة صارمة مع حدّ 25 في المية. ضبط القراءة على 25 بالضبط مش بيشغّلها.', start: () => { clearRun(); setScenario(SCENARIOS[0]); setReading(30); },
+      evaluate: () => scenario.id !== 'agriculture' ? feedback('retry', 'Use Smart agriculture for this mission.', 'استخدم الزراعة الذكية للمهمة دي.') : stage !== 4 || !hasRun || isProcessing ? feedback('pending', 'Adjust the reading and run through Collect, Transmit, Analyze and Act.', 'غيّر القراءة وشغّل مراحل Collect وTransmit وAnalyze وAct.') : triggered ? feedback('success', 'Dry-soil response confirmed: the completed Act stage turned on irrigation.', 'الاستجابة للتربة الجافة اتأكدت: مرحلة Act المكتملة شغّلت الري.') : feedback('retry', 'Irrigation stayed on standby. Check the strict threshold and run a drier reading.', 'الري فضل في الاستعداد. راجع الحدّ الصارم وشغّل قراءة أكثر جفافًا.') },
+    { id: 'temperature-boundary', title: 'Test the exact temperature boundary', titleAr: 'اختبر حدّ الحرارة بالضبط', goal: 'Use Smart home with the sensor exactly at 28°C. Run the full flow and show that the strict greater-than rule leaves cooling on standby.', goalAr: 'استخدم المنزل الذكي والحساس عند 28 درجة مئوية بالضبط. شغّل التدفق كامل وبيّن إن قاعدة أكبر من الصارمة بتخلّي التبريد في الاستعداد.', hint: 'A strict greater-than comparison excludes equality.', hintAr: 'مقارنة أكبر من الصارمة مش بتشمل التساوي.', start: () => { clearRun(); setScenario(SCENARIOS[1]); setReading(31); },
+      evaluate: () => scenario.id !== 'home' || reading !== 28 ? feedback('retry', 'Use Smart home at exactly 28°C.', 'استخدم المنزل الذكي عند 28 درجة مئوية بالضبط.') : stage === 4 && hasRun && !isProcessing && !triggered ? feedback('success', 'Boundary confirmed: 28 is not greater than 28, so cooling stayed on standby.', 'الحدّ اتأكد: 28 مش أكبر من 28، فالتبريد فضل في الاستعداد.') : feedback('pending', 'Run to the Act stage before checking the boundary result.', 'شغّل لحد مرحلة Act قبل ما تفحص نتيجة الحدّ.') },
+  ];
 
   return (
     <section className="space-y-6 rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
@@ -153,6 +161,7 @@ export const IotPipelineSimulator: React.FC = () => {
         </div>
       </header>
 
+      <LabChallenge missions={missions} busy={isProcessing} />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="space-y-4 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950 sm:p-5">
           <div className="flex items-start justify-between gap-3">
@@ -202,7 +211,10 @@ export const IotPipelineSimulator: React.FC = () => {
                 className="rounded-xl border border-beige-300 p-2 text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800"><RotateCcw className="h-4 w-4" /></button>
             </div>
           </div>
-          <ol className="grid gap-3 sm:grid-cols-2">
+          <LabWorkbench title="IoT · sensor to action" motionKey={scenario.id+'-'+stage}
+ nodes={STAGES.map<WorkbenchNode>((item,index)=>({id:String(item.step),label:item.title,sceneLabel:['Sensor','Link','Rule','Actuator'][index],kind:index===0?'sensor':index===1?'router':index===2?'cloud':scenario.id==='home'?'fan':scenario.id==='agriculture'?'water':'chip',position:[index===0||index===3?-2:2,0,index<2?-1.5:1.5],tone:stage===item.step?'active':stage>item.step?'success':'neutral',value:index===0?reading+scenario.unit:index===3&&stage===4&&hasRun?(triggered?'Activated':'No action'):undefined,detail:item.detail,detailAr:item.detailAr}))}
+ links={STAGES.slice(0,-1).map<WorkbenchLink>((item,index)=>({id:'flow-'+index,from:String(item.step),to:String(item.step+1),tone:stage===item.step+1?'active':stage>item.step+1?'success':'neutral',moving:stage===item.step+1}))}>
+<ol className="grid gap-3 sm:grid-cols-2">
             {STAGES.map((item) => {
               const Icon = item.icon;
               const active = stage === item.step && isProcessing;
@@ -224,6 +236,7 @@ export const IotPipelineSimulator: React.FC = () => {
               );
             })}
           </ol>
+</LabWorkbench>
         </div>
       </div>
 

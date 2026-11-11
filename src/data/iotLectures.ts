@@ -122,11 +122,11 @@ const SOURCE_LECTURES: IoTLectureSeed[] = [
             courseId: 'iot',
             lectureId: 'iot-lec-1',
             type: 'true_false',
-            question: 'According to course case studies, deploying IoT in precision agriculture has been shown to increase crop yields by over 20%.',
-            questionAr: 'وفقاً لدراسات الحالة المعتمدة بالمقرر، أثبت تطبيق الـ IoT في الزراعة الدقيقة قدرته على زيادة إنتاجية المحاصيل بنسبة تتجاوز 20%.',
+            question: 'The lecture’s smart-agriculture case uses soil-moisture sensors and drones to support farming decisions.',
+            questionAr: 'مثال الزراعة الذكية في المحاضرة بيستخدم حساسات رطوبة التربة والـ Drones لدعم قرارات الزراعة.',
             correctAnswer: true,
-            explanation: 'True: Deploying automated soil moisture probes and drone surveillance provides optimal water/nutrient delivery, sustainably lifting yields by >20%.',
-            explanationAr: 'صح! حساسات رطوبة التربة وطائرات الدرونز بتظبط مواعيد وكميات الري والتسميد بدقة بالغة، مما رفع إنتاجية المحصول بنسبة 20% وأكتر.'
+            explanation: 'True: Lecture 1, PDF p. 11 names soil-moisture sensors and drones, with John Deere and Climate Corp as examples. Its faint yield figure does not establish a verified general percentage gain; no study method is supplied.',
+            explanationAr: 'صح: المحاضرة 1، صفحة PDF رقم 11، بتذكر حساسات رطوبة التربة والـ Drones، وJohn Deere وClimate Corp كأمثلة. رقم زيادة المحصول باهت ومش دليل على نسبة عامة مؤكدة؛ والمصدر ما بيعرضش طريقة الدراسة.'
           },
           {
             id: 'q-iot1-9',
@@ -158,6 +158,57 @@ const SOURCE_LECTURES: IoTLectureSeed[] = [
               'Security solved via encryption and access controls',
               'Interoperability solved via standardized protocols and open standards',
               'Scalability/performance solved via Edge Computing and localized filtering'
+            ]
+          },
+          {
+            id: 'q-iot1-11',
+            courseId: 'iot',
+            lectureId: 'iot-lec-1',
+            type: 'essay',
+            question: 'Explain the 3-stage feedback loop in an IoT system: Data Generation, Data Communication, and Data Action, using an autonomous greenhouse as an example.',
+            questionAr: 'اشرح حلقة التغذية الراجعة ثلاثية المراحل في منظومة إنترنت الأشياء: توليد البيانات، نقل البيانات، واتخاذ القرار/الفعل، مطبقاً ذلك على مثال صوبة زراعية ذكية.',
+            correctAnswer: 'Generation, Communication, Action loop explained with autonomous greenhouse example.',
+            modelAnswer: '1) Stage 1: Data Generation (Transduction): Physical phenomena in the greenhouse (soil moisture, air temperature, ambient humidity) are sensed by specialized transducers and converted into digital electrical telemetry (e.g. soil moisture = 22%). 2) Stage 2: Data Communication: The digitized sensor readings are packaged into lightweight packets and transmitted across local wireless protocols (Zigbee/LoRa) to an IoT gateway and relayed via WAN/cellular to cloud brokers or local edge processors. 3) Stage 3: Data Action (Decision & Actuation): Control logic evaluates the telemetry against predefined threshold rules or predictive models; detecting that moisture has fallen below the 30% safe threshold, the system dispatches an actuation trigger down to a solenoid valve relay, opening the water line to irrigate the crops until optimum soil saturation is restored.',
+            modelAnswerAr: '1) المرحلة الأولى: توليد البيانات (Data Generation): تحويل الظواهر الفيزيائية داخل الصوبة (رطوبة التربة، حرارة الجو، الإضاءة) عبر حساسات متخصصة إلى إشارات كهربائية رقمية قابلة للمعالجة (مثل قراءة رطوبة 22%). 2) المرحلة الثانية: نقل البيانات (Data Communication): تجميع القراءات في حزم خفيفة وإرسالها عبر بروتوكولات لاسلكية (مثل Zigbee أو LoRa) إلى بوابة IoT ومنها عبر الإنترنت إلى السحابة أو معالج الحافة. 3) المرحلة الثالثة: اتخاذ القرار والتنفيذ (Data Action): تفحص خوارزميات التحكم البيانات، وعند اكتشاف هبوط الرطوبة عن الحد الحرج 30%، يتم إرسال أمر تشغيل فوري إلى محبس كهرومغناطيسي لضخ مياه الري تلقائياً حتى استعادة الرطوبة المثالية.',
+            keyPoints: [
+              'Data Generation via sensors transducing physical metrics',
+              'Data Communication via wireless field protocols to gateways/cloud',
+              'Data Action via decision rules triggering physical actuators'
+            ]
+          },
+          {
+            id: 'q-iot1-12',
+            courseId: 'iot',
+            lectureId: 'iot-lec-1',
+            type: 'essay',
+            question: 'Compare Edge Computing with Cloud Computing regarding latency, bandwidth consumption, offline autonomy, and computational complexity in mission-critical IoT systems.',
+            questionAr: 'قارن بين الحوسبة الحافية (Edge Computing) والحوسبة السحابية (Cloud Computing) من حيث زمن التأخير، واستهلاك الباندويث، والاستقلالية بدون إنترنت، والقدرة الحسابية في أنظمة IoT الحساسة.',
+            correctAnswer: 'Edge vs Cloud comparison across latency, bandwidth, autonomy, compute.',
+            modelAnswer: '1) Latency: Edge computing provides near-instantaneous sub-millisecond response times because processing happens adjacent to sensors on the local LAN, whereas cloud round trips introduce 50–500 ms WAN propagation delays. 2) Bandwidth Consumption: Edge nodes filter raw high-frequency noise and aggregate streams locally, transmitting only summary metrics or anomalies, dramatically slashing WAN bandwidth costs compared to streaming raw sensor data to the cloud. 3) Offline Autonomy: Edge systems maintain full operational continuity and emergency shutdown logic during complete internet outages, whereas pure cloud systems become blind and unresponsive if connection drops. 4) Computational Capacity: Cloud computing offers virtually unlimited elastic compute and distributed big data storage for training machine learning models across millions of devices, while edge hardware operates under thermal, power, and memory constraints suited for lightweight inference only.',
+            modelAnswerAr: '1) زمن التأخير (Latency): تقدم حوسبة الحافة استجابة فائقة السرعة بأجزاء من الثانية لمعالجة البيانات بجوار الحساسات مباشرة، بينما تتطلب السحابة عشرات إلى مئات المللي ثانية لعبور شبكة الإنترنت. 2) استهلاك الباندويث (Bandwidth): تقوم الحافة بفلترة الضوضاء وتلخيص القراءات محلياً وإرسال الحالات الشاذة فقط، مما يوفر تكلفة واستهلاك خطوط الإنترنت مقارنة ببث كل القراءات الخام للسحابة. 3) الاستقلالية في غياب الإنترنت (Offline Autonomy): تواصل أنظمة الحافة العمل واتخاذ قرارات الأمان والطوارئ بشكل كامل عند انقطاع الإنترنت، بينما تتوقف المنظومات السحابية البحتة تماماً. 4) القدرة الحسابية (Compute): تتفوق السحابة في توفير قدرات معالجة ضخمة غير محدودة وتخزين هائل لتدريب نماذج الذكاء الاصطناعي، بينما تقتصر الحافة على أجهزة مدمجة بموارد طاقة وذاكرة محدودة تناسب الاستدلال الخفيف.',
+            keyPoints: [
+              'Edge offers sub-millisecond local latency vs cloud WAN round-trip latency',
+              'Edge filters and aggregates to conserve WAN bandwidth',
+              'Edge provides offline fault tolerance during internet loss',
+              'Cloud provides unbounded elastic compute for big data training and deep analytics'
+            ]
+          },
+          {
+            id: 'q-iot1-13',
+            courseId: 'iot',
+            lectureId: 'iot-lec-1',
+            type: 'essay',
+            question: 'Outline the architectural pipeline of an Industrial IoT (IIoT) Predictive Maintenance system in a manufacturing plant, from vibration sensing to maintenance ticketing.',
+            questionAr: 'وضح مسار المعمارية التقنية لمنظومة صيانة تنبؤية صناعية (Predictive Maintenance) في مصنع ذكي، بدءاً من حساسات الاهتزاز وحتى إصدار تذكرة الصيانة آلياً.',
+            correctAnswer: 'IIoT Predictive Maintenance architecture pipeline from vibration to ticketing.',
+            modelAnswer: '1) High-Frequency Sensing: Piezoelectric vibration and acoustic sensors attached to machine bearings continuously capture high-frequency physical oscillations and motor surface temperatures. 2) Local Edge Preprocessing: An industrial edge gateway samples the vibration waveform, calculates Fast Fourier Transforms (FFT) and RMS acceleration, filtering out normal baseline noise and detecting harmonic peak shifts. 3) Secure WAN Ingestion: The gateway packages extracted vibration features and transmits them securely over TLS using MQTT or cellular 4G/Ethernet into an IoT cloud platform. 4) Cloud Machine Learning Inference: Cloud-hosted anomaly detection models compare incoming vibration spectra against historical wear patterns, predicting bearing failure within 72 hours. 5) Enterprise Integration & Action: The Application layer automatically generates an urgent maintenance ticket in the Enterprise Resource Planning (ERP/CMMS) system and notifies plant engineers via dashboard alerts and SMS to replace the bearing before catastrophic failure.',
+            modelAnswerAr: '1) الاستشعار عالي التردد: تثبيت حساسات اهتزاز كهروضغطية وحرارية على كراسي المحركات لمراقبة الذبذبات الميكانيكية اللحظية بدقة. 2) المعالجة المسبقة على الحافة: تلتقط البوابة الصناعية إشارات الاهتزاز وتحسب تحويلات فورييه السريعة (FFT) ومتوسط التسارع، وتقوم بتصفية الضوضاء واكتشاف الترددات غير الطبيعية محلياً. 3) النقل الآمن للسحابة: تقوم البوابة بتشفير وتغليف مؤشرات الاهتزاز المستخرجة وإرسالها عبر بروتوكول MQTT المشفر بتأمين TLS عبر شبكة 4G أو إيثرنت صناعي. 4) الاستدلال السحابي بالذكاء الاصطناعي: تفحص نماذج التعلم الآلي في السحابة أطياف الاهتزاز وتقارنها بأنماط التآكل التاريخية للتنبؤ باحتمالية انهيار الكرسي خلال 72 ساعة. 5) الربط المؤسسي واتخاذ الإجراء: تُصدر طبقة التطبيقات تذكرة صيانة فورية في نظام إدارة الصيانة المؤسسي (ERP) وترسل إشعاراً عاجلاً للمهندسين لاستبدال الجزء التالف قبل حدوث توقف مفاجئ للإنتاج.',
+            keyPoints: [
+              'Piezoelectric sensors capturing motor vibration/temperature',
+              'Edge gateway executing FFT and noise filtering',
+              'Secure MQTT/TLS transmission to cloud IoT broker',
+              'Cloud anomaly detection predicting mechanical failure',
+              'Automatic ERP maintenance ticket generation and alert notification'
             ]
           }
         ]
@@ -362,6 +413,58 @@ const SOURCE_LECTURES: IoTLectureSeed[] = [
               'Functions of Perception, Network, Edge, Middleware, and Application explained',
               'Concrete technology examples provided for each layer'
             ]
+          },
+          {
+            id: 'q-iot2-13',
+            courseId: 'iot',
+            lectureId: 'iot-lec-2',
+            type: 'essay',
+            question: 'Compare MQTT, CoAP, and HTTP regarding communication paradigm, transport protocol binding, header overhead, and suitability for battery-powered IoT devices.',
+            questionAr: 'قارن بين بروتوكولات MQTT و CoAP و HTTP من حيث نمط الاتصال، وبروتوكول طبقة النقل، وحجم ترويسة البيانات (Header Overhead)، والملاءمة للأجهزة ذات البطاريات المحدودة.',
+            correctAnswer: 'MQTT vs CoAP vs HTTP architectural comparison.',
+            modelAnswer: '1) Communication Paradigm: MQTT uses an asynchronous Publish/Subscribe broker architecture (many-to-many); CoAP uses asynchronous or synchronous Request/Response (RESTful client-server with Observe capability); HTTP uses standard synchronous Request/Response client-server. 2) Transport Binding: MQTT runs over connection-oriented TCP (ensuring reliable delivery); CoAP runs over connectionless UDP (minimal overhead, handling packet loss at application layer); HTTP runs over connection-oriented TCP. 3) Header Overhead: MQTT headers are extremely lightweight (as small as 2 bytes fixed header); CoAP headers are compact binary formats (4 bytes fixed header); HTTP headers are verbose ASCII text strings (hundreds of bytes to kilobytes per transaction). 4) Battery Suitability: CoAP and MQTT are purpose-built for battery-constrained nodes because minimal byte transmissions conserve RF radio active time; HTTP drains battery rapidly due to heavy text headers and continuous TCP handshakes.',
+            modelAnswerAr: '1) نمط الاتصال: يعتمد MQTT على نموذج النشر والاشتراك (Publish/Subscribe) عبر وسيط مركزي؛ ويعتمد CoAP على نموذج الطلب والاستجابة الخفيف (RESTful Client/Server مع إمكانية المراقبة المستمرة)؛ بينما يعتمد HTTP على الطلب والاستجابة التزامني التقليدي. 2) بروتوكول النقل: يعمل MQTT فوق بروتوكول TCP الموثوق؛ بينما يعمل CoAP فوق بروتوكول UDP فائق الخفة والسرعة؛ ويعمل HTTP فوق بروتوكول TCP. 3) حجم الترويسة (Header Overhead): ترويسة MQTT صغيرة جداً ومضغوطة (تبدأ من 2 بايت فقط)؛ وترويسة CoAP ثنائية مدمجة (4 بايت فقط)؛ بينما ترويسة HTTP نصوص ASCII ثقيلة تستهلك مئات البايتات لكل طلب. 4) استهلاك البطارية: يعتبر CoAP و MQTT الأنسب للأجهزة التي تعمل على بطاريات صغيرة لأن قلة البيانات المرسلة تقلل وقت تشغيل شريحة الراديو اللاسلكية؛ بينما يستهلك HTTP البطارية بسرعة فائقة بسبب ضخامة الترويسات ومصافحات TCP المتكررة.',
+            keyPoints: [
+              'MQTT uses Pub/Sub over TCP with 2-byte minimum header',
+              'CoAP uses RESTful over UDP with 4-byte binary header',
+              'HTTP uses heavy text headers over TCP, unsuitable for micro-power IoT',
+              'Low overhead preserves battery by reducing radio transmission time'
+            ]
+          },
+          {
+            id: 'q-iot2-14',
+            courseId: 'iot',
+            lectureId: 'iot-lec-2',
+            type: 'essay',
+            question: 'Trace the protocol data unit (PDU) encapsulation lifecycle as a temperature sensor reading travels from the physical transducer up to the cloud analytics platform.',
+            questionAr: 'تتبع دورة حياة تغليف البيانات (PDU Encapsulation) أثناء انتقال قراءة حساس الحرارة من المحول الفيزيائي وحتى منصة التحليلات السحابية.',
+            correctAnswer: 'Sensor data PDU lifecycle from Bits to Frames, Packets, Segments, and Application Data.',
+            modelAnswer: '1) Physical Transduction: The physical thermal state is digitized into raw electrical signals, converted into digital data bits (0s and 1s) and modulated onto radio frequencies (e.g., 2.4 GHz FSK/DSSS). 2) Data Link Framing: The MAC layer frames the bits into Data Link Frames, appending MAC source/destination addresses and Frame Check Sequence (FCS/CRC) for localized error checking. 3) Network Layer Packaging: The frame payload is packaged into an IP Packet (IPv4 or 6LoWPAN/IPv6), adding logical IP addresses and routing hops. 4) Transport Layer Segmentation: The packet data carries a Transport Layer Segment (TCP with port numbers and sequence tracking) or Datagram (UDP with lightweight port headers). 5) Application Layer Serialization: The innermost payload is the application PDU formatted as an MQTT PUBLISH packet or JSON payload (e.g. {"temp": 24.5, "unit": "C"}), which is ingested and parsed by the cloud platform.',
+            modelAnswerAr: '1) الإدراك الفيزيائي (Physical Layer): تحويل درجة الحرارة من مؤثر فيزيائي إلى إشارات كهربائية رقمية تُبث كبتات ثنائية (Bits) عبر موجات الراديو اللاسلكية. 2) إطار ربط البيانات (Data Link Layer): تجميع البتات في إطار (Frame) وإضافة عناوين الـ MAC الفيزيائية للمرسل والمستقبل وخاتمة فحص الأخطاء (CRC/FCS). 3) حزمة الشبكة (Network Layer): تغليف الإطار داخل حزمة بيانات (IP Packet) وإضافة عناوين الـ IP المنطقية لتوجيه الحزمة عبر الشبكات والموجهات. 4) قطاع النقل (Transport Layer): تضمين الحزمة داخل قطاع نقل (TCP Segment) لضمان الترتيب والتسليم أو (UDP Datagram) للسرعة المباشرة مع تحديد أرقام المنافذ (Port Numbers). 5) حمولة التطبيقات (Application Layer): استخراج رسالة التطبيق المشفرة (مثل رسالة MQTT PUBLISH أو ملف JSON يحتوي على قيمة الحرارة {"temp": 24.5}) حيث تستقبلها السحابة وتعرضها للمستخدم.',
+            keyPoints: [
+              'Physical Layer converts to Bits and modulates RF',
+              'Data Link Layer frames with MAC addresses and CRC checksums',
+              'Network Layer creates IP Packets for multi-hop routing',
+              'Transport Layer segments with TCP/UDP port tracking',
+              'Application Layer delivers MQTT/JSON telemetry to platform'
+            ]
+          },
+          {
+            id: 'q-iot2-15',
+            courseId: 'iot',
+            lectureId: 'iot-lec-2',
+            type: 'essay',
+            question: 'Compare Bluetooth Low Energy (BLE), Zigbee, Wi-Fi, and LoRaWAN regarding typical operational range, data rate, power profile, and ideal IoT deployment scenarios.',
+            questionAr: 'قارن بين تقنيات الاتصال اللاسلكي BLE و Zigbee و Wi-Fi و LoRaWAN من حيث مدى التغطية، ومعدل نقل البيانات، واستهلاك الطاقة، وأفضل سيناريو تطبيق لكل منها.',
+            correctAnswer: 'BLE, Zigbee, Wi-Fi, LoRaWAN wireless protocols comparison.',
+            modelAnswer: '1) Bluetooth Low Energy (BLE): Range: ~10 meters (Personal Area Network); Data Rate: 1–2 Mbps; Power: Very low (years on coin cell); Ideal Use: Wearables, fitness trackers, asset beacons. 2) Zigbee: Range: 10–100 meters with multi-hop mesh routing; Data Rate: ~250 kbps; Power: Low (battery operated); Ideal Use: Smart home lighting, automated building controls, HVAC sensors. 3) Wi-Fi (802.11): Range: 50–100 meters; Data Rate: High (54 Mbps to Gbps); Power: High (requires continuous mains or rechargeable power); Ideal Use: High-bandwidth video streaming security cameras, smart home hubs. 4) LoRaWAN: Range: Long (2–15+ km); Data Rate: Ultra-low (0.3–50 kbps); Power: Extremely low (5–10 years on single battery); Ideal Use: Smart agriculture, city-wide water metering, remote environmental monitoring.',
+            modelAnswerAr: '1) تقنية BLE (بلوتوث منخفض الطاقة): المدى: حوالي 10 أمتار (شبكة شخصية PAN)؛ معدل النقل: 1-2 ميجابت/ث؛ استهلاك الطاقة: ضئيل جداً (يعمل لسنوات على بطارية ساعة)؛ أفضل استخدام: الأجهزة القابلة للارتداء والساعات الذكية ومحددات المواقع. 2) تقنية Zigbee: المدى: 10-100 متر مع إمكانية التوسع عبر شبكة Mesh ممتدة؛ معدل النقل: حوالي 250 كيلوبت/ث؛ استهلاك الطاقة: منخفض؛ أفضل استخدام: أنظمة المنازل الذكية، التحكم بالإضاءة والتكييف، وحساسات المباني. 3) تقنية Wi-Fi: المدى: 50-100 متر؛ معدل النقل: عالي جداً (من 54 ميجابت إلى جيجابت)؛ استهلاك الطاقة: مرتفع (يتطلب مصدر كهرباء دائم)؛ أفضل استخدام: كاميرات المراقبة وبث الفيديو والأجهزة المنزلية الكبيرة. 4) تقنية LoRaWAN: المدى: بعيد المدى (2 إلى 15+ كم)؛ معدل النقل: منخفض جداً (بضعة كيلوبتات فقط)؛ استهلاك الطاقة: متناهي الصغر (5 إلى 10 سنوات على بطارية واحدة)؛ أفضل استخدام: الزراعة الذكية، عدادات المياه والكهرباء في المدن، ومراقبة البيئة عن بعد.',
+            keyPoints: [
+              'BLE: Short range (10m), low power, wearables and health sensors',
+              'Zigbee: Local mesh network (100m), low power, smart home and building automation',
+              'Wi-Fi: Local range (100m), high bandwidth, high power, video streaming',
+              'LoRaWAN: Long range (km), ultra-low power, low data rate, agricultural/city monitoring'
+            ]
           }
         ]
   }
@@ -433,17 +536,17 @@ const LECTURE_1_SECTIONS: SummarySection[] = [
       'Healthcare: wearables and remote monitoring can help clinicians observe patients between visits.',
       'Agriculture: sensing and aerial data support more targeted use of water and farm inputs.',
       'Industry 4.0: telemetry can support predictive maintenance, supply-chain monitoring, and automated quality checks.',
-      'The slide names John Deere and Climate Corp as examples; it does not provide a readable quantified yield result.',
+      'Source limitation: PDF p. 11 names John Deere and Climate Corp. Its faint yield figure appears to read 20%, but the qualifier is unclear; no study method or independent validation is supplied.',
     ],
     [
       'المنازل الذكية: الإضاءة والتحكم في المناخ والأمان المتصل ممكن يحسّنوا الراحة واستخدام الطاقة.',
       'الرعاية الصحية: الأجهزة القابلة للارتداء والمراقبة عن بُعد بيساعدوا الطاقم الطبي يتابع المريض بين الزيارات.',
       'الزراعة: الاستشعار والبيانات الجوية بيساعدوا على استخدام أدق للمياه ومدخلات الزراعة.',
       'الصناعة 4.0: بيانات الأجهزة بتدعم الصيانة التنبؤية ومتابعة سلاسل الإمداد وفحص الجودة الآلي.',
-      'الشريحة بتذكر John Deere وClimate Corp كأمثلة، لكنها ما بتعرضش رقمًا مقروءًا لزيادة المحصول.',
+      'حدود المصدر: صفحة PDF رقم 11 بتذكر John Deere وClimate Corp. رقم المحصول الباهت بيبان كأنه 20 بالمية، لكن العلامة اللي بعده مش واضحة؛ ومفيش طريقة دراسة أو تحقق مستقل معروض.',
     ],
-    'Treat the agriculture slide as an example of sensor-assisted decisions; do not invent the yield percentage missing from the source.',
-    'اعتبر مثال الزراعة توضيحًا لقرارات مدعومة بالحساسات؛ وما تخترعش نسبة زيادة محصول مش موجودة بوضوح في المصدر.',
+    'Use the agriculture case to explain sensor-assisted decisions; do not turn its faint, unverified yield claim into a general performance guarantee.',
+    'استخدم مثال الزراعة عشان تشرح القرارات المدعومة بالحساسات؛ وما تحوّلش رقم المحصول الباهت وغير المتحقق منه لضمان أداء عام.',
   ),
   section(
     '4. Adoption Challenges and Engineering Responses',
@@ -468,21 +571,23 @@ const LECTURE_1_SECTIONS: SummarySection[] = [
   section(
     '5. Trends, Forecasts, and Future Integrations',
     '5. الاتجاهات والتوقعات والتكاملات المستقبلية',
-    'The slides list 5G expansion, stronger security and privacy, AI-powered analytics, and integrated platforms as trends framed for 2025. They also print a “more than 14 billion” device estimate for 2025 and a 2030 forecast whose number is unreadable in the reviewed source. These are dated lecture forecasts, not verified current counts. The future-integration slide mentions AI, blockchain for security, and augmented reality for immersive experiences. Source coverage: PDF pp. 7, 10, and 13.',
-    'الشرائح بتسرد توسّع 5G، وتعزيز الأمان والخصوصية، وتحليلات الذكاء الاصطناعي، والمنصات المتكاملة كاتجاهات مؤرخة بسنة 2025. كمان بتطبع تقديرًا بأكتر من 14 مليار جهاز لعام 2025، وتوقعًا لعام 2030 رقمه مش مقروء في المصدر اللي اتراجع. دي توقعات تاريخية للمحاضرة، مش أرقام حالية مؤكدة. شريحة التكاملات المستقبلية بتذكر الذكاء الاصطناعي والـ Blockchain للأمان والواقع المعزز للتجارب التفاعلية. تغطية المصدر: صفحات PDF 7 و10 و13.',
+    'The slides list 5G expansion, stronger security and privacy, AI-powered analytics, and integrated platforms as trends framed for 2025. They print “more than 14 billion” connected devices for 2025 and predict “over 30 billion” for 2030; the latter was recovered from the faint source image. These are dated lecture forecasts, not verified current counts. The future-integration slide mentions AI, blockchain for security, and augmented reality for immersive experiences. Source coverage: PDF pp. 7, 10, and 13–14.',
+    'الشرائح بتسرد توسّع 5G، وتعزيز الأمان والخصوصية، وتحليلات الذكاء الاصطناعي، والمنصات المتكاملة كاتجاهات مؤرخة بسنة 2025. بتطبع أكتر من 14 مليار جهاز متصل لعام 2025، وبتتوقع أكتر من 30 مليار لعام 2030؛ والرقم الأخير اتقرأ من صورة المصدر الباهتة. دي توقعات تاريخية للمحاضرة، مش أرقام حالية مؤكدة. شريحة التكاملات المستقبلية بتذكر الذكاء الاصطناعي والـ Blockchain للأمان والواقع المعزز للتجارب التفاعلية. تغطية المصدر: صفحات PDF 7 و10 ومن 13 إلى 14.',
     [
       '5G: the lecture anticipates broader connectivity and faster transfer for real-time use cases.',
       'Security/privacy and integrated platforms: the slide highlights stronger protection and cross-device integration.',
       'AI analytics: applying AI to large IoT data sets is presented as a way to derive deeper insights.',
       'AI, blockchain, and augmented reality are presented as emerging integrations, not guaranteed outcomes.',
-      'Forecast values are tied to the lecture’s 2025/2030 framing; the 2030 count is not legible and should not be inferred.',
+      'Dated forecasts: over 14 billion devices in 2025 and over 30 billion in 2030 are slide claims, not independently verified measurements.',
+      'Closing priorities on p. 14: embrace connectivity, invest in secure and scalable solutions, and collaborate to build useful connected services.',
     ],
     [
       '5G: المحاضرة بتتوقع اتصالًا أوسع ونقلًا أسرع لاستخدامات لحظية.',
       'الأمان والخصوصية والمنصات المتكاملة: الشريحة بتسلّط الضوء على حماية أقوى وربط الأجهزة ببعض.',
       'تحليلات الذكاء الاصطناعي: تطبيقها على بيانات IoT الكبيرة معروض كطريقة لاستخراج رؤى أعمق.',
       'الذكاء الاصطناعي والـ Blockchain والواقع المعزز تكاملات ناشئة، مش نتائج مضمونة.',
-      'قيم التوقعات مرتبطة بإطار المحاضرة لعامَي 2025 و2030؛ رقم 2030 مش واضح وما ينفعش نستنتجه.',
+      'توقعات مؤرخة: أكتر من 14 مليار جهاز في 2025 وأكتر من 30 مليار في 2030 ادعاءات في الشريحة، مش قياسات اتأكدنا منها بشكل مستقل.',
+      'أولويات الختام في صفحة 14: تبنّى الاتصال، واستثمر في حلول آمنة وقابلة للتوسع، واتعاون لبناء خدمات متصلة مفيدة.',
     ],
     'Quote forecasts with their source date; never restate the slide’s projections as present-day verified facts.',
     'انقل التوقعات ومعاها تاريخ المصدر؛ وما تعرضش توقعات الشريحة كأنها حقائق حالية مؤكدة.',
@@ -500,12 +605,14 @@ const LECTURE_2_SECTIONS: SummarySection[] = [
       'Without shared protocols, independently designed systems may fail to communicate.',
       'Layering simplifies a complex problem, supports specialization, and helps preserve compatibility as protocols change.',
       'In the slide’s IPv4-to-IPv6 example, the Network layer changes while the application continues to work.',
+      'Teaching simplification: compatible layer interfaces can preserve application behavior, but an IPv6 migration may still require API, DNS, configuration, and transport-checksum changes; it is not automatically transparent.',
     ],
     [
       'الحزم بتخلّي الرسائل الكبيرة قابلة للنقل؛ والمستقبِل بيفسّرها ويعيد تجميعها.',
       'من غير بروتوكولات مشتركة، الأنظمة المصممة بشكل مستقل ممكن ما تعرفش تتواصل.',
       'تقسيم الطبقات بيبسّط المشكلة المعقدة ويدعم التخصص والتوافق مع تغيّر البروتوكولات.',
       'في مثال الانتقال من IPv4 إلى IPv6، طبقة الشبكة هي اللي بتتغير والتطبيق بيستمر في العمل.',
+      'تبسيط تعليمي: واجهات الطبقات المتوافقة ممكن تحافظ على سلوك التطبيق، لكن الانتقال إلى IPv6 ممكن يحتاج تغييرات في الـ API والـ DNS والإعدادات وحساب الـ Transport Checksum؛ مش بيحصل تلقائيًا من غير تأثير.',
     ],
     'A layered model describes responsibilities and interfaces; it is not a requirement that every implementation use identical internals.',
     'النموذج الطبقي بيوصف المسؤوليات والواجهات؛ ومش معناه إن كل تنفيذ لازم يستخدم نفس التفاصيل الداخلية.',
@@ -561,6 +668,7 @@ const LECTURE_2_SECTIONS: SummarySection[] = [
     'TCP بيبدأ اتصال بمصافحة من ثلاث رسائل وبيقدّم تدفق بايتات مرتب مع إقرارات وسلوك لإعادة الإرسال. UDP بيبعت مخططات بيانات مستقلة من غير إعداد اتصال في طبقة النقل ومن غير ضمان تسليم مدمج. فحص UDP ممكن يكتشف تلف البيانات، لكن ولا بروتوكول فيهم بيشفّر الحركة لوحده؛ والتطبيقات ممكن تضيف الأمان أو الاعتمادية. تغطية المصدر: صفحة PDF رقم 12.',
     [
       'TCP: connection-oriented; sequence numbers, acknowledgements, ordering, and retransmission support reliable delivery to an application.',
+      'Delivery limit: TCP reports failures when communication cannot continue; a handshake alone cannot guarantee delivery through a permanent outage. Reliability and encryption are separate properties.',
       'UDP: connectionless datagrams with less transport overhead and no built-in retransmission or ordering guarantee.',
       'UDP has a checksum mechanism; “no delivery guarantee” does not mean “no error detection.”',
       'The slide lists web, email, and file transfer for TCP; gaming, streaming, and DNS for UDP. Real applications may use either protocol depending on design.',
@@ -568,6 +676,7 @@ const LECTURE_2_SECTIONS: SummarySection[] = [
     ],
     [
       'TCP: قائم على اتصال؛ أرقام تسلسل وإقرارات وترتيب وإعادة إرسال بتدعم تسليمًا موثوقًا للتطبيق.',
+      'حدود التسليم: TCP بيبلّغ عن الفشل لما الاتصال ما يقدرش يكمل؛ والمصافحة لوحدها مش بتضمن التسليم مع انقطاع دائم. الاعتمادية والتشفير خاصيتان مختلفتان.',
       'UDP: مخططات بيانات من غير اتصال، بحمل أقل في النقل ومن غير ضمان مدمج لإعادة الإرسال أو الترتيب.',
       'UDP عنده آلية Checksum؛ وغياب ضمان التسليم مش معناه غياب اكتشاف الأخطاء.',
       'الشريحة بتذكر الويب والبريد ونقل الملفات مع TCP؛ والألعاب والبث وDNS مع UDP. التطبيق الفعلي ممكن يختار أيًا منهما حسب تصميمه.',
@@ -607,6 +716,8 @@ const LECTURE_2_SECTIONS: SummarySection[] = [
       'Middleware/Platform brokers messages and connects devices to services; Application presents dashboards, alerts, or controls.',
       'Practical implementation: Things → Device Hardware → Device Software → Communications → Cloud Platform → Cloud Applications.',
       'Things are physical objects; hardware is embedded components; software runs on the device; communication links connect it; cloud platform ingests/stores/processes data; cloud applications provide user-facing functions.',
+      'Source examples: p. 15 lists Raspberry Pi/ESP32, MQTT brokers, Firebase, AWS IoT, and Azure IoT; pp. 16/18 show wired links, Bluetooth, Wi-Fi, Zigbee, Thread, cellular, and LoRaWAN, plus dashboards, analytics, and device management.',
+      'Diagram clarification: pp. 16 and 18 repeat the practical view; the illustration and prose use different software-example lists. Linux is an operating system and Qt a framework, not programming languages. The platform may be hosted on a bare-metal server or a cloud service.',
     ],
     [
       'الإدراك نظريًا: الحساسات والمشغّلات بتتصل بالعالم المادي.',
@@ -614,6 +725,8 @@ const LECTURE_2_SECTIONS: SummarySection[] = [
       'الوسيط والمنصة بيديروا الرسائل ويربطوا الأجهزة بالخدمات؛ والتطبيق بيعرض لوحات وتنبيهات وتحكمًا.',
       'التنفيذ العملي: الأشياء ← عتاد الجهاز ← برمجيات الجهاز ← الاتصالات ← منصة السحابة ← تطبيقات السحابة.',
       'الأشياء أجسام مادية؛ والعتاد مكوّنات مدمجة؛ والبرمجيات بتشتغل على الجهاز؛ ووصلات الاتصال بتربطه؛ والمنصة السحابية بتستقبل البيانات وتخزنها وتعالجها؛ وتطبيقات السحابة بتقدّم وظائف للمستخدم.',
+      'أمثلة المصدر: صفحة 15 بتذكر Raspberry Pi وESP32، ووسطاء MQTT، وFirebase وAWS IoT وAzure IoT؛ وصفحتا 16 و18 بيعرضوا الوصلات السلكية وBluetooth وWi-Fi وZigbee وThread والاتصال الخلوي وLoRaWAN، مع لوحات المعلومات والتحليلات وإدارة الأجهزة.',
+      'توضيح الرسم: صفحتا 16 و18 بيكرروا المنظور العملي؛ وقائمة أمثلة البرمجيات مختلفة بين الرسم والنص. Linux نظام تشغيل وQt إطار برمجي، مش لغات برمجة. المنصة ممكن تتستضاف على خادم Bare-metal أو خدمة سحابية.',
     ],
     'Five conceptual layers are not six implementation blocks: preserve each diagram’s labels and explain correspondence as approximate.',
     'الخمس طبقات التصورية مش هي كتل التنفيذ الست: حافظ على تسميات كل رسم واشرح أي تقابل على إنه تقريبي.',
@@ -644,7 +757,7 @@ const CHEAT_SHEETS: Record<string, CheatSheetItem[]> = {
     { en: 'Device performs a task; sensor measures; network carries data; actuator acts.', ar: 'الجهاز بينفّذ مهمة؛ الحساس بيقيس؛ الشبكة بتنقل البيانات؛ والمشغّل بينفّذ فعلًا.' },
     { en: 'Applications: smart homes, healthcare, agriculture, and Industry 4.0.', ar: 'التطبيقات: المنازل الذكية والرعاية الصحية والزراعة والصناعة 4.0.' },
     { en: 'Challenges: security/privacy, interoperability, and scalability/performance.', ar: 'التحديات: الأمان والخصوصية والتوافقية وقابلية التوسع والأداء.' },
-    { en: '2025/2030 slide figures are historical forecasts; the reviewed 2030 number is unreadable.', ar: 'أرقام شريحة 2025 و2030 توقعات تاريخية؛ ورقم 2030 غير مقروء في المصدر المُراجع.' },
+    { en: 'Dated slide forecasts: over 14 billion devices in 2025; over 30 billion in 2030. These are not verified current counts.', ar: 'توقعات الشرائح المؤرخة: أكتر من 14 مليار جهاز في 2025؛ وأكتر من 30 مليار في 2030. دي مش أعداد حالية مؤكدة.' },
   ],
   'iot-lec-2': [
     { en: 'OSI layers: Application, Presentation, Session, Transport, Network, Data Link, Physical.', ar: 'طبقات OSI: التطبيق، العرض، الجلسة، النقل، الشبكة، ربط البيانات، الفيزيائية.' },

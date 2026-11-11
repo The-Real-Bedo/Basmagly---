@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode } from './LabWorkbench';
 import { useState } from 'react';
 import { Clock3, Eye, EyeOff, RotateCcw } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
@@ -143,7 +144,7 @@ export function AiEnvironmentLab() {
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[0.9fr,1.1fr]">
-        <div className="space-y-4 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
+        <div className="min-w-0 space-y-4 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <div>
             <p className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200">اختار مثالًا (Choose a task)</p>
             <div className="grid gap-2">
@@ -157,7 +158,7 @@ export function AiEnvironmentLab() {
 
           <div>
             <p className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200">خصائص البيئة (Environment properties)</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {DIMENSIONS.map(({ key, label, labelAr, options }) => (
                 <label key={key} className="min-w-0 text-[13px] text-stone-700 dark:text-stone-300">
                   <ArabicText className="mb-1 font-semibold">{`${labelAr} (${label})`}</ArabicText>
@@ -172,7 +173,7 @@ export function AiEnvironmentLab() {
           <ArabicText className="text-[13px] leading-relaxed text-stone-600 dark:text-zinc-400">الأمثلة متوافقة مع المحاضرة؛ تغيير أي اختيار بيكوّن تصنيفك الخاص.</ArabicText>
         </div>
 
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -185,7 +186,13 @@ export function AiEnvironmentLab() {
               </div>
             </div>
             <div className="flex min-h-[210px] flex-col items-center justify-center gap-3 rounded-xl border border-beige-300 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
-              {renderScene()}
+              <LabWorkbench title="Agent · visible environment" motionKey={task+'-'+step+'-'+view}
+ nodes={Array.from({length:16},(_,index):WorkbenchNode=>{
+ const hidden=showOcclusion&&hiddenCells.has(index);
+ const marker=hidden?'':task==='taxi'?(index===12+step%3?'YOU':index===5+step%2?'CAR':index===2?'PAX':''):task==='chess'?CHESS[index]:'';
+ const shade=hidden?0:task==='image'?IMAGE_SAMPLES[imageSample][index]:0;
+ return {id:'cell-'+index,label:'Cell '+(index+1),sceneLabel:hidden?'?':marker||String(shade),showValue:false,kind:marker==='YOU'||marker==='CAR'?'car':'layer',size:marker==='YOU'||marker==='CAR'?undefined:[1.1,.15+(task==='image'?shade*.25:0),1.1],position:[(index%4-1.5)*1.35,0,(Math.floor(index/4)-1.5)*1.35],tone:hidden?'neutral':marker?'active':'neutral',value:hidden?'Unknown':marker||(task==='image'?'Intensity '+shade:'Empty cell'),decorative:!hidden&&!marker&&task!=='image',detail:hidden?'Outside the current percept: its state is unknown.':'Visible cell in the illustrative environment.',detailAr:hidden?'برّه الـ Percept الحالي: حالتها مجهولة.':'خلية ظاهرة في البيئة التوضيحية.'};
+ })}>{renderScene()}</LabWorkbench>
               <p className="text-center text-[13px] text-stone-700 dark:text-stone-300" aria-live="polite">
                 {showOcclusion ? 'Some state is hidden from this percept.' : 'The displayed state is fully visible in this view.'}
               </p>
@@ -209,10 +216,10 @@ export function AiEnvironmentLab() {
           </div>
         </div>
       </div>
-      <p className="mt-4 rounded-xl bg-sky-50 p-3 text-[13px] leading-relaxed text-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
+      <div className="mt-4 rounded-xl bg-sky-50 p-3 text-[13px] leading-relaxed text-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
         Teaching sketches only: the taxi motion, chess clock, and pixel patterns are simplified illustrations, not full task models or performance predictions.
         <ArabicText className="mt-1 text-[13px] leading-relaxed text-sky-900 dark:text-sky-200">رسومات تعليمية مبسّطة فقط: حركة التاكسي والساعة ونمط البكسلات مش نماذج كاملة للمهمة ولا توقّعات للأداء.</ArabicText>
-      </p>
+      </div>
     </section>
   );
 }

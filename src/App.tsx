@@ -9,6 +9,8 @@ import { LAB_CATALOG, LabCategory } from './data/labCatalog';
 import { Footer } from './components/Footer';
 import { ArabicText } from './components/ArabicText';
 import { BrandLogo } from './components/BrandLogo';
+import { SmallScreenGate } from './components/SmallScreenGate';
+import { useMediaQuery } from './hooks/useMediaQuery';
 import { Wrench, Clock, ArrowRight, TriangleAlert } from 'lucide-react';
 
 type LabDirectoryItem = typeof LAB_CATALOG[number];
@@ -57,7 +59,8 @@ export const App: React.FC = () => {
   const [labFilter, setLabFilter] = useState<'all' | LabCategory>('all');
 
   const [isDark, setIsDark] = useState<boolean>(() => {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    try { return localStorage.getItem('basmagly-theme') === 'dark'; }
+    catch { return false; }
   });
 
   useEffect(() => {
@@ -66,6 +69,8 @@ export const App: React.FC = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    try { localStorage.setItem('basmagly-theme', isDark ? 'dark' : 'light'); }
+    catch { /* Theme switching still works when browser storage is unavailable. */ }
   }, [isDark]);
 
   const toggleDarkMode = () => setIsDark(prev => !prev);
@@ -134,6 +139,26 @@ export const App: React.FC = () => {
       }
     }
   }, [selectedCourse, selectedLecture, lectureInitialTab, selectedSheetId, currentTerm]);
+
+  // Small-screen gate: below the md breakpoint the layout (especially the 3D labs) breaks.
+  // Dismissal is session-only, so the gate returns on the next visit.
+  const isSmallScreen = useMediaQuery('(max-width: 767.98px)');
+  const [gateDismissed, setGateDismissed] = useState(() => {
+    try { return sessionStorage.getItem('basmagly-gate-dismissed') === '1'; }
+    catch { return false; }
+  });
+
+  if (isSmallScreen && !gateDismissed) {
+    return (
+      <SmallScreenGate
+        onContinue={() => {
+          try { sessionStorage.setItem('basmagly-gate-dismissed', '1'); }
+          catch { /* Session-only preference; skipping storage is fine. */ }
+          setGateDismissed(true);
+        }}
+      />
+    );
+  }
 
   const termCourses = COURSES_DATA.filter(c => c.term === currentTerm);
 
@@ -367,6 +392,11 @@ export const App: React.FC = () => {
                           <span className="text-[13px] font-mono font-bold px-2.5 py-1 rounded-md bg-white dark:bg-stone-900 text-stone-800 dark:text-zinc-200 border border-beige-200 dark:border-stone-800">
                             {lab.badge}
                           </span>
+                          {lab.isImportant && (
+                            <span className="text-[12px] font-mono font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-200 border border-amber-300 dark:border-amber-800 flex items-center gap-1">
+                              <span>★ Important · مهم</span>
+                            </span>
+                          )}
                         </div>
 
                         <div className="flex items-start gap-3">

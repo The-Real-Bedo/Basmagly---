@@ -1,6 +1,7 @@
 import React, { useId, useState } from 'react';
 import { Calculator, Binary, Lightbulb } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Scope = 'private' | 'public' | 'loopback' | 'linkLocal' | 'multicast' | 'reserved';
 
@@ -176,6 +177,12 @@ export const SubnetCalculatorVisualizer: React.FC = () => {
   const data = calculateSubnet(octets, prefixInput);
   const addr = data.addr;
   const ipInvalid = octets === null;
+  const missions: ChallengeMission[] = [
+    { id: 'office-50', title: 'Plan a subnet for 50 hosts', titleAr: 'خطّط Subnet لـ 50 جهاز', goal: 'Keep host 192.168.1.130. Choose the smallest traditional subnet with at least 50 usable host addresses, then inspect its network and broadcast boundaries.', goalAr: 'خلّي عنوان الجهاز 192.168.1.130. اختار أصغر Subnet تقليدية فيها 50 عنوان جهاز صالح على الأقل، وبعدها افحص حدود الشبكة والـ Broadcast.', hint: 'Reserve the network and broadcast addresses. Compare the usable count before and after one prefix step.', hintAr: 'احجز عنواني الشبكة والـ Broadcast. قارن عدد الأجهزة الصالحة قبل خطوة في الـ Prefix وبعدها.', start: () => { setIpInput('192.168.1.130'); setPrefixInput(28); },
+      evaluate: () => !addr || ipInput.trim() !== '192.168.1.130' ? feedback('retry', 'Use the required host address 192.168.1.130.', 'استخدم عنوان الجهاز المطلوب 192.168.1.130.') : data.usable < 50 ? feedback('retry', `Only ${data.usable} hosts fit. Allocate more host bits.`, `المتاح ${data.usable} جهاز بس. خصّص بتات أجهزة أكتر.`) : prefixInput !== 26 ? feedback('retry', 'The subnet fits, but a smaller address block also fits. Increase the prefix.', 'الـ Subnet كفاية، بس فيه بلوك عناوين أصغر يكفي برضه. زوّد الـ Prefix.') : feedback('success', 'Smallest fit: /26, 62 usable hosts. Network 192.168.1.128; broadcast 192.168.1.191.', 'أصغر حجم مناسب: /26، وفيه 62 جهاز صالح. عنوان الشبكة 192.168.1.128؛ والـ Broadcast هو 192.168.1.191.') },
+    { id: 'router-pair', title: 'Use both point-to-point addresses', titleAr: 'استخدم عنواني وصلة Point-to-Point', goal: 'Keep 10.0.0.1 on a point-to-point link. Choose the smallest subnet with two usable addresses under RFC 3021; avoid a traditional broadcast reservation.', goalAr: 'خلّي 10.0.0.1 على وصلة Point-to-Point. اختار أصغر Subnet فيها عنوانين صالحين حسب الـ RFC 3021؛ من غير حجز Broadcast تقليدي.', hint: 'Compare /30, /31 and /32. A /32 names one host; RFC 3021 changes /31 usability.', hintAr: 'قارن /30 و/31 و/32. الـ /32 بتحدّد جهاز واحد؛ والـ RFC 3021 بيغيّر استخدام /31.', start: () => { setIpInput('10.0.0.1'); setPrefixInput(30); },
+      evaluate: () => !addr || ipInput.trim() !== '10.0.0.1' ? feedback('retry', 'Keep the required endpoint 10.0.0.1.', 'خلّي عنوان الطرف المطلوب 10.0.0.1.') : prefixInput === 31 && data.usable === 2 ? feedback('success', 'RFC 3021 fit: /31 uses 10.0.0.0 and 10.0.0.1 as the two endpoints.', 'الحجم المناسب حسب الـ RFC 3021: /31 بتستخدم 10.0.0.0 و10.0.0.1 لطرفي الوصلة.') : feedback('retry', prefixInput === 32 ? 'A /32 has only one endpoint. Add one host bit.' : 'Both endpoints fit, but the allocation can be smaller under RFC 3021.', prefixInput === 32 ? 'الـ /32 فيها طرف واحد بس. زوّد بت أجهزة واحد.' : 'الطرفين كفاية، بس ممكن تصغّر المساحة حسب الـ RFC 3021.') },
+  ];
 
   return (
     <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
@@ -224,6 +231,7 @@ export const SubnetCalculatorVisualizer: React.FC = () => {
       </div>
 
       {/* Input Controls */}
+      <LabChallenge missions={missions} />
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5 bg-[#FAF7F2] dark:bg-stone-950 p-5 rounded-2xl border border-beige-300 dark:border-stone-800">
         <div className="md:col-span-5 space-y-2">
           <label htmlFor={ipId} className="block">
@@ -293,7 +301,7 @@ export const SubnetCalculatorVisualizer: React.FC = () => {
       </div>
 
       {/* Bitwise Table */}
-      <div className="bg-stone-900 text-stone-100 rounded-2xl p-5 border border-stone-800 text-sm overflow-x-auto space-y-3.5">
+      <div data-lab-scene className="bg-stone-900 text-stone-100 rounded-2xl p-5 border border-stone-800 text-sm overflow-x-auto space-y-3.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between text-zinc-300 border-b border-stone-800 pb-2.5 gap-2">
           <span className="font-bold text-zinc-200 text-sm flex items-center gap-2">
             <Binary className="w-4 h-4 text-amber-400 shrink-0" />

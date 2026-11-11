@@ -105,11 +105,11 @@
   }
 }
 
-/* 10-15% size boost for Arabic to match the optical weight of Latin.
-   Deliberately outside the base layer so it applies on top of text-* utilities
-   (Arabic is always ~1.12x the size its Latin sibling would get). */
+/* English-first hierarchy: Arabic renders ~5% smaller than its Latin sibling
+   instead of the previous 12% boost, and never below the 13px minimum.
+   Still outside the layers so it applies on top of text-* utilities. */
 .font-arabic {
-  font-size: 1.12em;
+  font-size: max(0.95em, 13px);
 }
 
 /* Default colour for <ArabicText>; any text-* utility on the element overrides it. */
@@ -126,6 +126,43 @@
 
 .text-secondary:is(.dark *) {
   color: #A1A1AA;
+}
+
+/* Expanded experiments keep one mounted lab, with room for its scene and inspector. */
+[data-testid="lab-workbench"] {
+  container-type: inline-size;
+}
+/* Respond to the bench width, including narrow lecture columns, not the window. */
+@container (min-width: 900px) {
+  [data-workbench-layout] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+  [data-workbench-inspector] {
+    border-left: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+  }
+  [data-workbench-inspector] [aria-label="Inspect scene objects"] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  [data-workbench-inspector] [aria-label="Inspect scene objects"] button {
+    overflow-wrap: anywhere;
+  }
+}
+.lab-expanded .grid:has([data-testid="lab-workbench"]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.lab-expanded .grid:has([data-testid="lab-workbench"]) > * {
+  grid-column: auto;
+}
+.grid:has([data-testid="lab-workbench"]) > * {
+  min-width: 0;
+}
+.lab-expanded [data-testid="workbench-viewport"],
+.lab-expanded [aria-label="Interactive 3D network topology"],
+.lab-expanded [data-testid="experiment-vacuum-world-3d"] .relative.isolate:has(canvas) {
+  height: clamp(340px, 65dvh, 720px);
 }
 
 /* Custom smooth scrollbar */

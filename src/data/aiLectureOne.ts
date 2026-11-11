@@ -66,18 +66,24 @@ export const AI_LECTURE_ONE: Lecture = {
         'Algorithms: Improved methods make it possible to learn useful patterns and solve tasks more effectively.',
         'Big Data: Large collections of examples provide training signals—the lecture calls data the “fuel” of AI.',
         'Computing power: Faster, more parallel hardware, including GPUs and specialized accelerators, makes larger workloads practical.',
+        'CPU/GPU/TPU diagram (p. 9): CPUs support versatile control and general-purpose computation; GPUs execute many suitable operations in parallel; Google TPUs are ASIC accelerators for tensor operations such as neural-network matrix multiplication.',
+        'Memory analogy: the slide compares CPU work to printing letters, GPU work to printing lines, and TPU work to printing pages. This illustrates parallelism and specialization, not a measured speed ratio.',
+        'Diagram limits: real CPUs also have parallelism; a TPU does not compute every arbitrary matrix in one clock cycle or eliminate every wait. Workload shape, memory movement, and software affect performance.',
         'Synergy: Algorithms, data, and compute work together; more data alone does not guarantee a capable system.',
       ],
       bulletPointsAr: [
         'الخوارزميات: الأساليب المتطورة بتساعد الأنظمة تتعلم أنماط مفيدة وتنجز المهام بكفاءة أحسن.',
         'البيانات الضخمة: مجموعات الأمثلة الكبيرة بتوفّر إشارات للتدريب؛ والمحاضرة بتشبّه البيانات بـ«وقود» الـ AI.',
         'القدرة الحوسبية: العتاد الأسرع والأكتر توازيًا، زي الـ GPUs والمسرّعات المتخصصة، بيخلّي تشغيل مهام أكبر عملي.',
+        'رسم CPU وGPU وTPU في صفحة 9: الـ CPUs بتدعم التحكم والحساب العام؛ والـ GPUs بتنفّذ عمليات مناسبة كتير بالتوازي؛ والـ TPUs من Google مسرّعات ASIC لعمليات الـ Tensors، زي ضرب المصفوفات في الشبكات العصبية.',
+        'تشبيه للحفظ: الشريحة بتشبّه شغل CPU بطباعة حروف، وGPU بطباعة سطور، وTPU بطباعة صفحات. التشبيه بيوضح التوازي والتخصص، مش نسبة سرعة مقاسة.',
+        'حدود الرسم: الـ CPUs الفعلية فيها توازي كمان؛ والـ TPU مش بتحسب أي مصفوفة في دورة ساعة واحدة ولا بتلغي كل الانتظار. شكل المهمة ونقل البيانات والبرمجيات بيأثروا على الأداء.',
         'التكامل: الخوارزميات والبيانات والحوسبة بيشتغلوا مع بعض؛ كثرة البيانات لوحدها مش ضمان لنظام كفء.',
       ],
       keyRule:
-        'Remember the three-part explanation—advanced algorithms + data + computing power—and their synergy, rather than attributing the AI boom to only one factor. Source: original lecture PDF, pp. 6–9.',
+        'Remember the three-part explanation—advanced algorithms + data + computing power—and their synergy. Source: original lecture PDF, p. 9; the hardware diagram is an analogy with qualified limits.',
       keyRuleAr:
-        'افتكر التفسير المكوّن من 3 عوامل: خوارزميات متقدمة + بيانات + قدرة حوسبية، والتكامل بينهم؛ ما تنسبش طفرة الـ AI لعامل واحد بس. المصدر: ملف المحاضرة الأصلي PDF، ص 6–9.',
+        'افتكر التفسير المكوّن من 3 عوامل: خوارزميات متقدمة + بيانات + قدرة حوسبية، والتكامل بينهم. المصدر: ملف المحاضرة الأصلي PDF، صفحة 9؛ ورسم العتاد تشبيه موضحين حدوده.',
       quickCheck: {
         question: 'Which combination does the lecture identify as driving recent AI breakthroughs?',
         questionAr: 'أنهي مجموعة بتحددها المحاضرة كمحرك للاختراقات الحديثة في الذكاء الاصطناعي؟',
@@ -100,6 +106,7 @@ export const AI_LECTURE_ONE: Lecture = {
     },
     {
       title: '3. A Brief History & AI Winters',
+      experimentIds: ['ai-perceptron'],
       titleAr: '3. لمحة تاريخية وفترات شتاء الذكاء الاصطناعي',
       content:
         'AI history is a sequence of advances and setbacks, not a smooth march toward today’s systems. The lecture links “AI winters” to cycles of optimistic claims followed by disappointment and reduced support; historical milestones mark particular developments, not a single cause for every cycle.',
@@ -107,17 +114,21 @@ export const AI_LECTURE_ONE: Lecture = {
         'تاريخ الـ AI فيه تقدّم وفترات تراجع، مش خط مستقيم وصل للأنظمة الحالية. المحاضرة بتربط «شتاء الذكاء الاصطناعي» بدورات من التفاؤل والوعود، وبعدها إحباط وتراجع في الدعم؛ وكل محطة تاريخية بتوصف تطور معيّن، مش سبب واحد لكل فترة ركود.',
       bulletPoints: [
         '1943–1956: McCulloch and Pitts propose an artificial-neuron model (1943); Turing publishes on computing machinery and intelligence (1950); the Dartmouth meeting adopts the name “Artificial Intelligence” (1956); Rosenblatt describes a trainable perceptron method in 1958.',
-        '1950s–1970s: Logic-driven programs flourish; Minsky and Papert’s 1969 work highlights limits of single-layer perceptrons, including XOR—not limits of all AI. The existing course-data summary groups 1969–1979 as the first AI Winter, but the slides do not establish this limitation as its sole cause.',
+        '1950s–1970s: Samuel’s checkers, Logic Theorist, and Geometry Engine illustrate early logic-driven programs. Minsky and Papert’s 1969 work highlights perceptron limits including XOR; p. 8 labels 1969–1979 as early knowledge-based-system development, not as the first AI winter.',
         '1980s–1993: Expert systems boom, and backpropagation makes multilayer neural networks trainable; the 1988–1993 period is identified in the slides with an AI winter after the expert-systems bust.',
         '1990s–2000s: Statistical methods and agents regain attention; Deep Blue defeats Kasparov in 1997, and the Roomba is cited as an embodied-AI example in 2002.',
         '2010–2022: Big Data, GPUs, and deep learning drive milestones including AlexNet (2012), AlphaGo (2016), Transformers (2017), and ChatGPT (2022). Later-year entries on the course slide are dated, course-specific claims, not timeless milestones.',
+        'Additional p. 8 milestones: TD-Gammon (1992), Siri (2011), Atari control (2015), neural translation (2016), poker systems (2017), AlphaFold (2018–2020), and text-to-image generation (2021–2022). These are distinct applications, not successive versions of one system.',
+        'Unresolved source claim: the 2026 entry “HuggingFace hack” has no event description or citation. The 2024 Nobel and 2025 IMO entries are dated slide claims; do not infer details or verification from the timeline alone.',
       ],
       bulletPointsAr: [
         '1943–1956: ماكولوتش وبيتس قدّموا نموذجًا لعصبون اصطناعي (1943)، وتورينج نشر عن الحوسبة والذكاء (1950)، واجتماع دارتموث اعتمد اسم «الذكاء الاصطناعي» (1956)، وروزنبلات قدّم طريقة لتدريب الـ Perceptron سنة 1958.',
-        'الخمسينيات–السبعينيات: انتشرت برامج المنطق؛ وشغل مينسكي وبابيرت سنة 1969 وضّح حدود الـ Perceptron أحادي الطبقة، ومنها دالة XOR، مش حدود كل الذكاء الاصطناعي. وملخص بيانات المقرر بيضم 1969–1979 لأول شتاء للـ AI، لكن السلايدات مش بتقول إن المحدودية دي كانت السبب الوحيد.',
+        'الخمسينيات–السبعينيات: لعبة الداما من Samuel، وLogic Theorist وGeometry Engine أمثلة لبرامج المنطق المبكرة. شغل Minsky وPapert سنة 1969 وضّح حدود الـ Perceptron ومنها XOR؛ وصفحة 8 بتسمّي 1969–1979 فترة تطوير مبكر للنظم المعتمدة على المعرفة، مش أول شتاء للـ AI.',
         'الثمانينيات–1993: ازدهرت النظم الخبيرة، وخوارزمية الـ Backpropagation خلّت تدريب الشبكات العصبية متعددة الطبقات ممكن؛ والسلايدات بتحدد 1988–1993 كفترة شتاء بعد تراجع النظم الخبيرة.',
         'التسعينيات–الألفينات: رجع الاهتمام بالأساليب الإحصائية والوكلاء؛ وDeep Blue هزم كاسباروف سنة 1997، والمحاضرة بتذكر Roomba كمثال للذكاء المتجسّد سنة 2002.',
         '2010–2022: البيانات الضخمة والـ GPUs والتعلّم العميق ساعدوا على محطات منها AlexNet (2012) وAlphaGo (2016) وTransformers (2017) وChatGPT (2022). الادعاءات اللاحقة في السلايد مرتبطة بتاريخ المحاضرة ومش محطات ثابتة لكل الأزمنة.',
+        'محطات إضافية في صفحة 8: TD-Gammon (1992)، وSiri (2011)، والتحكم في ألعاب Atari (2015)، والترجمة العصبية (2016)، ونظم الـ Poker (2017)، وAlphaFold (2018–2020)، وتوليد الصور من النصوص (2021–2022). دي تطبيقات مختلفة، مش نسخ متتابعة لنظام واحد.',
+        'نقطة مصدر غير محسومة: بند 2026 «HuggingFace hack» مفيهوش وصف للحادثة أو مرجع. وبندا Nobel في 2024 وIMO في 2025 ادعاءات مؤرخة في الشريحة؛ ما تستنتجش تفاصيل أو تحقق من الخط الزمني لوحده.',
       ],
       keyRule:
         'An AI winter is a period of disillusionment and reduced support after expectations outpace results. Treat the lecture’s later-year examples as dated claims that may need independent context. Source: original lecture PDF, pp. 6–9.',
@@ -377,6 +388,8 @@ export const AI_LECTURE_ONE: Lecture = {
         'Supervised Learning: Learn a model from examples with target labels or values; the lecture frames this as learning a model of the world from data.',
         'Reinforcement Learning: Learn a policy for choosing actions so as to maximize utility; a policy is a rule for acting in a situation, not just a stored fact.',
         'Applications & Impact: The lecture lists postal address recognition, banking checks and signatures, customer-service speech recognition, camera face detection, game agents, and hospital detection systems. These illustrate applications, not a guarantee that a deployed system is safe or correct.',
+        'Image-only domains (p. 7): public imagination and generative media, social chatbots, economic trading, political marketing and election campaigns, law, education, social services, health, science, and labour. The infographic surveys uses and social impact; it supplies no performance evidence.',
+        'Source omissions and repetition: p. 25 also includes web profiling and loan classification, but its bottom customer-service/hospital text is clipped. Repeated four-approach and course-topic slides emphasize different cells; study each distinction once, rather than duplicate its definition.',
       ],
       bulletPointsAr: [
         'البحث والتخطيط (Search & Planning): استخدم نموذج للعالم عشان تلاقي تسلسل أفعال يحقق الهدف.',
@@ -384,6 +397,8 @@ export const AI_LECTURE_ONE: Lecture = {
         'التعلّم الخاضع للإشراف (Supervised Learning): اتعلّم نموذج من أمثلة معاها تصنيفات أو قيم مستهدفة؛ والمحاضرة بتقدّمه كتعلّم نموذج للعالم من البيانات.',
         'التعلّم المعزز (Reinforcement Learning): اتعلّم سياسة لاختيار الأفعال عشان تعظّم المنفعة؛ السياسة قاعدة للتصرف في الموقف، مش مجرد معلومة متخزّنة.',
         'التطبيقات والتأثير: المحاضرة بتذكر قراءة عناوين البريد، وفحص الشيكات والتوقيعات في البنوك، والتعرّف على الكلام في خدمة العملاء، واكتشاف الوجوه بالكاميرات، ووكلاء الألعاب، ونظم الاكتشاف بالمستشفيات. دي أمثلة تطبيقات، مش ضمان إن أي نظام مستخدم آمن أو صحيح.',
+        'مجالات موجودة في صورة صفحة 7: الخيال العام والإعلام التوليدي، والـ Chatbots الاجتماعية، والتداول الاقتصادي، والتسويق السياسي والحملات الانتخابية، والقانون، والتعليم، والخدمات الاجتماعية، والصحة، والعلوم، والعمل. الرسم بيعرض الاستخدامات والتأثير الاجتماعي؛ ومش بيقدّم أدلة أداء.',
+        'نقص وتكرار في المصدر: صفحة 25 فيها كمان تحليل بيانات تصفح الويب وتصنيف طلبات القروض، لكن آخر نص خدمة العملاء والمستشفيات مقصوص. تكرار شرائح المناهج الأربعة وموضوعات المقرر بيسلّط الضوء على خانات مختلفة؛ ذاكر كل فرق مرة بدل تكرار تعريفه.',
       ],
       keyRule: 'Match the question to the topic: action sequence → search/planning; uncertainty → probability/inference; examples → supervised learning; an action policy and utility → reinforcement learning. Source: original lecture PDF, pp. 25–33. Definitions of labels and policy are teaching clarifications.',
       keyRuleAr: 'اربط السؤال بموضوعه: تسلسل أفعال ← بحث وتخطيط؛ عدم يقين ← احتمالات واستدلال؛ أمثلة ← تعلّم خاضع للإشراف؛ سياسة أفعال ومنفعة ← تعلّم معزز. المصدر: ملف المحاضرة الأصلي PDF، ص 25–33. توضيح التصنيفات والسياسة إضافة تعليمية.',
@@ -486,8 +501,8 @@ export const AI_LECTURE_ONE: Lecture = {
     {
       term: 'Soundness and completeness',
       termAr: 'سلامة الاستدلال واكتماله (الـ Soundness & Completeness)',
-      definition: 'Soundness means deriving no false conclusions from the formal system; completeness means being able to derive every conclusion entailed by its premises.',
-      definitionAr: 'سلامة الاستدلال معناها إن النظام الصوري ما يستنتجش نتيجة غلط؛ واكتماله معناه إنه يقدر يستنتج كل نتيجة بتلزم عن مقدماته.',
+      definition: 'Soundness means every derivable conclusion follows semantically from its premises, preserving truth when the premises are true. Completeness means every conclusion entailed by the premises can be derived.',
+      definitionAr: 'سلامة الاستدلال معناها إن كل نتيجة قابلة للاشتقاق بتلزم دلاليًا عن مقدماتها، فتحافظ على الصدق لما المقدمات تكون صادقة. الاكتمال معناه إن كل نتيجة بتلزم عن المقدمات نقدر نشتقّها.',
     },
   ],
   cheatSheet: [
@@ -504,8 +519,8 @@ export const AI_LECTURE_ONE: Lecture = {
       ar: 'محركات النمو التلاتة: خوارزميات متقدمة + بيانات ضخمة + قدرة حوسبية؛ والتكامل بينهم مهم.',
     },
     {
-      en: 'AI winters: the slides explicitly label 1988–1993 an AI Winter; the existing course-data summary uses 1969–1979 for the first winter, a course-specific range rather than a cause stated in the slide.',
-      ar: 'شتاء الـ AI: السلايدات بتسمّي 1988–1993 صراحةً شتاءً للـ AI؛ وملخص بيانات المقرر بيستخدم 1969–1979 للشتاء الأول، وده نطاق خاص بملخص المقرر مش سبب صريح في السلايد.',
+      en: 'Source timeline: 1969–1979 = early knowledge-based systems; 1988–1993 = the explicitly named AI winter. XOR limitations are not a complete explanation of funding cycles.',
+      ar: 'خط المصدر الزمني: 1969–1979 = النظم المبكرة المعتمدة على المعرفة؛ 1988–1993 = شتاء الـ AI المسمّى صراحةً. محدودية XOR مش تفسير كامل لدورات التمويل.',
     },
     {
       en: 'Four approaches: thinking humanly, thinking rationally, acting humanly, acting rationally. The course focuses on acting rationally.',
@@ -547,6 +562,7 @@ export const AI_LECTURE_ONE: Lecture = {
     'ai-approaches',
     'turing-test',
     'ai-rationality',
+    'ai-perceptron',
   ],
   questions: [
     {
@@ -626,8 +642,8 @@ export const AI_LECTURE_ONE: Lecture = {
         'جوجل وقفت إنتاج شرائح TPU.',
       ],
       correctAnswer: 0,
-      explanation: 'The lecture cites the XOR limitation as a historical milestone associated with the first AI winter; it is not, by itself, a complete causal explanation of that winter.',
-      explanationAr: 'المحاضرة بتذكر محدودية XOR كمحطة مرتبطة بأول شتاء للـ AI؛ لكنها لوحدها مش تفسير كامل لأسباب الفترة دي.',
+      explanation: 'PDF p. 8 lists the 1969 perceptron/XOR limitation. It separately labels 1969–1979 as early knowledge-based systems and 1988–1993 as an AI winter; the limitation does not establish a single cause for all AI winters.',
+      explanationAr: 'صفحة PDF رقم 8 بتذكر محدودية الـ Perceptron ودالة XOR سنة 1969. وبتسمّي 1969–1979 فترة النظم المبكرة المعتمدة على المعرفة، و1988–1993 شتاءً للـ AI؛ المحدودية دي مش بتثبت سبب واحد لكل فترات الشتاء.',
     },
     {
       id: 'q-ai1-5',
@@ -731,5 +747,73 @@ export const AI_LECTURE_ONE: Lecture = {
       explanation: 'The lecture lists IBM Deep Blue’s 1997 victory over reigning world champion Garry Kasparov as a major AI milestone.',
       explanationAr: 'المحاضرة بتذكر فوز Deep Blue على بطل العالم غاري كاسباروف سنة 1997 كمحطة مهمة في تاريخ الـ AI.',
     },
+    {
+      id: 'q-ai1-11',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Compare the four historical definitions of Artificial Intelligence organized along the 2×2 matrix: Thinking Humanly, Thinking Rationally, Acting Humanly, and Acting Rationally.',
+      questionAr: 'قارن بين التعريفات التاريخية الأربعة للذكاء الاصطناعي المنظمة في مصفوفة 2×2: التفكير كالبشر، والتفكير بعقلانية، والتصرف كالبشر، والتصرف بعقلانية.',
+      correctAnswer: 'Four AI approaches 2x2 matrix compared.',
+      modelAnswer: 'The 2×2 matrix evaluates AI systems along two axes: fidelity to human performance versus an ideal standard of rationality, and internal thought processes versus external behavior: 1. Thinking Humanly (Cognitive Science): Focuses on modeling human thought processes, introspection, and neural mechanisms to understand how human minds actually work. 2. Thinking Rationally (Laws of Thought): Grounded in formal logic and syllogisms from philosophy; aims to encode logically sound deductive reasoning where conclusions necessarily follow from true premises. 3. Acting Humanly (Turing Test): Focuses on empirical operational behavior; a machine acts humanly if its external observable responses are indistinguishable from an intelligent human. 4. Acting Rationally (Rational Agent): The modern engineering foundation; an agent acts rationally if it selects actions that maximize expected goal achievement based on its percept history and available knowledge.',
+      modelAnswerAr: 'تقسم مصفوفة 2×2 مناهج الذكاء الاصطناعي بناءً على محوري: القياس بالبشر مقابل المعيار العقلاني المثالي، والعمليات الفكرية الداخلية مقابل السلوك الخارجي: 1. التفكير كالبشر (العلوم المعرفية): يركز على نمذجة العقل البشري وفهم آليات التفكير السيكولوجية والعصبية. 2. التفكير بعقلانية (قوانين الفكر): يستند إلى المنطق الصوري والفلسفي (Syllogisms) لترميز استدلال منطقي سليم يقود لنتائج حتمية صحيحة من مقدمات صادقة. 3. التصرف كالبشر (اختبار تورينج): يركز على السلوك العملي الخارجي؛ حيث تنجح الآلة إذا كان تصرفها غير قابل للتمييز عن تصرف إنسان ذكي. 4. التصرف بعقلانية (الوكيل العقلاني): هو الأساس الهندسي الحديث؛ والوكيل العقلاني هو الذي يختار الفعل الذي يحقق أفضل نتيجة متوقعة للهدف بناءً على مدركاته المتاحة.',
+      keyPoints: [
+        'Thinking Humanly: cognitive modeling and internal mental processes',
+        'Thinking Rationally: formal logic, syllogisms, and laws of thought',
+        'Acting Humanly: Turing test operational indistinguishability',
+        'Acting Rationally: Rational agent maximizing expected performance measure'
+      ]
+    },
+    {
+      id: 'q-ai1-12',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Detail the operational design of Turing’s 1950 Imitation Game, explain how the Total Turing Test extends it, and discuss why passing the test does not necessarily prove machine consciousness.',
+      questionAr: 'فصل التصميم العملي لاختبار تورينج (1950)، واشرح كيف يوسعه اختبار تورينج الشامل (Total Turing Test)، ووضح لماذا لا يثبت اجتياز الاختبار وعي الآلة بالضرورة.',
+      correctAnswer: 'Turing test, Total Turing test, and consciousness vs behavior distinction.',
+      modelAnswer: '1. Standard Turing Test (1950): Designed as an operational benchmark bypassing philosophical definitions of thinking. A human interrogator is isolated in a separate room and exchanges written text questions with a human and a computer. The computer passes if the interrogator cannot reliably distinguish which is the machine. It tests natural language processing, knowledge representation, automated reasoning, and machine learning. 2. Total Turing Test: Extends the test beyond teletype text by including physical interaction and perceptual inspection via a video camera and a haptic pass-through slot. To pass, the machine must possess computer vision (to perceive real objects) and robotics (to manipulate physical objects). 3. Consciousness vs Behavior: Passing the test proves behavioral mimicry and operational intelligence, but does not prove genuine subjective consciousness or semantic understanding (as highlighted by Searle Chinese Room argument: manipulating symbols according to grammatical rules does not imply understanding their true meaning).',
+      modelAnswerAr: '1. اختبار تورينج القياسي (1950): صُمم كمعيار عملي لتجنب الجدال الفلسفي حول تعريف التفكير. يجلس محقق بشري في غرفة منفصلة ويتبادل نصوصاً مكتوبة مع إنسان وجهاز كمبيوتر. تنجح الآلة إذا عجز المحقق عن التمييز بينهما. يتطلب اجتياز الاختبار معالجة اللغات الطبيعية، وتمثيل المعرفة، والاستدلال الآلي، والتعلم الآلي. 2. اختبار تورينج الشامل (Total Turing Test): يوسع الاختبار ليشمل الرؤية الحاسوبية والروبوتات من خلال فتحة تفاعل فيزيائية وكاميرا لاختبار إدراك وتحريك الأشياء المادية في العالم الواقعي. 3. السلوك مقابل الوعي الحقيقي: اجتياز الاختبار يثبت المحاكاة السلوكية والذكاء العملي، لكنه لا يثبت بالضرورة الوعي الذاتي أو الفهم الإدراكي الحقيقي (كما توضح حجة الغرفة الصينية لسيرل: معالجة الرموز وفق قواعد مبرمجة لا تعني فهم معناها الحقيقي).',
+      keyPoints: [
+        'Standard test: blind text exchange with human interrogator',
+        'Capabilities required: NLP, knowledge representation, automated reasoning, ML',
+        'Total Turing Test adds computer vision and robotics for physical interaction',
+        'Behavioral imitation does not inherently prove subjective consciousness or semantic comprehension'
+      ]
+    },
+    {
+      id: 'q-ai1-13',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Explain the three converging fuel pillars behind the modern deep learning explosion, and describe the historical significance of the Perceptron XOR limitation discovered in 1969.',
+      questionAr: 'اشرح الركائز الثلاث المتكاملة وراء انفجار التعلم العميق الحديث، وصف الأهمية التاريخية لمشكلة بوابة XOR في الـ Perceptron المكتشفة عام 1969.',
+      correctAnswer: 'Three AI drivers (Data, Algorithms, Compute) and Perceptron XOR limitation.',
+      modelAnswer: '1. The Three Drivers of AI: (a) Abundant Data (The Fuel): Digitization, the Internet, mobile smartphones, and IoT generated massive high-quality labeled datasets (e.g. ImageNet) necessary to train deep neural architectures. (b) Advanced Algorithms (The Engine): Mathematical breakthroughs including deep convolutional networks, backpropagation optimizations, attention mechanisms, and the 2017 Transformer architecture. (c) Massive Compute Power (Hardware Accelerators): Moving from general-purpose sequential CPUs to massively parallel GPUs (thousands of lightweight cores) and custom ASICs (Google TPUs) specialized in high-throughput matrix multiplications. 2. The Perceptron XOR Limitation (1969): Marvin Minsky and Seymour Papert mathematically proved that a single-layer perceptron can only learn linearly separable functions (like AND, OR); it is fundamentally incapable of solving non-linearly separable problems like XOR. Because they pessimistically doubted multi-layer training, funding and research dried up, triggering the First AI Winter.',
+      modelAnswerAr: '1. الركائز الثلاث لنهضة الذكاء الاصطناعي: (أ) وفرة البيانات (الوقود): أدى الإنترنت والهواتف الذكية إلى توليد مليارات البيانات الرقمية المصنفة (مثل ImageNet) اللازمة لتدريب الشبكات. (ب) الخوارزميات المتقدمة (المحرك): ابتكارات رياضية ثورية كمعمارية Transformer في 2017، وشبكات الالتفاف CNN، وخوارزميات الانتشار العكسي Backpropagation. (ج) القدرات الحوسبية الفائقة (المسرعات): الانتقال من المعالجات المركزية التسلسلية CPUs إلى معالجات الرسوميات المتوازية GPUs ورقاقات جوجل TPU المخصصة لضرب المصفوفات بسرعة فائقة. 2. معضلة XOR في الـ Perceptron (1969): أثبت مينسكي وبابرت رياضياً أن العصبون المنفرد (Single Perceptron) يقتصر على حل الدوال القابلة للفصل الخطي فقط (مثل AND و OR)، ويعجز تماماً عن حل بوابة XOR غير الخطية. وبسبب تشكيكهم في جدوى الشبكات متعددة الطبقات، توقف التمويل ودخل الذكاء الاصطناعي في أول شتاء تاريخي (First AI Winter).',
+      keyPoints: [
+        'Data as fuel: massive labeled datasets from internet and mobile devices',
+        'Algorithms as engine: Transformers, CNNs, backpropagation',
+        'Compute as hardware: parallel GPUs and Google TPUs accelerating matrix math',
+        'Minsky & Papert 1969 showed single-layer perceptron cannot solve non-linear XOR, triggering first AI winter'
+      ]
+    },
+    {
+      id: 'q-ai1-14',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Define the formal distinction between Rationality and Omniscience in AI, and explain why rational decisions must be evaluated relative to expected outcome rather than actual perfection.',
+      questionAr: 'حدد الفرق الجوهري بين العقلانية (Rationality) والقدرة المطلقة على معرفة الغيب (Omniscience) في الذكاء الاصطناعي، ووضح لماذا يُقاس القرار العقلاني بالنتيجة المتوقعة وليس بالكمال المطلق.',
+      correctAnswer: 'Rationality vs Omniscience and expected outcome evaluation.',
+      modelAnswer: '1. Rationality: A rational agent selects the action that maximizes its expected performance measure given the evidence provided by its complete percept history to date and its built-in knowledge base. Rationality is about doing the right thing under uncertainty with available information. 2. Omniscience: An omniscient agent knows the actual future outcome of its actions and possesses infinite, perfect knowledge of all hidden variables in advance; omniscience is impossible in reality. 3. Expected vs Actual Outcome: Rationality depends on the expected outcome, not the actual outcome. For example, if an agent looks both ways, sees an empty road, and legally crosses, its decision is fully rational. If an unexpected meteorite hits the agent while crossing, the outcome is catastrophic, but the agent was not irrational because it maximized expected utility based on all observable signals. Rational agents are not clairvoyant; they are judged by the logical validity and rigor of their decision-making process under uncertainty.',
+      modelAnswerAr: '1. العقلانية (Rationality): الوكيل العقلاني هو الذي يختار الفعل الذي يعظم القيمة المتوقعة لمعيار الأداء، بناءً على سجل مدركاته الحسي المتراكم حتى اللحظة ومعرفته المسبقة المتاحة. العقلانية تعني اتخاذ أفضل قرار ممكن في ظل عدم اليقين. 2. العلم المطلق (Omniscience): الوكيل كلي العلم يعرف مسبقاً النتيجة الحتمية المستقبلية لكل فعل ويمتلك معرفة كاملة بكافة المتغيرات المخفية؛ وهذا مستحيل فيزيائياً وعملياً. 3. النتيجة المتوقعة مقابل النتيجة الفعلية: تُقاس العقلانية بما كان متوقعاً وقت اتخاذ القرار وليس بما حدث بعده مصادفة. مثال: إذا تأكد المشاة من خلو الشارع وعبروا في الإشارة الخضراء، فهذا قرار عقلاني تماماً؛ ولو سقط نيزك من السماء في تلك اللحظة فالنتيجة كارثية لكن القرار ظل عقلانياً لأن الوكيل تصرف وفق أفضل استدلال متاح له. العقلانية ليست ادعاءً بمعرفة الغيب بل تعظيم للأداء المتوقع في ظل المعطيات المتاحة.',
+      keyPoints: [
+        'Rationality maximizes expected performance measure given percept history',
+        'Omniscience requires impossible perfect knowledge of future outcomes',
+        'Decisions are evaluated on expected utility at decision time, not hindsight luck',
+        'Rationality operates under uncertainty and incomplete information'
+      ]
+    }
   ],
 };

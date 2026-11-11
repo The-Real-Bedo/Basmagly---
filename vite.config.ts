@@ -8,6 +8,8 @@ export default defineConfig({
   base: process.env.BASE_PATH || '/',
   server: {
     port: 3000,
-    host: true
+    host: true,
+    // Allow ngrok tunnel hosts (free-tier URLs rotate, so match the whole domain)
+    allowedHosts: ['.ngrok-free.dev', '.ngrok-free.app']
   }
 });

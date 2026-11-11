@@ -1,6 +1,8 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import { useState } from 'react';
 import { Binary, Braces, Cpu, Fingerprint, Type, Waypoints } from 'lucide-react';
 import ArabicText from '../ArabicText';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Architecture = 'x86' | 'x64';
 type TextMode = 'narrow' | 'unicode';
@@ -40,7 +42,7 @@ const groups: { id: GroupId; title: string; titleAr: string; icon: typeof Binary
   {
     id: 'text', title: 'Strings and text', titleAr: 'النصوص والـ Strings', icon: Type,
     types: [
-      { name: 'char', meaning: 'Narrow code unit; its encoding is not always ASCII.', meaningAr: 'وحدة نصية narrow؛ وترميزها مش دايمًا ASCII.', character: true },
+      { name: 'char', meaning: 'Narrow code unit; its encoding is not always ASCII.', meaningAr: 'وحدة نصية narrow؛ وترميزها مش دايمًا ASCII.', bits: 8, character: true },
       { name: 'wchar_t', meaning: '16-bit UTF-16 code unit on Windows.', meaningAr: 'وحدة UTF-16 حجمها 16-bit على Windows.', bits: 16 },
       { name: 'LPSTR / LPCSTR', meaning: 'Mutable / constant narrow-string pointer.', meaningAr: 'مؤشر نص narrow قابل للتعديل / ثابت.', pointer: true },
       { name: 'LPWSTR / LPCWSTR', meaning: 'Mutable / constant wide-string pointer.', meaningAr: 'مؤشر نص wide قابل للتعديل / ثابت.', pointer: true },
@@ -81,7 +83,7 @@ export function Win32TypesLab() {
   const selectedType = activeGroup.types.find((type) => type.name === selectedName) ?? activeGroup.types[0];
   const selectedBits = selectedType.pointer
     ? pointerBits[architecture]
-    : selectedType.character
+    : selectedType.name === 'TCHAR'
       ? textMode === 'unicode' ? 16 : 8
       : selectedType.bits;
   const pointerWidth = pointerBits[architecture];
@@ -98,6 +100,12 @@ export function Win32TypesLab() {
     setArchitecture(next);
     setPointerChoice(null);
   };
+  const missions: ChallengeMission[] = [
+    { id: 'pointer-safe', title: 'Choose and inspect a pointer-safe type', titleAr: 'اختار وافحص نوع آمن لحجم المؤشر', goal: 'Target x64. In Pointer-width safety choose the portable pointer-sized unsigned type, then select that type in Message parameters and inspect its eight bytes.', goalAr: 'اختار x64. في أمان حجم المؤشر اختار النوع العام الـ unsigned بحجم المؤشر، وبعدها اختار نفس النوع من مجموعة الـ Message parameters وافحص بايتاته التمانية.', hint: 'DWORD remains 32-bit on x64. Look for the unsigned type whose width follows a pointer.', hintAr: 'الـ DWORD بيفضل 32-bit على x64. دوّر على النوع الـ unsigned اللي حجمه بيتبع المؤشر.', start: () => { setArchitecture('x64'); selectGroup('numbers'); setSelectedName('DWORD'); setPointerChoice('DWORD'); },
+      evaluate: () => architecture !== 'x64' ? feedback('retry', 'Use the x64 target for the eight-byte inspection.', 'استخدم هدف x64 لفحص البايتات التمانية.') : !choiceSafe ? feedback('retry', 'The safety selection must hold a pointer on both x86 and x64.', 'اختيار الأمان لازم يشيل مؤشر على x86 وx64.') : selectedType.name !== 'UINT_PTR' || selectedBits !== 64 ? feedback('pending', 'Now inspect the same type in Message parameters and count its bytes.', 'دلوقتي افحص نفس النوع في مجموعة الـ Message parameters وعدّ بايتاته.') : feedback('success', 'UINT_PTR is pointer-sized: 64 bits / 8 bytes on x64, and 32 bits on x86.', 'الـ UINT_PTR بحجم المؤشر: 64 بت، يعني 8 بايت على x64، و32 بت على x86.') },
+    { id: 'unicode-unit', title: 'Inspect a generic Unicode code unit', titleAr: 'افحص وحدة نص Unicode عامة', goal: 'Select TCHAR under Strings and text. Change the generic text build so its code unit occupies two bytes on Windows.', goalAr: 'اختار الـ TCHAR من النصوص والـ Strings. غيّر بناء النص العام عشان وحدة النص تشغل بايتين على Windows.', hint: 'The UNICODE build selects wchar_t for TCHAR; architecture does not decide a character code unit width.', hintAr: 'بناء الـ UNICODE بيختار wchar_t للـ TCHAR؛ والمعمارية مش هي اللي بتحدّد حجم وحدة النص.', start: () => { selectGroup('text'); setSelectedName('TCHAR'); setTextMode('narrow'); },
+      evaluate: () => selectedType.name === 'TCHAR' && textMode === 'unicode' && selectedBits === 16 ? feedback('success', 'TCHAR maps to wchar_t in the Unicode build: one Windows UTF-16 code unit uses 2 bytes.', 'الـ TCHAR بيتحوّل لـ wchar_t في بناء الـ Unicode: وحدة UTF-16 واحدة على Windows بتستخدم بايتين.') : feedback('retry', 'Inspect TCHAR and change the generic text build to a two-byte code unit.', 'افحص الـ TCHAR وغيّر بناء النص العام لوحدة نص من بايتين.') },
+  ];
 
   return (
     <section id="win32-types-lab" className="rounded-3xl border border-beige-300 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 sm:p-6">
@@ -109,6 +117,7 @@ export function Win32TypesLab() {
         </div>
       </header>
 
+      <LabChallenge missions={missions} />
       <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <p className="mb-2 text-sm font-semibold text-stone-800 dark:text-stone-200">Target build · إعداد الـ Build</p>
@@ -166,13 +175,16 @@ export function Win32TypesLab() {
               {selectedType.structure ? 'الحجم بيتغير حسب الحقول والمعمارية ومحاذاة الـ compiler.' : selectedType.character ? 'حجم وحدة النص: ' + selectedBits + ' bit' : 'الحجم: ' + selectedBits + ' bit (' + (selectedBits ? selectedBits / 8 : 0) + ' bytes)'}
             </ArabicText>
             {selectedBits && !selectedType.structure && (
-              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8" aria-label={selectedBits + ' bit width'}>
+              <LabWorkbench title={selectedType.name+' · memory bytes'}
+ nodes={Array.from({length:selectedBits!/8},(_,index):WorkbenchNode=>({id:'byte-'+index,label:'B'+(index+1),kind:'byte',position:[(index%4-1.5)*1.3,0,Math.floor(index/4)*1.8-.9],tone:'info',detail:'Byte '+(index+1)+' represents bits '+(index*8)+'–'+(index*8+7)+'. This illustrates width, not an actual memory address or encoding.',detailAr:'البايت '+(index+1)+' بيمثل البتات من '+(index*8)+' لـ '+(index*8+7)+'. ده توضيح للحجم، مش عنوان ذاكرة فعلي ولا ترميز.'}))}>
+<div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8" aria-label={selectedBits + ' bit width'}>
                 {Array.from({ length: selectedBits / 8 }, (_, index) => (
                   <div key={index} className="rounded-lg border border-sky-300 bg-sky-100 px-2 py-2 text-center font-mono text-xs text-sky-900 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-200">
                     B{index + 1}
                   </div>
                 ))}
               </div>
+</LabWorkbench>
             )}
           </div>
           {groupId === 'text' && (

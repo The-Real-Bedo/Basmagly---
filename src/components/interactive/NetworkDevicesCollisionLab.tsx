@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Network, Zap, Play, Flame, Cpu } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
+import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type DeviceType = 'hub' | 'switch' | 'router';
 type NodeState = 'tx' | 'rx' | 'drop' | 'collision';
@@ -32,10 +34,10 @@ interface SimView {
 }
 
 const NODES: ConnectedNode[] = [
-  { id: 'pca', name: 'PC-A', mac: 'AA:11:AA:11:AA:11', port: 1 },
-  { id: 'pcb', name: 'PC-B', mac: 'BB:22:BB:22:BB:22', port: 2 },
-  { id: 'pcc', name: 'PC-C', mac: 'CC:33:CC:33:CC:33', port: 3 },
-  { id: 'pcd', name: 'PC-D', mac: 'DD:44:DD:44:DD:44', port: 4 },
+  { id: 'pca', name: 'PC-A', mac: '02:11:AA:11:AA:11', port: 1 },
+  { id: 'pcb', name: 'PC-B', mac: '02:22:BB:22:BB:22', port: 2 },
+  { id: 'pcc', name: 'PC-C', mac: '02:33:CC:33:CC:33', port: 3 },
+  { id: 'pcd', name: 'PC-D', mac: '02:44:DD:44:DD:44', port: 4 },
 ];
 
 // Hub/Switch share one subnet; the router puts each PC on its own network.
@@ -53,9 +55,9 @@ const DEVICES: {
   border: string;
   icon: string;
 }[] = [
-  { id: 'hub', label: 'الهب (Hub)', name: 'HUB', layer: 'Layer 1 • Physical', Icon: Zap, border: 'border-amber-500', icon: 'text-amber-600 dark:text-amber-400' },
-  { id: 'switch', label: 'السويتش (Switch)', name: 'SWITCH', layer: 'Layer 2 • Data Link', Icon: Network, border: 'border-emerald-500', icon: 'text-emerald-600 dark:text-emerald-400' },
-  { id: 'router', label: 'الراوتر (Router)', name: 'ROUTER', layer: 'Layer 3 • Network', Icon: Cpu, border: 'border-sky-500', icon: 'text-sky-600 dark:text-sky-400' },
+  { id: 'hub', label: 'الـ Hub', name: 'HUB', layer: 'Layer 1 • Physical', Icon: Zap, border: 'border-amber-500 dark:border-amber-400', icon: 'text-amber-600 dark:text-amber-400' },
+  { id: 'switch', label: 'الـ Switch', name: 'SWITCH', layer: 'Layer 2 • Data Link', Icon: Network, border: 'border-emerald-500 dark:border-emerald-400', icon: 'text-emerald-600 dark:text-emerald-400' },
+  { id: 'router', label: 'الـ Router', name: 'ROUTER', layer: 'Layer 3 • Network', Icon: Cpu, border: 'border-sky-500 dark:border-sky-400', icon: 'text-sky-600 dark:text-sky-400' },
 ];
 
 const NODE_BADGE: Record<NodeState, { text: string; cls: string }> = {
@@ -66,10 +68,10 @@ const NODE_BADGE: Record<NodeState, { text: string; cls: string }> = {
 };
 
 const WIRE_CLASS: Record<NodeState, string> = {
-  tx: 'stroke-amber-500',
-  rx: 'stroke-emerald-500',
+  tx: 'stroke-amber-500 dark:stroke-amber-400',
+  rx: 'stroke-emerald-500 dark:stroke-emerald-400',
   drop: 'stroke-stone-400 dark:stroke-stone-500',
-  collision: 'stroke-rose-500',
+  collision: 'stroke-rose-500 dark:stroke-rose-400',
 };
 
 // Approximate anchor of each PC card in the 0-100 SVG space (A, B on top; C, D below).
@@ -77,21 +79,21 @@ const WIRE_ANCHORS: [number, number][] = [[25, 14], [75, 14], [25, 86], [75, 86]
 
 const COMPARISON = [
   {
-    name: 'الهب (Hub)',
+    name: 'الـ Hub',
     layer: 'Layer 1 (Physical)',
     domains: 'كل البورتات في Collision Domain واحد وBroadcast Domain واحد',
     tone: 'text-rose-700 dark:text-rose-400',
     behavior: 'مبيفهمش عناوين، بيكرر الإشارة على كل البورتات التانية',
   },
   {
-    name: 'السويتش (Switch)',
+    name: 'الـ Switch',
     layer: 'Layer 2 (Data Link)',
     domains: 'كل بورت هو Collision Domain مستقل، لكن كل البورتات في Broadcast Domain واحد',
     tone: 'text-emerald-700 dark:text-emerald-400',
     behavior: 'بيفهم MAC Address ويبعت لصاحب الشأن بس، ولو الـ MAC مجهول أو الفريم Broadcast بيعمل Flood',
   },
   {
-    name: 'الراوتر (Router)',
+    name: 'الـ Router',
     layer: 'Layer 3 (Network)',
     domains: 'كل Interface هو Collision Domain وBroadcast Domain مستقل',
     tone: 'text-sky-700 dark:text-sky-400',
@@ -285,17 +287,20 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
   };
 
   const handleDevice = (id: DeviceType) => {
+    if (isSimulating) return;
     setActiveDevice(id);
     reset();
   };
 
   const handleSender = (id: string) => {
+    if (isSimulating) return;
     setSenderId(id);
     if (id === targetId) setTargetId((NODES.find(n => n.id !== id) ?? NODES[0]).id);
     reset();
   };
 
   const handleTarget = (id: string) => {
+    if (isSimulating) return;
     setTargetId(id);
     reset();
   };
@@ -342,6 +347,40 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
 
   const tableCols =
     activeDevice === 'switch' ? ['Port', 'MAC Address', 'Device'] : ['Interface', 'Network', 'Device'];
+  const startMission = (id: DeviceType) => {
+    reset();
+    setActiveDevice(id);
+    setSenderId('pca');
+    setTargetId('pcc');
+  };
+  const missions: ChallengeMission[] = [
+    {
+      id: 'hub-collision', title: 'Expose the shared collision domain', titleAr: 'بيّن نطاق التصادم المشترك',
+      goal: 'Choose Hub and send both independent flows simultaneously. Wait for completion and inspect why neither frame arrived intact.',
+      goalAr: 'اختار الـ Hub وابعت المسارين المستقلين في نفس الوقت. استنى اكتمال الإرسال وافحص ليه مفيش Frame وصلت سليمة.',
+      hint: 'All Hub ports share a half-duplex medium. A switch separates the links.',
+      hintAr: 'كل منافذ الـ Hub بتتشارك وسيط Half-duplex. الـ Switch بيفصل الوصلات.',
+      start: () => startMission('switch'),
+      evaluate: () => activeDevice !== 'hub' ? feedback('retry', 'Choose Hub for the shared-medium experiment.', 'اختار الـ Hub لتجربة الوسيط المشترك.')
+        : isSimulating ? feedback('pending', 'Wait for the simultaneous transmission to finish.', 'استنى الإرسال المتزامن يخلص.')
+        : view.collision ? feedback('success', 'Both frames collided in one shared domain; no NIC accepted an intact frame.', 'الـ Frames الاتنين اتصادموا في نطاق مشترك واحد؛ ومفيش كارت شبكة قبل Frame سليمة.')
+        : feedback('pending', 'Send simultaneously to expose the collision.', 'ابعت في نفس الوقت عشان تبيّن التصادم.'),
+    },
+    {
+      id: 'switch-unicast', title: 'Predict known unicast acceptance', titleAr: 'توقّع قبول الـ Unicast المعروفة',
+      goal: 'Choose Switch, keep PC-A sending to PC-C, and predict which NIC accepts the ordinary unicast frame. Send once, then check.',
+      goalAr: 'اختار الـ Switch، وخلّي PC-A تبعت لـ PC-C، وتوقّع أي كارت شبكة هيقبل الـ Unicast Frame العادية. ابعت مرة وبعدها افحص.',
+      hint: 'The destination is already in the MAC table. The sender and unrelated ports are not receivers.',
+      hintAr: 'الوجهة موجودة بالفعل في جدول الـ MAC. الراسل والمنافذ اللي ملهاش علاقة مش مستقبِلين.',
+      start: () => startMission('hub'),
+      prediction: { label: 'NICs that accept the frame', labelAr: 'كروت الشبكة اللي بتقبل الـ Frame', options: NODES.map(node => ({ id: node.id, label: node.name })) },
+      evaluate: prediction => activeDevice !== 'switch' || senderId !== 'pca' || targetId !== 'pcc' ? feedback('retry', 'Use Switch with PC-A → PC-C.', 'استخدم الـ Switch من PC-A لـ PC-C.')
+        : isSimulating || view.nodes.pcc !== 'rx' ? feedback('pending', 'Predict recipients and complete an ordinary send.', 'توقّع المستقبِلين وكمّل إرسال عادي.')
+        : view.nodes.pcd === 'rx' ? feedback('retry', 'Use ordinary send for one frame, rather than the two simultaneous flows.', 'استخدم الإرسال العادي لـ Frame واحدة، بدل المسارين المتزامنين.')
+        : prediction.length === 1 && prediction[0] === 'pcc' ? feedback('success', 'Only PC-C accepted. The prelearned destination selects one switch output port.', 'PC-C بس قبلت الـ Frame. الوجهة المتعلّمة مسبقًا بتختار منفذ خرج واحد في الـ Switch.')
+        : feedback('retry', 'Compare your NIC selection with the receiving port.', 'قارن كروت الشبكة اللي اخترتها بمنفذ الاستقبال.'),
+    },
+  ];
 
   return (
     <div className="bg-white dark:bg-stone-900 rounded-3xl border border-beige-300 dark:border-stone-800 p-6 shadow-sm space-y-6">
@@ -368,19 +407,21 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
           {DEVICES.map(d => (
             <button
               key={d.id}
+              disabled={isSimulating}
               onClick={() => handleDevice(d.id)}
-              className={`flex-1 px-3 py-1.5 rounded-xl text-center transition-all ${
+              className={`flex-1 min-h-11 px-3 py-1.5 rounded-xl text-center transition-all disabled:opacity-50 ${
                 activeDevice === d.id
                   ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
                   : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-stone-100'
               }`}
             >
-              <span dir="rtl" className="font-arabic">{d.label}</span>
+              <ArabicText as="span" className="text-inherit">{d.label}</ArabicText>
             </button>
           ))}
         </div>
       </div>
 
+      <LabChallenge missions={missions} busy={isSimulating} />
       {/* Control Strip */}
       <div className="bg-[#FAF7F2] dark:bg-stone-950 p-4 rounded-2xl border border-beige-300 dark:border-stone-800 space-y-3 text-sm">
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -389,8 +430,9 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
               <ArabicText as="span" className="text-xs font-bold">الراسل (Sender)</ArabicText>
               <select
                 value={senderId}
+                disabled={isSimulating}
                 onChange={(e) => handleSender(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl border border-beige-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-mono text-xs font-bold text-stone-800 dark:text-stone-200"
+                className="min-h-11 px-2.5 py-1.5 rounded-xl border border-beige-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-mono text-xs font-bold text-stone-800 dark:text-stone-200 disabled:opacity-50"
               >
                 {NODES.map(n => (
                   <option key={n.id} value={n.id}>{n.name} ({ipOf(n, activeDevice)})</option>
@@ -402,8 +444,9 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
               <ArabicText as="span" className="text-xs font-bold">المستقبل (Target)</ArabicText>
               <select
                 value={targetId}
+                disabled={isSimulating}
                 onChange={(e) => handleTarget(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl border border-beige-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-mono text-xs font-bold text-stone-800 dark:text-stone-200"
+                className="min-h-11 px-2.5 py-1.5 rounded-xl border border-beige-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-mono text-xs font-bold text-stone-800 dark:text-stone-200 disabled:opacity-50"
               >
                 {NODES.filter(n => n.id !== senderId).map(n => (
                   <option key={n.id} value={n.id}>{n.name} ({ipOf(n, activeDevice)})</option>
@@ -439,8 +482,20 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
         </ArabicText>
       </div>
 
+      <button type="button" onClick={reset} aria-label="Reset network simulation" className="min-h-11 rounded-xl border border-beige-300 px-4 text-sm font-semibold text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800">Reset simulation</button>
+      <p className="text-xs text-stone-600 dark:text-zinc-400">Teaching model: locally administered unicast MAC addresses, one VLAN, prelearned switch destinations, and separate directly connected router networks. Full-duplex switch links have no CSMA/CD collisions.</p>
+      <ArabicText className="text-xs text-stone-600 dark:text-zinc-400">نموذج تعليمي: عناوين MAC محلية الإدارة للـ Unicast، وVLAN واحدة، ووجهات الـ Switch متعلّمة مسبقًا، وشبكات Router منفصلة ومتّصلة مباشرة. وصلات الـ Switch بنظام Full-duplex مفيهاش تصادمات CSMA/CD.</ArabicText>
       {/* Visual Canvas Area */}
-      <div className="relative bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 rounded-2xl p-4 sm:p-6 overflow-hidden">
+      <LabWorkbench title="Network devices · live ports" motionKey={view.logEn}
+ nodes={[
+  ...NODES.map<WorkbenchNode>((n, i) => ({ id: n.id, label: n.name, showValue: false, kind: 'computer', position: [i % 2 ? 3 : -3, 0, i < 2 ? -2 : 2],
+    tone: view.nodes[n.id] === 'collision' ? 'error' : view.nodes[n.id] === 'rx' ? 'success' : view.nodes[n.id] === 'tx' ? 'active' : 'neutral', value: ipOf(n, activeDevice), detail: `${n.mac} · Port ${n.port}. ${view.nodes[n.id] === 'drop' ? 'Frame received and discarded by this NIC.' : 'Inspect the highlighted port during transmission.'}`, detailAr: `${n.mac} · المنفذ ${n.port}. ${view.nodes[n.id] === 'drop' ? 'الـ Frame وصل وكارت الشبكة تجاهله.' : 'راجع المنفذ المظلل أثناء الإرسال.'}` })),
+  { id: 'central', label: device.name, kind: activeDevice === 'hub' ? 'switch' : activeDevice, position: [0, 0, 0], tone: view.collision ? 'error' : isSimulating ? 'active' : 'info', detail: device.layer, detailAr: activeDevice === 'hub' ? 'الطبقة 1 · Physical' : activeDevice === 'switch' ? 'الطبقة 2 · Data Link' : 'الطبقة 3 · Network' },
+ ]}
+ links={NODES.map<WorkbenchLink>(n => ({ id: n.id, from: view.nodes[n.id] === 'tx' ? n.id : 'central', to: view.nodes[n.id] === 'tx' ? 'central' : n.id,
+   tone: view.nodes[n.id] === 'collision' ? 'error' : view.nodes[n.id] === 'rx' ? 'success' : view.nodes[n.id] === 'tx' || view.nodes[n.id] === 'drop' ? 'active' : 'neutral', moving: isSimulating && !!view.nodes[n.id] }))}
+>
+<div className="relative bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 rounded-2xl p-4 sm:p-6 overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#dcd1bd_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
         <div className="relative mx-auto w-full max-w-xl">
@@ -503,6 +558,8 @@ export const NetworkDevicesCollisionLab: React.FC = () => {
           </div>
         </div>
       </div>
+
+      </LabWorkbench>
 
       {/* Forwarding Table */}
       <div className="bg-[#FAF7F2] dark:bg-stone-950 rounded-2xl border border-beige-300 dark:border-stone-800 p-4 space-y-3">

@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import React, { useEffect, useRef, useState } from 'react';
 import { Activity, ArrowRight, ArrowUp, Box, Check, Cloud, Code2, Cpu, Database, Layers, LayoutDashboard, Play, Radio, RotateCcw, Smartphone, Wifi } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -200,7 +201,10 @@ export const IotStackArchitectureLab: React.FC = () => {
           </div>
 
           <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-            <div className="space-y-2" aria-label={isPractical ? 'Practical stack diagram' : 'Theoretical stack diagram'}>
+            <LabWorkbench title={isPractical?'IoT · six practical blocks':'IoT · five theoretical layers'} motionKey={activeTab+'-'+layerStep}
+ nodes={layers.map<WorkbenchNode>((layer,index)=>({id:layer.id,label:layer.name,sceneLabel:'Layer '+layer.number,showValue:false,labelOnSelect:true,kind:'layer',position:[0,index*.6,0],tone:packetLayerId===layer.id?'active':selectedLayerId===layer.id?'info':'neutral',value:layer.technologies,detail:layer.role,detailAr:layer.roleAr,action:()=>setSelectedLayerId(layer.id),actionLabel:'Inspect layer',disabled:isTracing}))}
+ links={layers.slice(0,-1).map<WorkbenchLink>((layer,index)=>({id:layer.id,from:layer.id,to:layers[index+1].id,tone:layerStep===index+2?'active':'neutral',moving:layerStep===index+2}))}>
+<div className="space-y-2" aria-label={isPractical ? 'Practical stack diagram' : 'Theoretical stack diagram'}>
               {orderedLayers.map((layer) => {
                 const Icon = layer.icon;
                 const packetHere = packetLayerId === layer.id;
@@ -216,6 +220,7 @@ export const IotStackArchitectureLab: React.FC = () => {
                 </React.Fragment>;
               })}
             </div>
+</LabWorkbench>
 
             <aside className="space-y-4 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950 sm:p-5">
               <div className="flex items-start justify-between gap-3 border-b border-beige-200 pb-3 dark:border-stone-800"><div><p className="text-[13px] font-semibold uppercase tracking-wide text-stone-500 dark:text-zinc-400">Layer {selectedLayer.number} details</p><h4 className="mt-1 text-lg font-bold text-stone-900 dark:text-stone-100">{selectedLayer.name}</h4><ArabicText className="text-sm text-stone-600 dark:text-zinc-400">{selectedLayer.nameAr}</ArabicText></div><span className="rounded-xl bg-white p-2 text-stone-700 dark:bg-stone-900 dark:text-zinc-300">{React.createElement(selectedLayer.icon, { className: 'h-5 w-5' })}</span></div>
@@ -241,10 +246,17 @@ export const IotStackArchitectureLab: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <LabWorkbench title={transportMode.toUpperCase()+' · endpoint exchange'} motionKey={transportStep}
+ nodes={[
+ {id:'IoT node',label:'IoT node',kind:'sensor',position:[-2,0,0],tone:transportLog[transportLog.length-1]?.from==='IoT node'?'active':'neutral',detail:transportLog[transportLog.length-1]?.note??'Step through the transport exchange.',detailAr:transportLog[transportLog.length-1]?.noteAr??'اتقدّم خطوة بخطوة في تبادل بيانات النقل.'},
+ {id:'Server',label:'Server',kind:'server',position:[2,0,0],tone:transportLog[transportLog.length-1]?.from==='Server'?'active':'info',detail:transportLog[transportLog.length-1]?'Current packet: '+transportLog[transportLog.length-1]!.packet:'The server is waiting for a packet.',detailAr:transportLog[transportLog.length-1]?'الحزمة الحالية: '+transportLog[transportLog.length-1]!.packet:'الخادم مستني حزمة.'}
+ ]}
+ links={[{id:'transport',from:transportLog[transportLog.length-1]?.from??'IoT node',to:transportLog[transportLog.length-1]?.to??'Server',tone:transportStep>0?'active':'neutral',moving:transportStep>0}]}>
+<div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950"><p className="text-sm font-bold text-stone-900 dark:text-stone-100">IoT node</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">العقدة المرسلة</ArabicText></div>
             <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950"><p className="text-sm font-bold text-stone-900 dark:text-stone-100">Server</p><ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400">الخادم المستقبِل</ArabicText></div>
           </div>
+</LabWorkbench>
 
           <ol className="space-y-2" aria-label={transportMode === 'tcp' ? 'TCP message sequence' : 'UDP datagram sequence'}>
             {events.map((event, index) => {

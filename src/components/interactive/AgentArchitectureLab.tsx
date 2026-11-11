@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import { useState } from 'react';
 import { Activity, ArrowRight, BrainCircuit, Eye, RotateCcw, Target, Wind, Zap } from 'lucide-react';
 import ArabicText from '../ArabicText';
@@ -148,7 +149,10 @@ export function AgentArchitectureLab() {
         </div>
       </div>
 
-      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Agent perception and action loop">
+      <LabWorkbench title="Agent · perception and action" motionKey={cycle+'-'+stageIndex}
+ nodes={stages.map<WorkbenchNode>((stage,index)=>({id:String(index),label:stage.title,sceneLabel:String(index+1),showValue:false,kind: ['sensor','server','chip','robot','computer'][index] as WorkbenchNode['kind'],position:[Math.cos(index*Math.PI*2/5)*2.8,0,Math.sin(index*Math.PI*2/5)*2.8],tone:stageIndex===index?'active':'neutral',value:scenario.loop[index],detail:stage.title,detailAr:stage.titleAr}))}
+ links={stages.map<WorkbenchLink>((_,index)=>({id:String(index),from:String((index+4)%5),to:String(index),tone:stageIndex===index?'active':'neutral',moving:stageIndex===index}))}>
+<div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Agent perception and action loop">
         {stages.map((stage, index) => {
           const Icon = stage.icon;
           const active = stageIndex === index;
@@ -175,6 +179,7 @@ export function AgentArchitectureLab() {
           );
         })}
       </div>
+</LabWorkbench>
 
       <div className="mb-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto_1fr]">
         <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4 dark:border-sky-900 dark:bg-sky-950/30">

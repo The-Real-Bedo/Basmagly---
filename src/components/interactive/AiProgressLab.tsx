@@ -1,3 +1,4 @@
+import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkbench';
 import { useId, useState } from 'react';
 import {
   Brain,
@@ -225,7 +226,9 @@ export function AiFuelLab() {
         </ArabicText>
       </div>
 
-      <figure className="mt-5 rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-3 sm:p-5">
+      <LabWorkbench title="AI · resource pillars"
+ nodes={FUEL_PILLARS.map<WorkbenchNode>((pillar,index)=>({id:pillar.key,label:pillar.title,sceneLabel: ['Data','Algorithm','Compute'][index],kind:'bar',position:[(index-1)*2.3,0,0],size:[1,values[pillar.key]*.6,1],tone:values[pillar.key]===assessment?.lowest?'active':'neutral',value:values[pillar.key]+' / 5',detail:pillar.lectureCue,detailAr:pillar.lectureCueAr,action:()=>{setValues(current=>({...current,[pillar.key]:Math.min(5,current[pillar.key]+1)}));setSelectedPreset(null);clearResult()},actionLabel:'Increase resource level',disabled:values[pillar.key]>=5}))}>
+<figure className="mt-5 rounded-2xl border border-beige-300 dark:border-stone-800 bg-[#FAF7F2] dark:bg-stone-950 p-3 sm:p-5">
         <svg viewBox="0 0 600 210" className="w-full text-stone-600 dark:text-zinc-400" role="img" aria-label="Three adjustable resource towers feed an AI system; the lowest tower constrains this teaching model">
           <path d="M100 165 H500 M100 165 V182 H300 V165 M300 182 H500 V165" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.3" />
           {FUEL_PILLARS.map((pillar, index) => {
@@ -243,6 +246,7 @@ export function AiFuelLab() {
         <figcaption className="mt-2 text-[13px] text-stone-600 dark:text-zinc-400">Move a slider to reshape a pillar. Step through the flow to locate a relative constraint, not an accuracy score.</figcaption>
         <ArabicText className="text-[13px] text-stone-600 dark:text-zinc-400 mt-1">حرّك السلايدر عشان تغيّر شكل الركن. الخطوات بتوضح القيد النسبي، مش درجة دقة للنموذج.</ArabicText>
       </figure>
+</LabWorkbench>
       <div className="mt-4 flex flex-wrap gap-2" aria-label="Choose a preset">
         {PRESETS.map((preset) => (
           <button
