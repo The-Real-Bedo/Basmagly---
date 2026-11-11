@@ -41,6 +41,8 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
   // The app follows a saved choice, so seed matrix themes explicitly.
   await page.evaluateOnNewDocument(() => {
     localStorage.setItem('basmagly-theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    // Dismiss the below-768px warning gate so mobile panels render the app.
+    try { sessionStorage.setItem('basmagly-gate-dismissed', '1'); } catch { /* opaque origins deny storage */ }
   });
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

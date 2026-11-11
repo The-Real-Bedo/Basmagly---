@@ -159,6 +159,57 @@ const SOURCE_LECTURES: IoTLectureSeed[] = [
               'Interoperability solved via standardized protocols and open standards',
               'Scalability/performance solved via Edge Computing and localized filtering'
             ]
+          },
+          {
+            id: 'q-iot1-11',
+            courseId: 'iot',
+            lectureId: 'iot-lec-1',
+            type: 'essay',
+            question: 'Explain the 3-stage feedback loop in an IoT system: Data Generation, Data Communication, and Data Action, using an autonomous greenhouse as an example.',
+            questionAr: 'اشرح حلقة التغذية الراجعة ثلاثية المراحل في منظومة إنترنت الأشياء: توليد البيانات، نقل البيانات، واتخاذ القرار/الفعل، مطبقاً ذلك على مثال صوبة زراعية ذكية.',
+            correctAnswer: 'Generation, Communication, Action loop explained with autonomous greenhouse example.',
+            modelAnswer: '1) Stage 1: Data Generation (Transduction): Physical phenomena in the greenhouse (soil moisture, air temperature, ambient humidity) are sensed by specialized transducers and converted into digital electrical telemetry (e.g. soil moisture = 22%). 2) Stage 2: Data Communication: The digitized sensor readings are packaged into lightweight packets and transmitted across local wireless protocols (Zigbee/LoRa) to an IoT gateway and relayed via WAN/cellular to cloud brokers or local edge processors. 3) Stage 3: Data Action (Decision & Actuation): Control logic evaluates the telemetry against predefined threshold rules or predictive models; detecting that moisture has fallen below the 30% safe threshold, the system dispatches an actuation trigger down to a solenoid valve relay, opening the water line to irrigate the crops until optimum soil saturation is restored.',
+            modelAnswerAr: '1) المرحلة الأولى: توليد البيانات (Data Generation): تحويل الظواهر الفيزيائية داخل الصوبة (رطوبة التربة، حرارة الجو، الإضاءة) عبر حساسات متخصصة إلى إشارات كهربائية رقمية قابلة للمعالجة (مثل قراءة رطوبة 22%). 2) المرحلة الثانية: نقل البيانات (Data Communication): تجميع القراءات في حزم خفيفة وإرسالها عبر بروتوكولات لاسلكية (مثل Zigbee أو LoRa) إلى بوابة IoT ومنها عبر الإنترنت إلى السحابة أو معالج الحافة. 3) المرحلة الثالثة: اتخاذ القرار والتنفيذ (Data Action): تفحص خوارزميات التحكم البيانات، وعند اكتشاف هبوط الرطوبة عن الحد الحرج 30%، يتم إرسال أمر تشغيل فوري إلى محبس كهرومغناطيسي لضخ مياه الري تلقائياً حتى استعادة الرطوبة المثالية.',
+            keyPoints: [
+              'Data Generation via sensors transducing physical metrics',
+              'Data Communication via wireless field protocols to gateways/cloud',
+              'Data Action via decision rules triggering physical actuators'
+            ]
+          },
+          {
+            id: 'q-iot1-12',
+            courseId: 'iot',
+            lectureId: 'iot-lec-1',
+            type: 'essay',
+            question: 'Compare Edge Computing with Cloud Computing regarding latency, bandwidth consumption, offline autonomy, and computational complexity in mission-critical IoT systems.',
+            questionAr: 'قارن بين الحوسبة الحافية (Edge Computing) والحوسبة السحابية (Cloud Computing) من حيث زمن التأخير، واستهلاك الباندويث، والاستقلالية بدون إنترنت، والقدرة الحسابية في أنظمة IoT الحساسة.',
+            correctAnswer: 'Edge vs Cloud comparison across latency, bandwidth, autonomy, compute.',
+            modelAnswer: '1) Latency: Edge computing provides near-instantaneous sub-millisecond response times because processing happens adjacent to sensors on the local LAN, whereas cloud round trips introduce 50–500 ms WAN propagation delays. 2) Bandwidth Consumption: Edge nodes filter raw high-frequency noise and aggregate streams locally, transmitting only summary metrics or anomalies, dramatically slashing WAN bandwidth costs compared to streaming raw sensor data to the cloud. 3) Offline Autonomy: Edge systems maintain full operational continuity and emergency shutdown logic during complete internet outages, whereas pure cloud systems become blind and unresponsive if connection drops. 4) Computational Capacity: Cloud computing offers virtually unlimited elastic compute and distributed big data storage for training machine learning models across millions of devices, while edge hardware operates under thermal, power, and memory constraints suited for lightweight inference only.',
+            modelAnswerAr: '1) زمن التأخير (Latency): تقدم حوسبة الحافة استجابة فائقة السرعة بأجزاء من الثانية لمعالجة البيانات بجوار الحساسات مباشرة، بينما تتطلب السحابة عشرات إلى مئات المللي ثانية لعبور شبكة الإنترنت. 2) استهلاك الباندويث (Bandwidth): تقوم الحافة بفلترة الضوضاء وتلخيص القراءات محلياً وإرسال الحالات الشاذة فقط، مما يوفر تكلفة واستهلاك خطوط الإنترنت مقارنة ببث كل القراءات الخام للسحابة. 3) الاستقلالية في غياب الإنترنت (Offline Autonomy): تواصل أنظمة الحافة العمل واتخاذ قرارات الأمان والطوارئ بشكل كامل عند انقطاع الإنترنت، بينما تتوقف المنظومات السحابية البحتة تماماً. 4) القدرة الحسابية (Compute): تتفوق السحابة في توفير قدرات معالجة ضخمة غير محدودة وتخزين هائل لتدريب نماذج الذكاء الاصطناعي، بينما تقتصر الحافة على أجهزة مدمجة بموارد طاقة وذاكرة محدودة تناسب الاستدلال الخفيف.',
+            keyPoints: [
+              'Edge offers sub-millisecond local latency vs cloud WAN round-trip latency',
+              'Edge filters and aggregates to conserve WAN bandwidth',
+              'Edge provides offline fault tolerance during internet loss',
+              'Cloud provides unbounded elastic compute for big data training and deep analytics'
+            ]
+          },
+          {
+            id: 'q-iot1-13',
+            courseId: 'iot',
+            lectureId: 'iot-lec-1',
+            type: 'essay',
+            question: 'Outline the architectural pipeline of an Industrial IoT (IIoT) Predictive Maintenance system in a manufacturing plant, from vibration sensing to maintenance ticketing.',
+            questionAr: 'وضح مسار المعمارية التقنية لمنظومة صيانة تنبؤية صناعية (Predictive Maintenance) في مصنع ذكي، بدءاً من حساسات الاهتزاز وحتى إصدار تذكرة الصيانة آلياً.',
+            correctAnswer: 'IIoT Predictive Maintenance architecture pipeline from vibration to ticketing.',
+            modelAnswer: '1) High-Frequency Sensing: Piezoelectric vibration and acoustic sensors attached to machine bearings continuously capture high-frequency physical oscillations and motor surface temperatures. 2) Local Edge Preprocessing: An industrial edge gateway samples the vibration waveform, calculates Fast Fourier Transforms (FFT) and RMS acceleration, filtering out normal baseline noise and detecting harmonic peak shifts. 3) Secure WAN Ingestion: The gateway packages extracted vibration features and transmits them securely over TLS using MQTT or cellular 4G/Ethernet into an IoT cloud platform. 4) Cloud Machine Learning Inference: Cloud-hosted anomaly detection models compare incoming vibration spectra against historical wear patterns, predicting bearing failure within 72 hours. 5) Enterprise Integration & Action: The Application layer automatically generates an urgent maintenance ticket in the Enterprise Resource Planning (ERP/CMMS) system and notifies plant engineers via dashboard alerts and SMS to replace the bearing before catastrophic failure.',
+            modelAnswerAr: '1) الاستشعار عالي التردد: تثبيت حساسات اهتزاز كهروضغطية وحرارية على كراسي المحركات لمراقبة الذبذبات الميكانيكية اللحظية بدقة. 2) المعالجة المسبقة على الحافة: تلتقط البوابة الصناعية إشارات الاهتزاز وتحسب تحويلات فورييه السريعة (FFT) ومتوسط التسارع، وتقوم بتصفية الضوضاء واكتشاف الترددات غير الطبيعية محلياً. 3) النقل الآمن للسحابة: تقوم البوابة بتشفير وتغليف مؤشرات الاهتزاز المستخرجة وإرسالها عبر بروتوكول MQTT المشفر بتأمين TLS عبر شبكة 4G أو إيثرنت صناعي. 4) الاستدلال السحابي بالذكاء الاصطناعي: تفحص نماذج التعلم الآلي في السحابة أطياف الاهتزاز وتقارنها بأنماط التآكل التاريخية للتنبؤ باحتمالية انهيار الكرسي خلال 72 ساعة. 5) الربط المؤسسي واتخاذ الإجراء: تُصدر طبقة التطبيقات تذكرة صيانة فورية في نظام إدارة الصيانة المؤسسي (ERP) وترسل إشعاراً عاجلاً للمهندسين لاستبدال الجزء التالف قبل حدوث توقف مفاجئ للإنتاج.',
+            keyPoints: [
+              'Piezoelectric sensors capturing motor vibration/temperature',
+              'Edge gateway executing FFT and noise filtering',
+              'Secure MQTT/TLS transmission to cloud IoT broker',
+              'Cloud anomaly detection predicting mechanical failure',
+              'Automatic ERP maintenance ticket generation and alert notification'
+            ]
           }
         ]
   },
@@ -361,6 +412,58 @@ const SOURCE_LECTURES: IoTLectureSeed[] = [
               'All 5 layers identified in correct order from bottom to top',
               'Functions of Perception, Network, Edge, Middleware, and Application explained',
               'Concrete technology examples provided for each layer'
+            ]
+          },
+          {
+            id: 'q-iot2-13',
+            courseId: 'iot',
+            lectureId: 'iot-lec-2',
+            type: 'essay',
+            question: 'Compare MQTT, CoAP, and HTTP regarding communication paradigm, transport protocol binding, header overhead, and suitability for battery-powered IoT devices.',
+            questionAr: 'قارن بين بروتوكولات MQTT و CoAP و HTTP من حيث نمط الاتصال، وبروتوكول طبقة النقل، وحجم ترويسة البيانات (Header Overhead)، والملاءمة للأجهزة ذات البطاريات المحدودة.',
+            correctAnswer: 'MQTT vs CoAP vs HTTP architectural comparison.',
+            modelAnswer: '1) Communication Paradigm: MQTT uses an asynchronous Publish/Subscribe broker architecture (many-to-many); CoAP uses asynchronous or synchronous Request/Response (RESTful client-server with Observe capability); HTTP uses standard synchronous Request/Response client-server. 2) Transport Binding: MQTT runs over connection-oriented TCP (ensuring reliable delivery); CoAP runs over connectionless UDP (minimal overhead, handling packet loss at application layer); HTTP runs over connection-oriented TCP. 3) Header Overhead: MQTT headers are extremely lightweight (as small as 2 bytes fixed header); CoAP headers are compact binary formats (4 bytes fixed header); HTTP headers are verbose ASCII text strings (hundreds of bytes to kilobytes per transaction). 4) Battery Suitability: CoAP and MQTT are purpose-built for battery-constrained nodes because minimal byte transmissions conserve RF radio active time; HTTP drains battery rapidly due to heavy text headers and continuous TCP handshakes.',
+            modelAnswerAr: '1) نمط الاتصال: يعتمد MQTT على نموذج النشر والاشتراك (Publish/Subscribe) عبر وسيط مركزي؛ ويعتمد CoAP على نموذج الطلب والاستجابة الخفيف (RESTful Client/Server مع إمكانية المراقبة المستمرة)؛ بينما يعتمد HTTP على الطلب والاستجابة التزامني التقليدي. 2) بروتوكول النقل: يعمل MQTT فوق بروتوكول TCP الموثوق؛ بينما يعمل CoAP فوق بروتوكول UDP فائق الخفة والسرعة؛ ويعمل HTTP فوق بروتوكول TCP. 3) حجم الترويسة (Header Overhead): ترويسة MQTT صغيرة جداً ومضغوطة (تبدأ من 2 بايت فقط)؛ وترويسة CoAP ثنائية مدمجة (4 بايت فقط)؛ بينما ترويسة HTTP نصوص ASCII ثقيلة تستهلك مئات البايتات لكل طلب. 4) استهلاك البطارية: يعتبر CoAP و MQTT الأنسب للأجهزة التي تعمل على بطاريات صغيرة لأن قلة البيانات المرسلة تقلل وقت تشغيل شريحة الراديو اللاسلكية؛ بينما يستهلك HTTP البطارية بسرعة فائقة بسبب ضخامة الترويسات ومصافحات TCP المتكررة.',
+            keyPoints: [
+              'MQTT uses Pub/Sub over TCP with 2-byte minimum header',
+              'CoAP uses RESTful over UDP with 4-byte binary header',
+              'HTTP uses heavy text headers over TCP, unsuitable for micro-power IoT',
+              'Low overhead preserves battery by reducing radio transmission time'
+            ]
+          },
+          {
+            id: 'q-iot2-14',
+            courseId: 'iot',
+            lectureId: 'iot-lec-2',
+            type: 'essay',
+            question: 'Trace the protocol data unit (PDU) encapsulation lifecycle as a temperature sensor reading travels from the physical transducer up to the cloud analytics platform.',
+            questionAr: 'تتبع دورة حياة تغليف البيانات (PDU Encapsulation) أثناء انتقال قراءة حساس الحرارة من المحول الفيزيائي وحتى منصة التحليلات السحابية.',
+            correctAnswer: 'Sensor data PDU lifecycle from Bits to Frames, Packets, Segments, and Application Data.',
+            modelAnswer: '1) Physical Transduction: The physical thermal state is digitized into raw electrical signals, converted into digital data bits (0s and 1s) and modulated onto radio frequencies (e.g., 2.4 GHz FSK/DSSS). 2) Data Link Framing: The MAC layer frames the bits into Data Link Frames, appending MAC source/destination addresses and Frame Check Sequence (FCS/CRC) for localized error checking. 3) Network Layer Packaging: The frame payload is packaged into an IP Packet (IPv4 or 6LoWPAN/IPv6), adding logical IP addresses and routing hops. 4) Transport Layer Segmentation: The packet data carries a Transport Layer Segment (TCP with port numbers and sequence tracking) or Datagram (UDP with lightweight port headers). 5) Application Layer Serialization: The innermost payload is the application PDU formatted as an MQTT PUBLISH packet or JSON payload (e.g. {"temp": 24.5, "unit": "C"}), which is ingested and parsed by the cloud platform.',
+            modelAnswerAr: '1) الإدراك الفيزيائي (Physical Layer): تحويل درجة الحرارة من مؤثر فيزيائي إلى إشارات كهربائية رقمية تُبث كبتات ثنائية (Bits) عبر موجات الراديو اللاسلكية. 2) إطار ربط البيانات (Data Link Layer): تجميع البتات في إطار (Frame) وإضافة عناوين الـ MAC الفيزيائية للمرسل والمستقبل وخاتمة فحص الأخطاء (CRC/FCS). 3) حزمة الشبكة (Network Layer): تغليف الإطار داخل حزمة بيانات (IP Packet) وإضافة عناوين الـ IP المنطقية لتوجيه الحزمة عبر الشبكات والموجهات. 4) قطاع النقل (Transport Layer): تضمين الحزمة داخل قطاع نقل (TCP Segment) لضمان الترتيب والتسليم أو (UDP Datagram) للسرعة المباشرة مع تحديد أرقام المنافذ (Port Numbers). 5) حمولة التطبيقات (Application Layer): استخراج رسالة التطبيق المشفرة (مثل رسالة MQTT PUBLISH أو ملف JSON يحتوي على قيمة الحرارة {"temp": 24.5}) حيث تستقبلها السحابة وتعرضها للمستخدم.',
+            keyPoints: [
+              'Physical Layer converts to Bits and modulates RF',
+              'Data Link Layer frames with MAC addresses and CRC checksums',
+              'Network Layer creates IP Packets for multi-hop routing',
+              'Transport Layer segments with TCP/UDP port tracking',
+              'Application Layer delivers MQTT/JSON telemetry to platform'
+            ]
+          },
+          {
+            id: 'q-iot2-15',
+            courseId: 'iot',
+            lectureId: 'iot-lec-2',
+            type: 'essay',
+            question: 'Compare Bluetooth Low Energy (BLE), Zigbee, Wi-Fi, and LoRaWAN regarding typical operational range, data rate, power profile, and ideal IoT deployment scenarios.',
+            questionAr: 'قارن بين تقنيات الاتصال اللاسلكي BLE و Zigbee و Wi-Fi و LoRaWAN من حيث مدى التغطية، ومعدل نقل البيانات، واستهلاك الطاقة، وأفضل سيناريو تطبيق لكل منها.',
+            correctAnswer: 'BLE, Zigbee, Wi-Fi, LoRaWAN wireless protocols comparison.',
+            modelAnswer: '1) Bluetooth Low Energy (BLE): Range: ~10 meters (Personal Area Network); Data Rate: 1–2 Mbps; Power: Very low (years on coin cell); Ideal Use: Wearables, fitness trackers, asset beacons. 2) Zigbee: Range: 10–100 meters with multi-hop mesh routing; Data Rate: ~250 kbps; Power: Low (battery operated); Ideal Use: Smart home lighting, automated building controls, HVAC sensors. 3) Wi-Fi (802.11): Range: 50–100 meters; Data Rate: High (54 Mbps to Gbps); Power: High (requires continuous mains or rechargeable power); Ideal Use: High-bandwidth video streaming security cameras, smart home hubs. 4) LoRaWAN: Range: Long (2–15+ km); Data Rate: Ultra-low (0.3–50 kbps); Power: Extremely low (5–10 years on single battery); Ideal Use: Smart agriculture, city-wide water metering, remote environmental monitoring.',
+            modelAnswerAr: '1) تقنية BLE (بلوتوث منخفض الطاقة): المدى: حوالي 10 أمتار (شبكة شخصية PAN)؛ معدل النقل: 1-2 ميجابت/ث؛ استهلاك الطاقة: ضئيل جداً (يعمل لسنوات على بطارية ساعة)؛ أفضل استخدام: الأجهزة القابلة للارتداء والساعات الذكية ومحددات المواقع. 2) تقنية Zigbee: المدى: 10-100 متر مع إمكانية التوسع عبر شبكة Mesh ممتدة؛ معدل النقل: حوالي 250 كيلوبت/ث؛ استهلاك الطاقة: منخفض؛ أفضل استخدام: أنظمة المنازل الذكية، التحكم بالإضاءة والتكييف، وحساسات المباني. 3) تقنية Wi-Fi: المدى: 50-100 متر؛ معدل النقل: عالي جداً (من 54 ميجابت إلى جيجابت)؛ استهلاك الطاقة: مرتفع (يتطلب مصدر كهرباء دائم)؛ أفضل استخدام: كاميرات المراقبة وبث الفيديو والأجهزة المنزلية الكبيرة. 4) تقنية LoRaWAN: المدى: بعيد المدى (2 إلى 15+ كم)؛ معدل النقل: منخفض جداً (بضعة كيلوبتات فقط)؛ استهلاك الطاقة: متناهي الصغر (5 إلى 10 سنوات على بطارية واحدة)؛ أفضل استخدام: الزراعة الذكية، عدادات المياه والكهرباء في المدن، ومراقبة البيئة عن بعد.',
+            keyPoints: [
+              'BLE: Short range (10m), low power, wearables and health sensors',
+              'Zigbee: Local mesh network (100m), low power, smart home and building automation',
+              'Wi-Fi: Local range (100m), high bandwidth, high power, video streaming',
+              'LoRaWAN: Long range (km), ultra-low power, low data rate, agricultural/city monitoring'
             ]
           }
         ]

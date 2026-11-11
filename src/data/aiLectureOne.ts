@@ -747,5 +747,73 @@ export const AI_LECTURE_ONE: Lecture = {
       explanation: 'The lecture lists IBM Deep Blue’s 1997 victory over reigning world champion Garry Kasparov as a major AI milestone.',
       explanationAr: 'المحاضرة بتذكر فوز Deep Blue على بطل العالم غاري كاسباروف سنة 1997 كمحطة مهمة في تاريخ الـ AI.',
     },
+    {
+      id: 'q-ai1-11',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Compare the four historical definitions of Artificial Intelligence organized along the 2×2 matrix: Thinking Humanly, Thinking Rationally, Acting Humanly, and Acting Rationally.',
+      questionAr: 'قارن بين التعريفات التاريخية الأربعة للذكاء الاصطناعي المنظمة في مصفوفة 2×2: التفكير كالبشر، والتفكير بعقلانية، والتصرف كالبشر، والتصرف بعقلانية.',
+      correctAnswer: 'Four AI approaches 2x2 matrix compared.',
+      modelAnswer: 'The 2×2 matrix evaluates AI systems along two axes: fidelity to human performance versus an ideal standard of rationality, and internal thought processes versus external behavior: 1. Thinking Humanly (Cognitive Science): Focuses on modeling human thought processes, introspection, and neural mechanisms to understand how human minds actually work. 2. Thinking Rationally (Laws of Thought): Grounded in formal logic and syllogisms from philosophy; aims to encode logically sound deductive reasoning where conclusions necessarily follow from true premises. 3. Acting Humanly (Turing Test): Focuses on empirical operational behavior; a machine acts humanly if its external observable responses are indistinguishable from an intelligent human. 4. Acting Rationally (Rational Agent): The modern engineering foundation; an agent acts rationally if it selects actions that maximize expected goal achievement based on its percept history and available knowledge.',
+      modelAnswerAr: 'تقسم مصفوفة 2×2 مناهج الذكاء الاصطناعي بناءً على محوري: القياس بالبشر مقابل المعيار العقلاني المثالي، والعمليات الفكرية الداخلية مقابل السلوك الخارجي: 1. التفكير كالبشر (العلوم المعرفية): يركز على نمذجة العقل البشري وفهم آليات التفكير السيكولوجية والعصبية. 2. التفكير بعقلانية (قوانين الفكر): يستند إلى المنطق الصوري والفلسفي (Syllogisms) لترميز استدلال منطقي سليم يقود لنتائج حتمية صحيحة من مقدمات صادقة. 3. التصرف كالبشر (اختبار تورينج): يركز على السلوك العملي الخارجي؛ حيث تنجح الآلة إذا كان تصرفها غير قابل للتمييز عن تصرف إنسان ذكي. 4. التصرف بعقلانية (الوكيل العقلاني): هو الأساس الهندسي الحديث؛ والوكيل العقلاني هو الذي يختار الفعل الذي يحقق أفضل نتيجة متوقعة للهدف بناءً على مدركاته المتاحة.',
+      keyPoints: [
+        'Thinking Humanly: cognitive modeling and internal mental processes',
+        'Thinking Rationally: formal logic, syllogisms, and laws of thought',
+        'Acting Humanly: Turing test operational indistinguishability',
+        'Acting Rationally: Rational agent maximizing expected performance measure'
+      ]
+    },
+    {
+      id: 'q-ai1-12',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Detail the operational design of Turing’s 1950 Imitation Game, explain how the Total Turing Test extends it, and discuss why passing the test does not necessarily prove machine consciousness.',
+      questionAr: 'فصل التصميم العملي لاختبار تورينج (1950)، واشرح كيف يوسعه اختبار تورينج الشامل (Total Turing Test)، ووضح لماذا لا يثبت اجتياز الاختبار وعي الآلة بالضرورة.',
+      correctAnswer: 'Turing test, Total Turing test, and consciousness vs behavior distinction.',
+      modelAnswer: '1. Standard Turing Test (1950): Designed as an operational benchmark bypassing philosophical definitions of thinking. A human interrogator is isolated in a separate room and exchanges written text questions with a human and a computer. The computer passes if the interrogator cannot reliably distinguish which is the machine. It tests natural language processing, knowledge representation, automated reasoning, and machine learning. 2. Total Turing Test: Extends the test beyond teletype text by including physical interaction and perceptual inspection via a video camera and a haptic pass-through slot. To pass, the machine must possess computer vision (to perceive real objects) and robotics (to manipulate physical objects). 3. Consciousness vs Behavior: Passing the test proves behavioral mimicry and operational intelligence, but does not prove genuine subjective consciousness or semantic understanding (as highlighted by Searle Chinese Room argument: manipulating symbols according to grammatical rules does not imply understanding their true meaning).',
+      modelAnswerAr: '1. اختبار تورينج القياسي (1950): صُمم كمعيار عملي لتجنب الجدال الفلسفي حول تعريف التفكير. يجلس محقق بشري في غرفة منفصلة ويتبادل نصوصاً مكتوبة مع إنسان وجهاز كمبيوتر. تنجح الآلة إذا عجز المحقق عن التمييز بينهما. يتطلب اجتياز الاختبار معالجة اللغات الطبيعية، وتمثيل المعرفة، والاستدلال الآلي، والتعلم الآلي. 2. اختبار تورينج الشامل (Total Turing Test): يوسع الاختبار ليشمل الرؤية الحاسوبية والروبوتات من خلال فتحة تفاعل فيزيائية وكاميرا لاختبار إدراك وتحريك الأشياء المادية في العالم الواقعي. 3. السلوك مقابل الوعي الحقيقي: اجتياز الاختبار يثبت المحاكاة السلوكية والذكاء العملي، لكنه لا يثبت بالضرورة الوعي الذاتي أو الفهم الإدراكي الحقيقي (كما توضح حجة الغرفة الصينية لسيرل: معالجة الرموز وفق قواعد مبرمجة لا تعني فهم معناها الحقيقي).',
+      keyPoints: [
+        'Standard test: blind text exchange with human interrogator',
+        'Capabilities required: NLP, knowledge representation, automated reasoning, ML',
+        'Total Turing Test adds computer vision and robotics for physical interaction',
+        'Behavioral imitation does not inherently prove subjective consciousness or semantic comprehension'
+      ]
+    },
+    {
+      id: 'q-ai1-13',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Explain the three converging fuel pillars behind the modern deep learning explosion, and describe the historical significance of the Perceptron XOR limitation discovered in 1969.',
+      questionAr: 'اشرح الركائز الثلاث المتكاملة وراء انفجار التعلم العميق الحديث، وصف الأهمية التاريخية لمشكلة بوابة XOR في الـ Perceptron المكتشفة عام 1969.',
+      correctAnswer: 'Three AI drivers (Data, Algorithms, Compute) and Perceptron XOR limitation.',
+      modelAnswer: '1. The Three Drivers of AI: (a) Abundant Data (The Fuel): Digitization, the Internet, mobile smartphones, and IoT generated massive high-quality labeled datasets (e.g. ImageNet) necessary to train deep neural architectures. (b) Advanced Algorithms (The Engine): Mathematical breakthroughs including deep convolutional networks, backpropagation optimizations, attention mechanisms, and the 2017 Transformer architecture. (c) Massive Compute Power (Hardware Accelerators): Moving from general-purpose sequential CPUs to massively parallel GPUs (thousands of lightweight cores) and custom ASICs (Google TPUs) specialized in high-throughput matrix multiplications. 2. The Perceptron XOR Limitation (1969): Marvin Minsky and Seymour Papert mathematically proved that a single-layer perceptron can only learn linearly separable functions (like AND, OR); it is fundamentally incapable of solving non-linearly separable problems like XOR. Because they pessimistically doubted multi-layer training, funding and research dried up, triggering the First AI Winter.',
+      modelAnswerAr: '1. الركائز الثلاث لنهضة الذكاء الاصطناعي: (أ) وفرة البيانات (الوقود): أدى الإنترنت والهواتف الذكية إلى توليد مليارات البيانات الرقمية المصنفة (مثل ImageNet) اللازمة لتدريب الشبكات. (ب) الخوارزميات المتقدمة (المحرك): ابتكارات رياضية ثورية كمعمارية Transformer في 2017، وشبكات الالتفاف CNN، وخوارزميات الانتشار العكسي Backpropagation. (ج) القدرات الحوسبية الفائقة (المسرعات): الانتقال من المعالجات المركزية التسلسلية CPUs إلى معالجات الرسوميات المتوازية GPUs ورقاقات جوجل TPU المخصصة لضرب المصفوفات بسرعة فائقة. 2. معضلة XOR في الـ Perceptron (1969): أثبت مينسكي وبابرت رياضياً أن العصبون المنفرد (Single Perceptron) يقتصر على حل الدوال القابلة للفصل الخطي فقط (مثل AND و OR)، ويعجز تماماً عن حل بوابة XOR غير الخطية. وبسبب تشكيكهم في جدوى الشبكات متعددة الطبقات، توقف التمويل ودخل الذكاء الاصطناعي في أول شتاء تاريخي (First AI Winter).',
+      keyPoints: [
+        'Data as fuel: massive labeled datasets from internet and mobile devices',
+        'Algorithms as engine: Transformers, CNNs, backpropagation',
+        'Compute as hardware: parallel GPUs and Google TPUs accelerating matrix math',
+        'Minsky & Papert 1969 showed single-layer perceptron cannot solve non-linear XOR, triggering first AI winter'
+      ]
+    },
+    {
+      id: 'q-ai1-14',
+      courseId: 'ai',
+      lectureId: 'ai-lec-1',
+      type: 'essay',
+      question: 'Define the formal distinction between Rationality and Omniscience in AI, and explain why rational decisions must be evaluated relative to expected outcome rather than actual perfection.',
+      questionAr: 'حدد الفرق الجوهري بين العقلانية (Rationality) والقدرة المطلقة على معرفة الغيب (Omniscience) في الذكاء الاصطناعي، ووضح لماذا يُقاس القرار العقلاني بالنتيجة المتوقعة وليس بالكمال المطلق.',
+      correctAnswer: 'Rationality vs Omniscience and expected outcome evaluation.',
+      modelAnswer: '1. Rationality: A rational agent selects the action that maximizes its expected performance measure given the evidence provided by its complete percept history to date and its built-in knowledge base. Rationality is about doing the right thing under uncertainty with available information. 2. Omniscience: An omniscient agent knows the actual future outcome of its actions and possesses infinite, perfect knowledge of all hidden variables in advance; omniscience is impossible in reality. 3. Expected vs Actual Outcome: Rationality depends on the expected outcome, not the actual outcome. For example, if an agent looks both ways, sees an empty road, and legally crosses, its decision is fully rational. If an unexpected meteorite hits the agent while crossing, the outcome is catastrophic, but the agent was not irrational because it maximized expected utility based on all observable signals. Rational agents are not clairvoyant; they are judged by the logical validity and rigor of their decision-making process under uncertainty.',
+      modelAnswerAr: '1. العقلانية (Rationality): الوكيل العقلاني هو الذي يختار الفعل الذي يعظم القيمة المتوقعة لمعيار الأداء، بناءً على سجل مدركاته الحسي المتراكم حتى اللحظة ومعرفته المسبقة المتاحة. العقلانية تعني اتخاذ أفضل قرار ممكن في ظل عدم اليقين. 2. العلم المطلق (Omniscience): الوكيل كلي العلم يعرف مسبقاً النتيجة الحتمية المستقبلية لكل فعل ويمتلك معرفة كاملة بكافة المتغيرات المخفية؛ وهذا مستحيل فيزيائياً وعملياً. 3. النتيجة المتوقعة مقابل النتيجة الفعلية: تُقاس العقلانية بما كان متوقعاً وقت اتخاذ القرار وليس بما حدث بعده مصادفة. مثال: إذا تأكد المشاة من خلو الشارع وعبروا في الإشارة الخضراء، فهذا قرار عقلاني تماماً؛ ولو سقط نيزك من السماء في تلك اللحظة فالنتيجة كارثية لكن القرار ظل عقلانياً لأن الوكيل تصرف وفق أفضل استدلال متاح له. العقلانية ليست ادعاءً بمعرفة الغيب بل تعظيم للأداء المتوقع في ظل المعطيات المتاحة.',
+      keyPoints: [
+        'Rationality maximizes expected performance measure given percept history',
+        'Omniscience requires impossible perfect knowledge of future outcomes',
+        'Decisions are evaluated on expected utility at decision time, not hindsight luck',
+        'Rationality operates under uncertainty and incomplete information'
+      ]
+    }
   ],
 };

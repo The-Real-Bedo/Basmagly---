@@ -81,6 +81,10 @@ console.log('AI model fixtures passed: training, clipping, legal shortest paths,
 (async () => {
   const browser = await puppeteer.launch({ executablePath: process.env.BASMAGLY_BROWSER_PATH || '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser', headless: true, pipe: true });
   const page = await browser.newPage(), errors = [];
+  await page.evaluateOnNewDocument(() => {
+    // Dismiss the below-768px warning gate so the 375px panels render the app.
+    try { sessionStorage.setItem('basmagly-gate-dismissed', '1'); } catch { /* storage may be blocked by a later test */ }
+  });
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   let root;

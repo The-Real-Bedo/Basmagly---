@@ -15,6 +15,11 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     pipe: true,
   });
   const page = await browser.newPage();
+  // The app gates screens below 768px behind a warning; dismiss it for the
+  // mobile matrix so the real layout is still exercised at 375px.
+  await page.evaluateOnNewDocument(() => {
+    try { sessionStorage.setItem('basmagly-gate-dismissed', '1'); } catch { /* about:blank and opaque origins deny storage */ }
+  });
   await page.setViewport({ width: 375, height: 900 });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -118,6 +123,18 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       mode,
     );
     await ready();
+  }
+  async function checkbox(index) {
+    await page.$$eval(
+      `${root} input[type="checkbox"]`,
+      (elements, index) => {
+        const element = elements[index];
+        if (!element || element.disabled) throw new Error('Checkbox unavailable');
+        element.click();
+      },
+      index,
+    );
+    await delay(120);
   }
   async function byteCount(count) {
     assert.equal(
@@ -243,6 +260,9 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           await expect(/Cycle 1 · Step 1/);
           break;
         case 'search-visualizer':
+          // Default preset is now the Goal-13 slide tree; the A → B → G → L → O
+          // trace lives in the "Lecture 4 tree · Goal O" preset.
+          await button(/Lecture 4 tree/);
           for (const [algorithm, expectedExpansions] of [
             ['BFS', 12],
             ['UCS', 15],
@@ -622,6 +642,71 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
               `${root} button[aria-label="All output samples computed"]:disabled`,
             ),
           );
+          break;
+        case 'bfs-queue-lab':
+          await button(/^Step/);
+          await expect(/Steps: 1 \| Current Queue: 2/);
+          await expect(/Dequeued 1 \(depth 0\)\. Enqueued 2 children \[2, 3\] at tail/);
+          await button(/^Step/);
+          await button(/^Step/);
+          // Both depth-1 siblings must leave the head before any depth-2 node.
+          await expect(/Dequeued 3 \(depth 1\)/);
+          for (let i = 0; i < 3; i++) await button(/^Step/);
+          await expect(/Goal 13 Found!/);
+          await expect(/Goal 13 GENERATED and enqueued/);
+          break;
+        case 'dfs-stack-lab':
+          await button(/^Step/);
+          await button(/^Step/);
+          await expect(/Current Stack Depth: 3/);
+          await button(/^Step/);
+          await expect(/All children of F exhausted\. Backtracking: Popped F from stack, returning to B/);
+          await expect(/Current Stack Depth: 2/);
+          await expect(/Peak Depth \(Max O\(bm\)\): 3/);
+          break;
+        case 'ucs-priority-lab':
+          await button(/^Step/);
+          await expect(/Expanded S \(g=0\)\. Relaxed 3 edges\. Reordered Priority Queue/);
+          await button(/^Step/);
+          await expect(/Expanded A \(g=1\)/);
+          await button(/^Step/);
+          await expect(/Expanded B \(g=3\)/);
+          await button(/^Step/);
+          await expect(/Optimal Solution Found by UCS!/);
+          await expect(/g\(n\) = 4/);
+          break;
+        case 'ipv6-compress':
+          await checkbox(0);
+          await expect(/2041:0:140f:0:0:0:875b:131b/);
+          await expect(/Rule 1 applied/);
+          await checkbox(1);
+          await expect(/2041:0:140f::875b:131b/);
+          await expect(/Both rules applied/);
+          await select(0, 'expand');
+          await expect(/fd00:0000:0000:4100:0000:0000:0000:0000/);
+          await expect(/The double colon had covered 4 missing zero hextets/);
+          break;
+        case 'eui-64-lab':
+          await select(0, 'FC-99-47-75-CE-E0');
+          await button(/^Step/);
+          await expect(/STEP 1 \/ 3/);
+          await button(/^Step/);
+          await expect(/STEP 2 \/ 3/);
+          await expect(/inserted/);
+          await button(/^Step/);
+          await expect(/STEP 3 \/ 3/);
+          await expect(/FE99:47FF:FE75:CEE0/);
+          await expect(/2001:0DB8:ACAD:0001:FE99:47FF:FE75:CEE0\/64/);
+          break;
+        case 'ipv6-structure-3d':
+          await expect(/Inspecting · all eight hextets/i);
+          await button(/Subnet ID · \/16/);
+          await expect(/Inspecting · Subnet ID/i);
+          await expect(/1 hextet · 16 bits/);
+          await button(/Global Routing Prefix · \/48/);
+          await expect(/3 hextets · 48 bits/);
+          await button(/Top view/);
+          await button(/Reset 3D camera/);
           break;
         default:
           throw new Error(`Missing interaction flow: ${lab.id}`);

@@ -93,11 +93,13 @@ export const SIGNAL_PROCESSING_COURSE: Course = {
           "bulletPoints": [
             "Impulse–step relation: δ[n] = u[n] − u[n−1]. Conversely u[n] = Σₖ₌₋∞ⁿ δ[k]. Therefore u[n] + u[−n] equals 1 away from 0 but equals 2 at 0 under this convention.",
             "Exponential cases: For increasing n, 0 < a < 1 decays; a > 1 grows; −1 < a < 0 decays with alternating sign; a < −1 grows in magnitude with alternating sign. A two-sided aⁿ need not be bounded in both directions.",
+            "LTI eigenfunction property (book p. 14): Exponential sequences are eigenfunctions of LTI systems. When an exponential signal x[n] = zⁿ (or eʲʷⁿ) is applied to an LTI system, the output is the identical exponential sequence scaled by a complex scalar H(z), so y[n] = H(z)zⁿ. This property simplifies system analysis and forms the mathematical foundation of both the Z-transform and the Discrete-Time Fourier Transform (DTFT).",
             "Support example: If x is zero outside −2 ≤ n ≤ 4, x[n−3] can only be nonzero for 1 ≤ n ≤ 7. For x[−n+2], solve −2 ≤ −n+2 ≤ 4 to obtain −2 ≤ n ≤ 4. These intervals permit, but do not guarantee, nonzero values."
           ],
           "bulletPointsAr": [
             "العلاقة بين النبضة والخطوة: δ[n] = u[n] − u[n−1]. والعكس u[n] مجموع δ[k] من سالب ما لا نهاية لحد n. عشان كده u[n] + u[−n] قيمتها 1 بعيد عن الصفر، لكن 2 عند الصفر حسب التعريف ده.",
             "حالات الأسّي: مع زيادة n، لو 0 < a < 1 بيضمحل؛ ولو a > 1 بينمو؛ ولو −1 < a < 0 بيضمحل وإشارته بتتبادل؛ ولو a < −1 مقداره بينمو وإشارته بتتبادل. الإشارة aⁿ على الاتجاهين مش لازم تكون محدودة في الاتجاهين.",
+            "خاصية الدالة الذاتية لأنظمة LTI (الكتاب ص 14): الإشارات الأسية دوال ذاتية (Eigenfunctions) لأنظمة LTI. عند تمرير x[n] = zⁿ (أو eʲʷⁿ) عبر نظام LTI، بيكون الخرج هو نفس الإشارة الأسية مضروبة في معامل قياسي مركب H(z)، بحيث y[n] = H(z)zⁿ. الخاصية دي بتبسّط تحليل الأنظمة وهي الأساس الرياضي لتحويل Z وتحويل فورييه للزمن المتقطع (DTFT).",
             "مثال حدود الإشارة: لو x صفر خارج −2 ≤ n ≤ 4، يبقى x[n−3] ممكن تكون غير صفر بس عند 1 ≤ n ≤ 7. وفي x[−n+2] حل −2 ≤ −n+2 ≤ 4 فتلاقي −2 ≤ n ≤ 4. المجالات دي بتسمح بقيم غير صفر، لكنها مش بتضمنها."
           ],
           "keyRule": "Work with the full argument inside x[·]. For guaranteed zeros, state the complement of the allowed support interval. Source: SignalProcessing.pdf, PDF pp. 12–15, 22.",
@@ -162,12 +164,14 @@ export const SIGNAL_PROCESSING_COURSE: Course = {
           "bulletPoints": [
             "Why convolution works: Decompose x[n] into scaled shifted impulses. Time invariance shifts h by the same amount; linearity scales and adds those responses. Flip h[k] into h[n−k], multiply overlaps, and sum.",
             "Moving-average example: h[0]=h[1]=h[2]=1/3, with zero elsewhere. For x=[3,0,6], zero-padded convolution is y=[1,1,3,2,2]. The n=2 output is (6+0+3)/3 = 3.",
+            "Foundation slide convolution example and table correction (sig.pdf pp. 5–11): For input x[n] = [2, 3, 1] (n = 0, 1, 2) and impulse response h[n] = [1, −0.5] (n = 0, 1), the convolution output has length Lx + Lh − 1 = 4 spanning n = 0, 1, 2, 3: y[0] = 2, y[1] = 2, y[2] = −0.5, and y[3] = −0.5. Crucial source correction: Slide 11 summarizes this in a table whose final row is labeled 'All other n' with −0.5 in the y[n] column. This is misleading; −0.5 is strictly the output for n = 3 (calculated on slide 10 as 1 × (−0.5) = −0.5). For all other indices (n < 0 and n > 3), y[n] is 0, maintaining finite support.",
             "Difference equation: a₀y[n]+Σₖ₌₁ᴺ aₖy[n−k] = Σₖ₌₀ᴹ bₖx[n−k]. With a₀≠0, divide by a₀ and solve for y[n]; the signs of feedback terms change when moved to the right.",
             "FIR versus feedback: An output formed only from a finite set of current/past inputs is FIR. Feedback can yield an IIR response, but constant coefficients alone do not guarantee causality or stability; the equation and realization matter."
           ],
           "bulletPointsAr": [
             "ليه الالتفاف بينفع: فكّك x[n] لنبضات مزاحة ومضروبة في معاملات. الثبات الزمني بيزيح h بنفس المقدار؛ والخطية بتضرب وتجمع الاستجابات. اعكس h[k] إلى h[n−k]، واضرب نقاط التداخل واجمع.",
             "مثال المتوسط المتحرك: h[0]=h[1]=h[2]=1/3 وصفر غير كده. لدخل x=[3,0,6] مع أصفار خارج المجال، الالتفاف y=[1,1,3,2,2]. والخرج عند n=2 هو (6+0+3)/3 = 3.",
+            "مثال الالتفاف وتصحيح جدول الشرائح (ملف sig.pdf ص 5–11): لدخل x[n] = [2, 3, 1] عند n = 0, 1, 2 واستجابة نبضة h[n] = [1, −0.5] عند n = 0, 1، خرج الالتفاف طوله Lx + Lh − 1 = 4 على الفهارس n = 0, 1, 2, 3 وقيمه: y[0] = 2 و y[1] = 2 و y[2] = −0.5 و y[3] = −0.5. تصحيح مهم لجدول المصدر: شريحة 11 تلخص ذلك في جدول صفه الأخير مسمى 'All other n' وتحته −0.5 في عمود y[n]. هذا مضلل لأن −0.5 هي قيمة y[3] فقط (المحسوبة في شريحة 10: 1 × (−0.5) = −0.5). لكل الفهارس الأخرى (n < 0 و n > 3) الخرج y[n] يساوي 0 تماماً حفاظاً على محدودية الدعم.",
             "معادلة الفروق: a₀y[n]+Σₖ₌₁ᴺ aₖy[n−k] = Σₖ₌₀ᴹ bₖx[n−k]. لو a₀≠0 اقسم عليه واعزل y[n]؛ وإشارات حدود التغذية الراجعة بتتغيّر لما ننقلها للطرف التاني.",
             "الـ FIR والتغذية الراجعة: خرج من عدد محدود من المدخلات الحالية والسابقة بس يبقى FIR. التغذية الراجعة ممكن تطلع استجابة IIR، لكن ثبات المعاملات لوحده مش ضمان للسببية أو الاستقرار؛ المعادلة وطريقة التنفيذ مهمين."
           ],
@@ -602,10 +606,10 @@ export const SIGNAL_PROCESSING_COURSE: Course = {
       "id": "signal-chapter-1-sheet",
       "courseId": "signal-processing",
       "sheetNumber": 1,
-      "title": "Chapter 1 — Original Book Exercises",
-      "titleAr": "الفصل الأول — أسئلة الكتاب الأصلية",
-      "brief": "All 23 numbered Chapter 1 exercises on PDF pages 22–25, with book-grounded worked and short model answers (not an official answer key). Question 23 appears above the Chapter 2 heading; some mathematical expressions in its original options are missing from the supplied PDF and are explicitly marked, not invented.",
-      "briefAr": "كل الـ 23 سؤال المرقّمين للفصل الأول في صفحات PDF 22–25، بإجابات محلولة ومختصرة مبنية على الكتاب، مش مفتاح إجابة رسمي. سؤال 23 موجود فوق عنوان الفصل التاني؛ وبعض المعادلات في اختياراته ناقصة من ملف PDF نفسه، واتعلّمت بوضوح بدل ما نخترعها.",
+      "title": "Chapter 1 Sheet",
+      "titleAr": "شيت الفصل الأول",
+      "brief": "Chapter 1 exercises.",
+      "briefAr": "تمارين الفصل الأول.",
       "problemsCount": 23,
       "hasSolution": true,
       "problems": [

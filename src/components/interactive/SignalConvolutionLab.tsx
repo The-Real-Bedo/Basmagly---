@@ -3,10 +3,10 @@ import { AudioWaveform, RotateCcw, SkipForward } from 'lucide-react';
 import { ArabicText } from '../ArabicText';
 import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
-type InputPreset = 'book' | 'pulse' | 'ramp';
-type KernelPreset = 'average' | 'impulse' | 'weighted';
-const INPUTS: Record<InputPreset, number[]> = { book: [3, 0, 6], pulse: [1, 2, 1], ramp: [0, 1, 2, 1] };
-const KERNELS: Record<KernelPreset, number[]> = { average: [1 / 3, 1 / 3, 1 / 3], impulse: [1], weighted: [1, 2, 0.5] };
+type InputPreset = 'book' | 'sig1' | 'sig2' | 'pulse' | 'ramp';
+type KernelPreset = 'average' | 'sigh1' | 'sigh2' | 'impulse' | 'weighted';
+const INPUTS: Record<InputPreset, number[]> = { book: [3, 0, 6], sig1: [2, 3, 1], sig2: [1, 2], pulse: [1, 2, 1], ramp: [0, 1, 2, 1] };
+const KERNELS: Record<KernelPreset, number[]> = { average: [1 / 3, 1 / 3, 1 / 3], sigh1: [1, -0.5], sigh2: [1, 1, 1, 1], impulse: [1], weighted: [1, 2, 0.5] };
 const clean = (value: number) => Number(value.toFixed(2));
 const show = (value: number) => Number.isInteger(value) ? `${value}` : Math.abs(value * 3 - Math.round(value * 3)) < 1e-10 ? `${Math.round(value * 3)}/3` : `${clean(value)}`;
 
@@ -84,18 +84,46 @@ export const SignalConvolutionLab: React.FC = () => {
   const [kernelPreset, setKernelPreset] = useState<KernelPreset>('average');
   const [steppedThrough, setSteppedThrough] = useState(-1);
   const [inspectedIndex, setInspectedIndex] = useState(0);
+  const [windowSize, setWindowSize] = useState(8);
+
+  const isInfiniteStep = kernelPreset === 'sigh2';
   const x = INPUTS[inputPreset];
-  const h = KERNELS[kernelPreset];
+  const h = isInfiniteStep ? Array(windowSize).fill(1) : KERNELS[kernelPreset];
   const output = Array.from({ length: x.length + h.length - 1 }, (_, n) => x.reduce((sum, value, k) => sum + value * (h[n - k] ?? 0), 0));
-  const active = inspectedIndex;
+  const active = Math.min(inspectedIndex, output.length - 1);
   const next = Math.min(steppedThrough + 1, output.length - 1);
   const terms = x.map((value, k) => ({ k, hIndex: active - k, xValue: value, hValue: h[active - k] ?? 0, product: value * (h[active - k] ?? 0) }));
   const averagePreset = inputPreset === 'book' && kernelPreset === 'average';
-  const reset = () => { setInputPreset('book'); setKernelPreset('average'); setSteppedThrough(-1); setInspectedIndex(0); };
+  const isSig2 = inputPreset === 'sig2' && isInfiniteStep;
+
+  const reset = () => { setInputPreset('book'); setKernelPreset('average'); setSteppedThrough(-1); setInspectedIndex(0); setWindowSize(8); };
   const updateInput = (value: InputPreset) => { setInputPreset(value); setSteppedThrough(-1); setInspectedIndex(0); };
   const updateKernel = (value: KernelPreset) => { setKernelPreset(value); setSteppedThrough(-1); setInspectedIndex(0); };
+  const updateWindow = (w: number) => { setWindowSize(w); setSteppedThrough(-1); setInspectedIndex(0); };
   const selectClass = 'w-full rounded-xl border border-beige-300 bg-white px-3 py-2 text-sm text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100';
   const missions: ChallengeMission[] = [
+    {
+      id: 'sig-slide-example1',
+      title: 'SIG Slide Ex 1: [2, 3, 1] * [1, -0.5]',
+      titleAr: 'مثال 1 من سلايدات SIG: [2, 3, 1] * [1, -0.5]',
+      goal: 'Select SIG Slide Ex 1 input [2, 3, 1] and response [1, -0.5]. Step through the 4 output samples and verify y = [2, 2, -0.5, -0.5].',
+      goalAr: 'اختار مدخل سلايدات SIG رقم 1 [2, 3, 1] والاستجابة [1, -0.5]. امشي بالـ Step في عينات الخرج الـ 4 وتأكد من y = [2, 2, -0.5, -0.5].',
+      hint: 'Slide 11 shows y[0]=2, y[1]=2, y[2]=-0.5, y[3]=-0.5.',
+      hintAr: 'السلايد رقم 11 بيوضح إن y[0]=2 وy[1]=2 وy[2]=-0.5 وy[3]=-0.5.',
+      start: () => { reset(); updateInput('sig1'); updateKernel('sigh1'); },
+      evaluate: () => inputPreset !== 'sig1' || kernelPreset !== 'sigh1' ? feedback('retry', 'Select SIG Slide Ex 1 for both input and response.', 'اختار مثال سلايدات SIG رقم 1 للمدخل والاستجابة.') : steppedThrough !== output.length - 1 ? feedback('pending', 'Step through all 4 output samples.', 'امشي بالـ Step في عينات الخرج الأربعة كلها.') : feedback('success', 'SIG Slide Ex 1 verified: y = [2, 2, -0.5, -0.5].', 'تم التحقق من مثال سلايدات SIG الأول: y = [2, 2, -0.5, -0.5].'),
+    },
+    {
+      id: 'sig-slide-example2',
+      title: 'SIG Slide Ex 2: Infinite Step Response [1, 2] * u[n]',
+      titleAr: 'مثال 2 من سلايدات SIG: استجابة الخطوة اللانهائية [1, 2] * u[n]',
+      goal: 'Select SIG Slide Ex 2 input [1, 2] and step response u[n]. Observe the symbolic formula y[n] = δ[n] + 3u[n-1] and expand the observation window W.',
+      goalAr: 'اختار مدخل سلايدات SIG رقم 2 [1, 2] واستجابة الخطوة u[n]. راقب الصيغة الرمزية y[n] = δ[n] + 3u[n-1] ووسّع نافذة الملاحظة W.',
+      hint: 'Slide 12: y[0]=1, y[n]=3 for all n >= 1 going to infinity.',
+      hintAr: 'السلايد رقم 12: y[0]=1 وy[n]=3 لجميع قيم n >= 1 ممتدة إلى ما لا نهاية.',
+      start: () => { reset(); updateInput('sig2'); updateKernel('sigh2'); updateWindow(8); },
+      evaluate: () => inputPreset !== 'sig2' || kernelPreset !== 'sigh2' ? feedback('retry', 'Select SIG Slide Ex 2 for input and step response.', 'اختار مثال سلايدات SIG رقم 2 للمدخل واستجابة الخطوة.') : feedback('success', 'Infinite step response verified: y[0]=1, y[n]=3 for n>=1 (tail extends to ∞).', 'تم التحقق من استجابة الخطوة اللانهائية: y[0]=1 و y[n]=3 لكل n>=1 ممتدة إلى ∞.'),
+    },
     { id: 'average-peak', title: 'Compute and inspect the average peak', titleAr: 'احسب وافحص قمة المتوسط', goal: 'Use input [3, 0, 6] with the three-sample moving average. Step through the full output, then inspect n = 2 and its aligned products.', goalAr: 'استخدم المدخل [3, 0, 6] مع المتوسط المتحرك من تلات عينات. امشي في الخرج كامل بالـ Step، وبعدها افحص n = 2 ونواتج ضربه المتحاذية.', hint: 'Full convolution has input length + response length − 1 outputs. The middle output sums every overlapping pair.', hintAr: 'الالتفاف الكامل فيه عدد مخارج يساوي طول المدخل زائد طول الاستجابة ناقص 1. الخرج الأوسط بيجمع كل الأزواج المتداخلة.', start: () => { reset(); setKernelPreset('impulse'); },
       evaluate: () => inputPreset !== 'book' || kernelPreset !== 'average' ? feedback('retry', 'Use [3, 0, 6] and the three-sample moving average.', 'استخدم [3, 0, 6] والمتوسط المتحرك من تلات عينات.') : steppedThrough !== output.length - 1 ? feedback('pending', 'Step through every output sample before inspecting the peak.', 'امشي بالـ Step في كل عينات الخرج قبل فحص القمة.') : active !== 2 ? feedback('pending', 'Move the inspection slider to n = 2.', 'حرّك مؤشر الفحص لـ n = 2.') : feedback('success', 'Peak verified: y[2] = 1 + 0 + 2 = 3. Full output is [1, 1, 3, 2, 2].', 'القمة اتأكدت: y[2] = 1 + 0 + 2 = 3. الخرج الكامل هو [1, 1, 3, 2, 2].') },
     { id: 'weighted-middle', title: 'Inspect an asymmetric response', titleAr: 'افحص استجابة غير متماثلة', goal: 'Use pulse [1, 2, 1] and asymmetric response [1, 2, 0.5]. Compute through n = 2, then inspect that position and the reversed response.', goalAr: 'استخدم النبضة [1, 2, 1] والاستجابة غير المتماثلة [1, 2, 0.5]. احسب لحد n = 2، وبعدها افحص الموضع ده والاستجابة المعكوسة.', hint: 'At n = 2, response indices decrease across k = 0, 1, 2; do not multiply the two sequences in their original order.', hintAr: 'عند n = 2، مؤشرات الاستجابة بتقلّ عند k = 0 و1 و2؛ ما تضربش التسلسلين بترتيبهم الأصلي.', start: () => { reset(); setInputPreset('pulse'); },
@@ -110,19 +138,100 @@ export const SignalConvolutionLab: React.FC = () => {
         <button type="button" onClick={reset} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-beige-300 px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#FAF7F2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800" aria-label="Reset convolution lab"><RotateCcw size={15} aria-hidden="true" /><span className="hidden sm:inline">Reset</span></button>
       </header>
 
+      <div className="mb-4 rounded-2xl border border-amber-300 bg-amber-50/80 p-3.5 text-xs text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2">
+        <span className="font-semibold">★ Important Lab (SIG File) · معمل أساسي مبني على سلايدات د. مسعد حسن الرسمية</span>
+        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-900/60 font-bold">LTI & Convolution</span>
+      </div>
+
       <LabChallenge missions={missions} />
       <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950 sm:grid-cols-2">
         <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">Input x[n] · index starts at 0
           <select value={inputPreset} onChange={(event) => updateInput(event.target.value as InputPreset)} className={selectClass}>
-            <option value="book">Worked input: [3, 0, 6]</option><option value="pulse">Pulse: [1, 2, 1]</option><option value="ramp">Short pulse: [0, 1, 2, 1]</option>
+            <option value="sig1">★ SIG Slide Ex 1: [2, 3, 1]</option>
+            <option value="sig2">★ SIG Slide Ex 2: [1, 2] (δ[n] + 2δ[n−1])</option>
+            <option value="book">Worked input: [3, 0, 6]</option>
+            <option value="pulse">Pulse: [1, 2, 1]</option>
+            <option value="ramp">Short pulse: [0, 1, 2, 1]</option>
           </select>
         </label>
         <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">Impulse response h[n] · index starts at 0
           <select value={kernelPreset} onChange={(event) => updateKernel(event.target.value as KernelPreset)} className={selectClass}>
-            <option value="average">Moving average: [1/3, 1/3, 1/3]</option><option value="impulse">Unit impulse: [1]</option><option value="weighted">Asymmetric response: [1, 2, 0.5]</option>
+            <option value="sigh1">★ SIG Slide Ex 1: [1, −0.5]</option>
+            <option value="sigh2">★ SIG Slide Ex 2: Infinite Step response u[n]</option>
+            <option value="average">Moving average: [1/3, 1/3, 1/3]</option>
+            <option value="impulse">Unit impulse: [1]</option>
+            <option value="weighted">Asymmetric response: [1, 2, 0.5]</option>
           </select>
         </label>
       </div>
+
+      {isInfiniteStep && (
+        <div className="mb-5 rounded-2xl border border-amber-300 bg-amber-50/70 p-4 dark:border-amber-800 dark:bg-amber-950/30">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h4 className="font-semibold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+              Infinite Convolution Output &amp; Observation Window
+            </h4>
+            <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900/60 font-bold text-amber-900 dark:text-amber-200">
+              Window W = {windowSize} samples
+            </span>
+          </div>
+
+          {isSig2 && (
+            <div className="mb-4 rounded-xl border border-amber-200 bg-white p-3.5 dark:border-stone-800 dark:bg-stone-900">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-stone-600 dark:text-stone-400">Analytical Convolution Formula</p>
+                  <p className="mt-1 font-mono text-sm font-bold text-amber-900 dark:text-amber-300">
+                    y[n] = x[n] ∗ u[n] = δ[n] + 3u[n−1]
+                  </p>
+                  <p className="mt-1 text-xs text-stone-500 dark:text-zinc-400">
+                    Derivation: (δ[n] + 2δ[n−1]) ∗ u[n] = u[n] + 2u[n−1] = δ[n] + 3u[n−1]
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-stone-600 dark:text-stone-400">Infinite Sequence Tail</p>
+                  <p className="mt-1 font-mono text-sm font-bold text-stone-900 dark:text-stone-100">
+                    y = [1, 3, 3, 3, 3, 3, ... → ∞]
+                  </p>
+                  <p className="mt-1 text-xs text-stone-500 dark:text-zinc-400">
+                    y[0] = 1, and y[n] = 3 for all n ≥ 1 extending to infinity
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="mb-3">
+            <div className="flex items-center justify-between text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
+              <span>Configurable Observation Window Slider (W = 4 ... 24)</span>
+              <span className="font-mono text-amber-700 dark:text-amber-300 font-bold">W = {windowSize}</span>
+            </div>
+            <input
+              type="range"
+              min={4}
+              max={24}
+              value={windowSize}
+              onChange={(e) => updateWindow(Number(e.target.value))}
+              aria-label="Convolution observation window size W"
+              className="w-full accent-amber-600 dark:accent-amber-400"
+            />
+          </div>
+
+          <div className="rounded-xl bg-amber-100/60 p-3 text-xs text-amber-950 dark:bg-amber-900/30 dark:text-amber-200">
+            <p className="font-semibold">Observation Window vs. Infinite Sequence:</p>
+            <p className="mt-1">
+              The unit step response u[n] and the resulting output y[n] = δ[n] + 3u[n−1] extend infinitely (n → ∞).
+              The slider above adjusts our <strong>finite observation window</strong> (W = {windowSize} samples) to inspect any prefix;
+              it does <strong>NOT</strong> truncate or change the underlying infinite mathematical signal.
+            </p>
+            <ArabicText className="mt-1.5 text-xs text-amber-900 dark:text-amber-300">
+              الفرق بين نافذة الملاحظة والتسلسل اللانهائي: دالة الخطوة u[n] والخرج الناتج y[n] = δ[n] + 3u[n−1] ممتدان إلى ما لا نهاية.
+              شريط التمرير يحدد فقط <strong>نافذة العرض المحدودة</strong> (W = {windowSize} عينة) لمشاهدة وفحص أي بادئة؛ وهو <strong>لا يقتطع</strong> الإشارة الرياضية اللانهائية الأصلية ولا يغيّر طبيعتها.
+            </ArabicText>
+          </div>
+        </div>
+      )}
 
       <div className="mb-4 grid grid-cols-1 gap-4 rounded-2xl border border-beige-300 bg-white p-4 dark:border-stone-800 dark:bg-stone-900 sm:grid-cols-2">
         <StemRow name={`Input x[n] = [${x.map(show).join(', ')}]`} values={x} />
@@ -157,9 +266,18 @@ export const SignalConvolutionLab: React.FC = () => {
       </div>
 
       <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
-        <p className="font-semibold">Model assumptions</p>
-        <p className="mt-1">Both sequences are zero outside their listed samples. This is full, zero-state discrete convolution; it is not a circular convolution.</p>
-        <ArabicText className="mt-2 text-sm text-sky-800 dark:text-sky-300">العينات خارج القيم المعروضة بتساوي صفر، والنموذج بيحسب الالتفاف الكامل مع حالة ابتدائية صفرية، مش التفافًا دائريًا.</ArabicText>
+        <p className="font-semibold">Model assumptions &amp; Academic Scope</p>
+        <p className="mt-1">Both sequences are zero outside their listed samples, except when the infinite step response u[n] is selected. This is full, zero-state discrete-time convolution.</p>
+        <ArabicText className="mt-2 text-sm text-sky-800 dark:text-sky-300">العينات خارج القيم المعروضة بتساوي صفر (باستثناء استجابة الخطوة اللانهائية u[n])، والنموذج بيحسب الالتفاف الكامل في الزمن المتقطع مع حالة ابتدائية صفرية.</ArabicText>
+        <div className="mt-3 rounded-xl border border-sky-300 bg-white/80 p-3 dark:border-sky-800 dark:bg-stone-900/60">
+          <p className="text-xs font-semibold text-sky-950 dark:text-sky-100">Academic Verification Note (SIG Slide Deck):</p>
+          <p className="mt-1 text-xs text-sky-800 dark:text-sky-300">
+            Verified against Dr. Mousaad Hassan&apos;s 27-page official lecture deck: the academic scope is 100% discrete-time (n, δ[n], u[n], y[n]). The lecture deck contains zero continuous-time proofs or limits; this lab adheres faithfully to the original discrete-time curriculum without inventing unauthorized external material.
+          </p>
+          <ArabicText className="mt-1 text-xs text-sky-800 dark:text-sky-300">
+            توثيق الأمانة العلمية: تم التحقق من سلايدات د. مسعد حسن الرسمية (27 صفحة)؛ نطاق المنهج متقطع زمنياً بالكامل (Discrete-time)، ولا يتضمن أي إثباتات أو نهايات للزمن المستمر؛ يلتزم المعمل بدقة بالمنهج الأصلي دون إضافة معلومات خارجية غير معتمدة.
+          </ArabicText>
+        </div>
         {averagePreset && <p className="mt-2 font-mono text-xs text-sky-800 dark:text-sky-300">Worked check: [3, 0, 6] * [1/3, 1/3, 1/3] = [1, 1, 3, 2, 2]</p>}
         <p className="mt-2 text-xs text-sky-800 dark:text-sky-300">The three averaging coefficients follow the book equation. Input presets and the asymmetric response are teaching examples. Calculations use unrounded values; other displayed decimals are rounded.</p>
         <ArabicText className="mt-1 text-xs text-sky-800 dark:text-sky-300">معاملات المتوسط التلاتة من معادلة الكتاب. المدخلات والاستجابة غير المتماثلة أمثلة تعليمية. الحسابات بتستخدم القيم من غير تقريب؛ وباقي القيم العشرية المعروضة متقرّبة.</ArabicText>

@@ -5,6 +5,7 @@ import { LabWorkbench, type WorkbenchNode, type WorkbenchLink } from './LabWorkb
 import { LabChallenge, challengeFeedback as feedback, type ChallengeMission } from './LabChallenge';
 
 type Algorithm = 'bfs' | 'dfs' | 'ucs';
+type SearchMode = 'graph' | 'tree';
 
 type SearchNode = {
   id: string;
@@ -27,10 +28,12 @@ type FrontierItem = { id: string; path: string[]; cost: number };
 type SearchState = {
   frontier: FrontierItem[];
   expanded: string[];
+  explored: string[];
   current: string | null;
   solution: string[] | null;
   cost: number | null;
   steps: number;
+  maxFrontierSize: number;
   finished: boolean;
 };
 
@@ -74,8 +77,9 @@ const makeTreeFromEdges = (edges: Record<string, string[]>): SearchNode[] => {
 };
 
 const presets: Preset[] = [
+  { id: 'binary-tree-13', label: 'Binary tree · Goal 13 (Slide trace)', labelAr: 'الشجرة الثنائية · الهدف 13 (أنيميشن السلايد)', rootId: '1', goalId: '13', nodes: makeTree(numberIds) },
+  { id: 'binary-tree', label: 'Binary tree · Goal 11 (Worksheet trace)', labelAr: 'الشجرة الثنائية · الهدف 11 (تمرين الشيت)', rootId: '1', goalId: '11', nodes: makeTree(numberIds) },
   { id: 'sheet4-tree', label: 'Lecture 4 tree · Goal O', labelAr: 'شجرة المحاضرة 4 · الهدف O', rootId: 'A', goalId: 'O', nodes: makeTreeFromEdges(letterEdges) },
-  { id: 'binary-tree', label: 'Binary tree · Goal 11', labelAr: 'الشجرة الثنائية · الهدف 11', rootId: '1', goalId: '11', nodes: makeTree(numberIds) },
   { id: 'weighted-routes', label: 'Weighted routes · supplementary', labelAr: 'مسارات بتكاليف مختلفة · مثال إضافي', rootId: 'S', goalId: 'G', nodes: makeTreeFromEdges({ S: ['A', 'B'], A: ['G'], B: ['G'], G: [] }), costs: { 'S-A': 1, 'S-B': 3, 'A-G': 8, 'B-G': 1 } },
 ];
 const edgeCost = (preset: Preset, from: string, to: string) => preset.costs?.[`${from}-${to}`] ?? 1;
@@ -83,10 +87,12 @@ const edgeCost = (preset: Preset, from: string, to: string) => preset.costs?.[`$
 const initialState = (preset: Preset): SearchState => ({
   frontier: [{ id: preset.rootId, path: [preset.rootId], cost: 0 }],
   expanded: [],
+  explored: [],
   current: null,
   solution: null,
   cost: null,
   steps: 0,
+  maxFrontierSize: 1,
   finished: false,
 });
 
@@ -98,33 +104,61 @@ const nextIndex = (frontier: FrontierItem[], algorithm: Algorithm) => {
   return 0;
 };
 
-const advanceSearch = (state: SearchState, preset: Preset, algorithm: Algorithm): SearchState => {
+const advanceSearch = (state: SearchState, preset: Preset, algorithm: Algorithm, searchMode: SearchMode): SearchState => {
   if (state.finished || state.frontier.length === 0) return { ...state, finished: true };
   const frontier = [...state.frontier];
   const selected = frontier.splice(nextIndex(frontier, algorithm), 1)[0];
   const expanded = [...state.expanded, selected.id];
+  const explored = searchMode === 'graph' ? (state.explored.includes(selected.id) ? state.explored : [...state.explored, selected.id]) : [];
   const steps = state.steps + 1;
 
   if (selected.id === preset.goalId) {
-    return { ...state, frontier, expanded, current: selected.id, solution: selected.path, cost: selected.cost, steps, finished: true };
+    return { ...state, frontier, expanded, explored, current: selected.id, solution: selected.path, cost: selected.cost, steps, finished: true };
   }
 
   const node = preset.nodes.find((item) => item.id === selected.id);
-  const successors = node?.children.map((id) => ({ id, path: [...selected.path, id], cost: selected.cost + edgeCost(preset, selected.id, id) })) ?? [];
+  let successors = node?.children.map((id) => ({ id, path: [...selected.path, id], cost: selected.cost + edgeCost(preset, selected.id, id) })) ?? [];
+
+  if (searchMode === 'graph') {
+    successors = successors.filter((s) => !explored.includes(s.id) && !frontier.some((f) => f.id === s.id && f.cost <= s.cost));
+  }
+
   if (algorithm === 'bfs') {
     const generatedGoal = successors.find((item) => item.id === preset.goalId);
     if (generatedGoal) {
-      return { ...state, frontier, expanded, current: selected.id, solution: generatedGoal.path, cost: generatedGoal.cost, steps, finished: true };
+      return { ...state, frontier, expanded, explored, current: selected.id, solution: generatedGoal.path, cost: generatedGoal.cost, steps, finished: true };
     }
   }
   const nextFrontier = algorithm === 'dfs' ? [...frontier, ...successors.reverse()] : [...frontier, ...successors];
-  return { ...state, frontier: nextFrontier, expanded, current: selected.id, steps, finished: nextFrontier.length === 0 };
+  const maxFrontierSize = Math.max(state.maxFrontierSize, nextFrontier.length);
+  return { ...state, frontier: nextFrontier, expanded, explored, current: selected.id, steps, maxFrontierSize, finished: nextFrontier.length === 0 };
 };
 
 const algorithmDetails: Record<Algorithm, { label: string; labelAr: string; rule: string; ruleAr: string }> = {
   bfs: { label: 'Breadth-first search', labelAr: 'البحث بالعرض', rule: 'FIFO · shallowest first · goal test on generation', ruleAr: 'FIFO · الأقل عمقًا أولًا · اختبار الهدف عند توليده' },
   dfs: { label: 'Depth-first search', labelAr: 'البحث بالعمق', rule: 'LIFO stack · deepest node first', ruleAr: 'مكدس LIFO · الأعمق أولًا' },
   ucs: { label: 'Uniform-cost search', labelAr: 'البحث الأقل تكلفة', rule: 'Priority queue · lowest path cost g(n)', ruleAr: 'طابور أولوية · أقل تكلفة مسار g(n)' },
+};
+
+const complexities: Record<Algorithm, { space: string; time: string; description: string; descriptionAr: string }> = {
+  bfs: {
+    space: 'O(bᵈ) [Exponential]',
+    time: 'O(bᵈ)',
+    description: 'BFS stores every generated node in memory; exponential space O(bᵈ) is the primary practical bottleneck.',
+    descriptionAr: 'البحث بالعرض بيخزن كل عقدة اتولّدت في الذاكرة؛ التعقيد المكاني الأُسي O(bᵈ) هو العائق الأساسي عمليًا.',
+  },
+  dfs: {
+    space: 'O(bm) [Linear]',
+    time: 'O(bᵐ)',
+    description: 'DFS stores only the current path and unexplored siblings; linear space O(bm) makes it memory-efficient.',
+    descriptionAr: 'البحث بالعمق بيخزن المسار الحالي والإخوة غير المستكشفين فقط؛ التعقيد المكاني الخطي O(bm) بيخليه موفر للذاكرة.',
+  },
+  ucs: {
+    space: 'O(b^(1 + ⌊C*/ε⌋))',
+    time: 'O(b^(1 + ⌊C*/ε⌋))',
+    description: 'UCS frontier size depends on optimal path cost C* and minimum step cost ε.',
+    descriptionAr: 'حجم الـ Frontier في UCS بيعتمد على التكلفة المثلى C* وأقل تكلفة خطوة ε.',
+  },
 };
 
 const nodePosition = (node: SearchNode, preset: Preset) => {
@@ -138,6 +172,7 @@ const nodePosition = (node: SearchNode, preset: Preset) => {
 export function SearchAlgorithmLab() {
   const [presetId, setPresetId] = useState(presets[0].id);
   const [algorithm, setAlgorithm] = useState<Algorithm>('bfs');
+  const [searchMode, setSearchMode] = useState<SearchMode>('graph');
   const [simulation, setSimulation] = useState(() => initialState(presets[0]));
   const [playing, setPlaying] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -146,13 +181,13 @@ export function SearchAlgorithmLab() {
   useEffect(() => {
     if (!playing || simulation.finished) return;
     timerRef.current = window.setInterval(() => {
-      setSimulation((current) => advanceSearch(current, preset, algorithm));
+      setSimulation((current) => advanceSearch(current, preset, algorithm, searchMode));
     }, 850);
     return () => {
       if (timerRef.current !== null) window.clearInterval(timerRef.current);
       timerRef.current = null;
     };
-  }, [playing, simulation.finished, preset, algorithm]);
+  }, [playing, simulation.finished, preset, algorithm, searchMode]);
 
   useEffect(() => () => {
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
@@ -182,6 +217,12 @@ export function SearchAlgorithmLab() {
     setSimulation(initialState(preset));
   };
 
+  const changeMode = (next: SearchMode) => {
+    reset();
+    setSearchMode(next);
+    setSimulation(initialState(preset));
+  };
+
   const next = !simulation.finished && simulation.frontier.length ? simulation.frontier[nextIndex(simulation.frontier, algorithm)] : null;
   const frontierOrder = algorithm === 'dfs'
     ? [...simulation.frontier].reverse()
@@ -190,7 +231,21 @@ export function SearchAlgorithmLab() {
       : simulation.frontier;
   const expandedSet = new Set(simulation.expanded);
   const frontierSet = new Set(simulation.frontier.map((item) => item.id));
+  const exploredSet = new Set(simulation.explored);
+  const complexity = complexities[algorithm];
+
   const missions: ChallengeMission[] = [
+    {
+      id: 'dual-target-trace',
+      title: 'Dual trace: Goal 13 (Slide) vs Goal 11 (Worksheet)',
+      titleAr: 'تتبّع ثنائي: هدف 13 (السلايد) مقابل هدف 11 (الشيت)',
+      goal: 'Select Binary tree Goal 13, run BFS or Step until found to verify the slide animation trace (1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13).',
+      goalAr: 'اختار الشجرة الثنائية بهدف 13، وشغّل BFS أو Step لحد الوصول للهدف للتحقق من أنيميشن السلايد (من 1 لـ 13).',
+      hint: 'AI Lectures 3 & 4 slides animate target 13, while worksheet problems ask for target 11. Both are fully valid.',
+      hintAr: 'سلايدات المحاضرتين 3 و4 بتشرح الهدف 13 بأنيميشن، ومسألة الشيت بتطلب الهدف 11. الاتنين صح وموجودين.',
+      start: () => { changePreset('binary-tree-13'); changeAlgorithm('bfs'); },
+      evaluate: () => presetId !== 'binary-tree-13' || algorithm !== 'bfs' ? feedback('retry', 'Select Binary tree Goal 13 and BFS.', 'اختار الشجرة الثنائية بهدف 13 والـ BFS.') : simulation.finished && simulation.solution?.includes('13') ? feedback('success', 'Slide animation trace verified: 1 → 3 → 6 → 13 found at depth 3.', 'تم التحقق من تتبّع أنيميشن السلايد: 1 ← 3 ← 6 ← 13 في العمق 3.') : feedback('pending', 'Advance search until Goal 13 is generated/found.', 'كمّل البحث لحد الوصول للهدف 13.'),
+    },
     { id: 'least-cost', title: 'Find the least-cost route', titleAr: 'اعثر على أقل مسار في التكلفة', goal: 'Use the supplementary weighted routes. Select UCS, then Step or Auto play until G is removed from the frontier. Find the route with total cost 4.', goalAr: 'استخدم المسارات الإضافية بتكاليف مختلفة. اختار الـ UCS، وبعدها استخدم Step أو Auto play لحد ما G تتسحب من الـ Frontier. اعثر على المسار بتكلفة إجمالية 4.', hint: 'UCS compares cumulative cost, and tests the goal when it is removed. A generated goal with cost 9 can wait behind a cheaper route.', hintAr: 'الـ UCS بتقارن التكلفة التراكمية وبتختبر الهدف وقت سحبه. هدف اتولّد بتكلفة 9 ممكن يستنى ورا مسار أرخص.', start: () => { changePreset('weighted-routes'); setAlgorithm('bfs'); }, evaluate: () => presetId !== 'weighted-routes' || algorithm !== 'ucs' ? feedback('retry', 'Use Weighted routes and UCS.', 'استخدم المسارات بتكاليف مختلفة والـ UCS.') : simulation.finished && simulation.cost === 4 ? feedback('success', 'UCS selected S → B → G: 3 + 1 = 4, instead of the route costing 9.', 'الـ UCS اختارت S ← B ← G: التكلفة 3 + 1 = 4، بدل المسار بتكلفة 9.') : feedback('pending', 'Continue until UCS removes the least-cost goal from the frontier.', 'كمّل لحد ما الـ UCS تسحب الهدف الأقل تكلفة من الـ Frontier.') },
     { id: 'bfs-cost', title: 'Expose the BFS cost limitation', titleAr: 'بيّن حدود الـ BFS مع التكلفة', goal: 'Use Weighted routes and BFS. Reach G and compare the cost of its two-edge route with the alternative route costing 4.', goalAr: 'استخدم المسارات بتكاليف مختلفة والـ BFS. وصل لـ G وقارن تكلفة مسارها من حافتين بالمسار البديل بتكلفة 4.', hint: 'BFS compares depth, not the edge weights. It generates G from A first.', hintAr: 'الـ BFS بتقارن العمق، مش أوزان الحواف. هي بتولّد G من A الأول.', start: () => { changePreset('weighted-routes'); setAlgorithm('ucs'); }, evaluate: () => presetId !== 'weighted-routes' || algorithm !== 'bfs' ? feedback('retry', 'Select BFS on Weighted routes.', 'اختار الـ BFS على المسارات بتكاليف مختلفة.') : simulation.finished && simulation.cost === 9 ? feedback('success', 'BFS found S → A → G: two edges, cost 9. Fewest edges does not guarantee least cost with unequal weights.', 'الـ BFS لقت S ← A ← G: حافتين بتكلفة 9. أقل عدد حواف مش ضمان لأقل تكلفة لما الأوزان تختلف.') : feedback('pending', 'Expand the frontier until BFS generates G.', 'وسّع الـ Frontier لحد ما الـ BFS تولّد G.') },
   ];
@@ -214,7 +269,7 @@ export function SearchAlgorithmLab() {
       </header>
 
       <LabChallenge missions={missions} busy={playing} />
-      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+      <div className="mb-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
           <h4 className="mb-2 font-semibold text-stone-900 dark:text-stone-100">Choose a search example</h4>
           <ArabicText className="mb-3 text-sm text-stone-600 dark:text-zinc-400">اختار مثال البحث</ArabicText>
@@ -239,6 +294,52 @@ export function SearchAlgorithmLab() {
             ))}
           </div>
         </div>
+        <div className="rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
+          <h4 className="mb-2 font-semibold text-stone-900 dark:text-stone-100">Search Formulation</h4>
+          <ArabicText className="mb-3 text-sm text-stone-600 dark:text-zinc-400">صياغة البحث: شجرة أم رسم بياني</ArabicText>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Search formulation mode">
+            <button type="button" aria-pressed={searchMode === 'graph'} onClick={() => changeMode('graph')} disabled={playing}
+              className={`min-h-11 rounded-xl border px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${searchMode === 'graph' ? 'border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900' : 'border-beige-300 bg-white text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-300 dark:hover:bg-stone-800'}`}>
+              Graph Search<ArabicText as="span" className={`mt-0.5 block text-xs font-normal ${searchMode === 'graph' ? 'text-stone-200 dark:text-stone-600' : 'text-stone-600 dark:text-zinc-400'}`}>مع قائمة مستكشفة (Closed)</ArabicText>
+            </button>
+            <button type="button" aria-pressed={searchMode === 'tree'} onClick={() => changeMode('tree')} disabled={playing}
+              className={`min-h-11 rounded-xl border px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${searchMode === 'tree' ? 'border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900' : 'border-beige-300 bg-white text-stone-700 hover:bg-beige-100 dark:border-stone-700 dark:bg-stone-900 dark:text-zinc-300 dark:hover:bg-stone-800'}`}>
+              Tree Search<ArabicText as="span" className={`mt-0.5 block text-xs font-normal ${searchMode === 'tree' ? 'text-stone-200 dark:text-stone-600' : 'text-stone-600 dark:text-zinc-400'}`}>تكرار الحالات مسموح</ArabicText>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Live Complexity & Space Metrics Card */}
+      <div className="mb-5 rounded-2xl border border-beige-300 bg-[#FAF7F2] p-4 dark:border-stone-800 dark:bg-stone-950">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-beige-300 pb-3 dark:border-stone-800">
+          <h4 className="font-semibold text-stone-900 dark:text-stone-100">Live Space & Time Complexity Metrics</h4>
+          <span className="font-mono text-xs px-2.5 py-1 rounded-md bg-white dark:bg-stone-900 text-stone-700 dark:text-zinc-300 border border-beige-200 dark:border-stone-800">
+            Formulation: {searchMode === 'graph' ? 'Graph Search (Explored Set Active)' : 'Tree Search (No Closed List)'}
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-beige-200 dark:border-stone-800">
+            <span className="block text-xs font-medium text-stone-500 dark:text-zinc-400">Current Frontier</span>
+            <span className="text-xl font-bold font-mono text-stone-900 dark:text-stone-100">{simulation.frontier.length}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-beige-200 dark:border-stone-800">
+            <span className="block text-xs font-medium text-stone-500 dark:text-zinc-400">Peak Frontier (Max Space)</span>
+            <span className="text-xl font-bold font-mono text-amber-700 dark:text-amber-400">{simulation.maxFrontierSize}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-beige-200 dark:border-stone-800">
+            <span className="block text-xs font-medium text-stone-500 dark:text-zinc-400">Space Complexity</span>
+            <span className="text-sm font-bold font-mono text-stone-900 dark:text-stone-100">{complexity.space}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-beige-200 dark:border-stone-800">
+            <span className="block text-xs font-medium text-stone-500 dark:text-zinc-400">Time Complexity</span>
+            <span className="text-sm font-bold font-mono text-stone-900 dark:text-stone-100">{complexity.time}</span>
+          </div>
+        </div>
+        <div className="mt-3 text-xs text-stone-600 dark:text-zinc-400">
+          <p>{complexity.description}</p>
+          <ArabicText className="mt-0.5">{complexity.descriptionAr}</ArabicText>
+        </div>
       </div>
 
       {preset.costs && <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-900 dark:bg-amber-950/20"><p className="text-sm text-stone-700 dark:text-zinc-300">Supplementary directed, acyclic routes. S → A costs 1; A → G costs 8; S → B costs 3; B → G costs 1. The frontier keeps separate paths to the same state. BFS tests on generation; UCS tests on removal. This example uses positive costs and does not model cycles.</p><ArabicText className="mt-2 text-sm text-stone-600 dark:text-zinc-400">مسارات إضافية موجّهة من غير دورات. من S لـ A التكلفة 1؛ ومن A لـ G التكلفة 8؛ ومن S لـ B التكلفة 3؛ ومن B لـ G التكلفة 1. الـ Frontier بتحتفظ بمسارات منفصلة لنفس الحالة. الـ BFS بتختبر وقت التوليد؛ والـ UCS وقت السحب. المثال فيه تكاليف موجبة ومش بيمثّل دورات.</ArabicText></div>}
@@ -248,7 +349,7 @@ export function SearchAlgorithmLab() {
           {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}{playing ? 'Pause' : 'Auto play'}
           <span className="font-arabic">{playing ? 'إيقاف مؤقت' : 'تشغيل تلقائي'}</span>
         </button>
-        <button type="button" onClick={() => setSimulation((current) => advanceSearch(current, preset, algorithm))} disabled={playing || simulation.finished}
+        <button type="button" onClick={() => setSimulation((current) => advanceSearch(current, preset, algorithm, searchMode))} disabled={playing || simulation.finished}
           className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-beige-300 px-4 text-sm font-semibold text-stone-700 hover:bg-beige-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-700 dark:text-zinc-300 dark:hover:bg-stone-800">
           <StepForward size={16} aria-hidden="true" /> Step <span className="font-arabic">خطوة</span>
         </button>
@@ -321,6 +422,18 @@ export function SearchAlgorithmLab() {
               </span>
             )) : <p className="text-sm text-stone-600 dark:text-zinc-400">No nodes remain. <ArabicText as="span">مفيش عقد متبقية.</ArabicText></p>}
           </div>
+          {searchMode === 'graph' && (
+            <div className="mt-3 pt-3 border-t border-beige-200 dark:border-stone-800">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-xs font-semibold text-stone-800 dark:text-zinc-200">Explored Set (Closed List):</span>
+                <span className="font-mono text-xs text-stone-500 dark:text-zinc-400">{simulation.explored.length} states</span>
+              </div>
+              <p className="mt-1 font-mono text-xs text-stone-700 dark:text-zinc-300 break-words">
+                {simulation.explored.length ? simulation.explored.join(', ') : 'Empty (None expanded yet)'}
+              </p>
+              <ArabicText className="mt-1 text-xs text-stone-500 dark:text-zinc-500">القائمة المستكشفة بتمنع إعادة فحص الحالات المتكررة.</ArabicText>
+            </div>
+          )}
         </div>
         <div aria-live="polite" className={`rounded-2xl border p-4 ${simulation.solution ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30' : 'border-beige-300 bg-[#FAF7F2] dark:border-stone-800 dark:bg-stone-950'}`}>
           <div className="mb-2 flex items-center gap-2">
