@@ -105,11 +105,11 @@
   }
 }
 
-/* 10-15% size boost for Arabic to match the optical weight of Latin.
-   Deliberately outside the base layer so it applies on top of text-* utilities
-   (Arabic is always ~1.12x the size its Latin sibling would get). */
+/* English-first hierarchy: Arabic renders ~5% smaller than its Latin sibling
+   instead of the previous 12% boost, and never below the 13px minimum.
+   Still outside the layers so it applies on top of text-* utilities. */
 .font-arabic {
-  font-size: 1.12em;
+  font-size: max(0.95em, 13px);
 }
 
 /* Default colour for <ArabicText>; any text-* utility on the element overrides it. */

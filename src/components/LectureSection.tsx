@@ -260,8 +260,8 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
                           <span className="w-6 h-6 rounded-md bg-white dark:bg-stone-800 border border-beige-300 dark:border-stone-700 text-[13px] font-mono font-bold flex items-center justify-center shrink-0 mt-0.5 text-stone-800 dark:text-zinc-200">
                             {i + 1}
                           </span>
-                          <ArabicText className="text-stone-800 dark:text-zinc-200">
-                            {lead && <strong className="text-stone-900 dark:text-white">{formatArabicWithEnglish(`${lead}:`)}</strong>}
+                          <ArabicText className="text-stone-600 dark:text-zinc-400">
+                            {lead && <strong className="text-stone-700 dark:text-zinc-300">{formatArabicWithEnglish(`${lead}:`)}</strong>}
                             {lead ? ` ${rest}` : rest}
                           </ArabicText>
                         </li>
