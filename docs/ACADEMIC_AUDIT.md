@@ -24,14 +24,14 @@ In accordance with all instructions:
 ## 2. Practice Sheets & Naming Rule Compliance
 
 All Practice Sheet titles have been strictly simplified to minimal titles without lecturer names, exam claims, or extraneous subtitles:
-- **AI**: `Lecture 1 Sheet`, `Lecture 2 Sheet`, `Lecture 3 Sheet`, `Lecture 4 Sheet` (48 total problems).
+- **AI**: `Lecture 1 Sheet`, `Lecture 2 Sheet`, `Lecture 3 Sheet`, `Lecture 4 Sheet` (21 reproduced worksheet problems: 4 + 6 + 6 + 5).
 - **Windows Programming**: `Chapter 1 Sheet`, `Chapter 2 Sheet` (70 total end-of-chapter problems: 35 per chapter).
 - **Signal Processing**: `Chapter 1 Sheet` (23 total textbook problems).
 - **IoT**: `Lecture 1 Sheet` (8 problems), `Lecture 2 Sheet` (20 problems), `Question Bank Sheet` (100 problems from `IoT-Bank.pdf`).
 - **Mobile Programming**: `Question Bank Sheet` (100 problems from `Flutter-Bank.pdf`).
 - **CCNA / Networking**: Removed previous synthetic sheets (`net-sheet-1` and `net-sheet-2`) from Practice Sheets because no official CCNA worksheets exist in `Sem1-data/CCN-A/`. Converted all relevant questions into in-lecture practice.
 
-Total Practice Sheet problems: **361 verified questions/problems** across 9 sheets.
+Total Practice Sheet problems: **342 verified questions/problems** across 11 sheets (AI 21, IoT 128, Windows 70, Signal 23, Mobile 100; CCNA has no official sheet and is practised in-lecture).
 
 ---
 
@@ -59,7 +59,7 @@ Substantial sets of diverse practice questions (MCQ, True/False, Essay, Short-An
   - `iot-lec-1`: Expanded to 13 questions (added 3 deep essay questions on sensor-to-action pipelines, edge vs cloud trade-offs, and scalability bottlenecks).
   - `iot-lec-2`: Expanded to 15 questions (added 3 deep essay questions on OSI vs TCP/IP layer mappings, TCP connection overhead vs UDP telemetry, and 6-stage IoT architecture).
 
-Total in-lecture practice questions: **162 verified questions** across 12 lectures.
+Total in-lecture practice questions: **286 verified questions** across 13 lectures (AI 56, CCNA 160, IoT 28, Windows 28, Signal 14).
 
 ---
 
@@ -106,6 +106,14 @@ Total in-lecture practice questions: **162 verified questions** across 12 lectur
      - Theoretical time complexity comparison: BFS $O(b^d)$ vs DFS $O(b^m)$.
      - Live display of the Explored Set (closed list) in Graph Search mode.
 
+4. **Six labs added for CCNA lecture 4 and AI lecture 4** (registered in `labCatalog.ts`, guides in `labGuides.ts`, rendered through `ExperimentStudio.tsx`):
+   - `bfs-queue-lab` — physical FIFO buffer with head/tail, per-level occupancy, goal-test timing (generation vs removal) and peak frontier size. Missions: level-order invariance, frontier peak.
+   - `dfs-stack-lab` — LIFO call-stack frames, push/backtrack narration, visited order, dead-end log and the O(bm) memory argument. Missions: observe F → B backtracking, linear space bound.
+   - `ucs-priority-lab` — min-heap ordering, extract-min/relax log, 3D cumulative-cost scene and the S→A→G (cost 9) vs S→B→G (cost 4) trap. Missions: goal test on removal, Romania 418 km route.
+   - `ipv6-compress` — Rule 1 / Rule 2 stepwise compression and the reverse expansion view over the deck examples. Missions: compress 2041::, expand fd00:0:0:4100::, which zero run earns the double colon.
+   - `eui-64-lab` — MAC split, FFFE insertion, U/L bit flip with binary highlighting and the /64 host address. Missions: rebuild FC-99-47-75-CE-E0 → FE99:47FF:FE75:CEE0, flip an all-zero OUI, predict the flip result.
+   - `ipv6-structure-3d` — eight hextets as 3D cells partitioned into /48 (Country), /16 (Street) and /64 (Home) with boundary posts and an ordered tour. Missions: tour the three parts, identify the 16-bit part.
+
 ---
 
 ## 6. Files Changed in this Task
@@ -128,20 +136,31 @@ Total in-lecture practice questions: **162 verified questions** across 12 lectur
 16. `src/components/interactive/SignalSupportLab.tsx`: Added SIG Slide 26 reference banner.
 17. `src/components/interactive/SearchAlgorithmLab.tsx`: Integrated dual-target presets, Graph vs Tree search toggle, and live complexity metrics.
 18. `docs/ACADEMIC_AUDIT.md`: Single source of truth audit and implementation record.
+19. `src/components/interactive/{BfsQueueLab,DfsStackLab,UcsPriorityLab}.tsx` (NEW): AI lecture 4 queue/stack/priority-queue studios.
+20. `src/components/interactive/{Ipv6CompressionLab,Eui64Lab,Ipv6Structure3DLab}.tsx` (NEW): CCNA lecture 4 compression, EUI-64 and 3D address-anatomy labs.
+21. `src/components/SmallScreenGate.tsx` + `src/hooks/useMediaQuery.ts` (NEW): below-768px warning with a session-scoped “Continue anyway”.
+22. `src/components/interactive/Ipv6CompressionLab.tsx`: the `m-expand-4100` mission now starts on the *other* expand example, so selecting `fd00:0:0:4100::` is a real learner action instead of being done by Start.
+23. `src/components/interactive/SignalConvolutionLab.tsx`: the `sig-slide-example2` mission starts at W=4 and requires W ≥ 12, matching its stated goal of expanding the observation window.
+24. `scripts/test_lab_interactions.cjs`: gate dismissal, Goal-13 vs Goal-O preset handling, six new interaction flows and a checkbox helper.
+25. `scripts/test_lab_challenges.cjs`: mission-count and mission-id-based flows for search-visualizer (3) and signal-convolution (4), six new labs added to the practice set, playback-aware auto-play and challenge-scoped checkbox helper.
+26. `scripts/test_lab_scene_layout.cjs` / `scripts/test_ai_labs.cjs`: gate dismissal; annotation checks wait two frames plus a short settle before measuring.
 
 ---
 
 ## 7. Verification and Test Results
 
-1. **`git diff --check`**:
-   - Status: **PASSED** cleanly with zero errors or whitespace issues.
-2. **`node scripts/test_curriculum.cjs`**:
-   - Status: **PASSED** cleanly.
-   - Output: `Curriculum checks passed: 6 courses, 12 lectures, 162 questions, 35 registered experiments.`
-3. **`npm run build` (`tsc && vite build`)**:
-   - Status: **PASSED** cleanly in 7.71s with zero errors.
-   - All 2,700 modules transformed; production bundle generated cleanly.
-4. **Pristine Academic Sources**:
-   - Verified that all files under `/Users/0xbedo/Desktop/Sem1-data` remain 100% untouched.
-5. **Git History**:
-   - No commits, pushes, merges, or resets were performed. Branch `feat/interactive-labs-3d` remains clean and preserved.
+Re-verified 2026-11-11 against the current tree (41 labs, including the six IPv6/search labs):
+
+1. **`npx tsc --noEmit -p .`**: PASSED, zero errors.
+2. **`node scripts/test_curriculum.cjs`**: PASSED.
+   - Output: `Curriculum checks passed: 6 courses, 13 lectures, 286 questions, 41 registered experiments.`
+   - Sheet inventory from the same data: 11 sheets, 342 sheet problems (the earlier 361/9 figure was wrong).
+3. **`npm run build` (`tsc && vite build`)**: PASSED.
+   - Production bundle generated; only the known Vite >500 kB chunk warning (not suppressed).
+4. **`node scripts/test_lab_interactions.cjs`**: 41/41 interaction flows pass at 375px with no document overflow and no application/console errors. The six new labs assert exact state: FIFO dequeue order plus Goal-13 generation, F → B backtracking with peak depth 3, UCS extract-min S/A/B then `g(n) = 4`, IPv6 rule-1/rule-2 compression and expansion, EUI-64 → `FE99:47FF:FE75:CEE0`, and 3D address-part focus.
+5. **`node scripts/test_lab_challenges.cjs`**: 164 expanded-view checks and 180 completed-mission checks pass (41 labs × 375/1280px × light/dark, 20 practice labs). Includes wrong attempts, feedback cleared on restart, success revoked by changed inputs and focus containment/restoration.
+6. **`node scripts/test_lab_scene_layout.cjs`**: 36 camera fits, 164 prominent-action checks, 92 scene flows and 596 annotation layouts pass.
+7. **`node scripts/test_ai_labs.cjs`**: model fixtures pass; 12 interaction panels (3 labs × 2 widths × 2 themes) pass, plus default/persisted/blocked theme behavior.
+8. **Pristine Academic Sources**: files under `/Users/0xbedo/Desktop/Sem1-data` remain untouched.
+9. **Mission integrity fixes**: `ipv6-compress` (`m-expand-4100`) and `signal-convolution` (`sig-slide-example2`) previously reported success straight after Start; both now require the action their goal describes.
+10. **Git**: changes stay local on `feat/interactive-labs-3d`; no push, merge or force-push.
