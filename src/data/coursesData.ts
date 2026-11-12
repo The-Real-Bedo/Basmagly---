@@ -13,13 +13,13 @@ import { MOBILE_PROGRAMMING_COURSE } from './mobileProgrammingCourse';
 export const COURSES_DATA: Course[] = [
   ...COURSE_SEEDS.map(course => {
     switch (course.id) {
-      case 'ai': return { ...course, lectures: [AI_LECTURE_ONE, ...AI_REMAINING_LECTURES], sheets: auditedAiSheets(course.sheets) };
-      case 'networks': return { ...course, lectures: NETWORK_LECTURES };
-      case 'iot': return { ...course, lectures: IOT_LECTURES, sheets: [...(course.sheets ?? []), IOT_QUESTION_BANK_SHEET] };
-      case 'windows-programming': return WINDOWS_PROGRAMMING_COURSE;
-      case 'mobile-programming': return MOBILE_PROGRAMMING_COURSE;
-      default: return course;
+      case 'ai': return { ...course, lectures: [AI_LECTURE_ONE, ...AI_REMAINING_LECTURES], sheets: auditedAiSheets(course.sheets), isAvailable: false };
+      case 'networks': return { ...course, lectures: NETWORK_LECTURES, isAvailable: true };
+      case 'iot': return { ...course, lectures: IOT_LECTURES, sheets: [...(course.sheets ?? []), IOT_QUESTION_BANK_SHEET], isAvailable: false };
+      case 'windows-programming': return { ...WINDOWS_PROGRAMMING_COURSE, isAvailable: false };
+      case 'mobile-programming': return { ...MOBILE_PROGRAMMING_COURSE, isAvailable: false };
+      default: return { ...course, isAvailable: false };
     }
   }),
-  SIGNAL_PROCESSING_COURSE,
+  { ...SIGNAL_PROCESSING_COURSE, isAvailable: false },
 ];

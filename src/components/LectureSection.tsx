@@ -4,6 +4,7 @@ import { SummarySection, QuickCheck } from '../types';
 import { ArabicText, formatArabicWithEnglish } from './ArabicText';
 import { CodeStudyBlock } from './CodeStudyBlock';
 import { InlineExperiment } from './interactive/ExperimentStudio';
+import { RichTextWithSlides } from './slides/RichTextWithSlides';
 
 /** Splits "Term: explanation" into a bold lead + rest when the colon comes early. */
 const splitLead = (text: string): [string | null, string] => {
@@ -156,13 +157,14 @@ interface LectureSectionProps {
   index: number;
   total: number;
   anchorId?: string;
+  lectureId?: string;
 }
 
 /**
  * Approved explanation-section layout (see AGENTS.md §4):
  * dark numbered side rail → title → Definition | الفكرة ببساطة cards → English | Arabic columns.
  */
-export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, total, anchorId }) => {
+export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, total, anchorId, lectureId = 'net-lec-1' }) => {
   const number = String(index + 1).padStart(2, '0');
   const points = section.bulletPoints ?? [];
 
@@ -197,13 +199,17 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
             <span className="text-[13px] font-mono font-bold uppercase tracking-wider text-stone-600 dark:text-zinc-400 flex items-center gap-2 mb-2">
               <BookOpen className="w-4 h-4" /> Definition
             </span>
-            <p className="text-[15px] text-stone-800 dark:text-stone-200 leading-relaxed">{section.content}</p>
+            <p className="text-[15px] text-stone-800 dark:text-stone-200 leading-relaxed">
+              <RichTextWithSlides text={section.content} lectureId={lectureId} />
+            </p>
           </div>
           <div className="rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/50 p-5">
             <ArabicText as="span" className="text-sm font-bold text-amber-900 dark:text-amber-300 flex items-center gap-2 mb-2">
               <Lightbulb className="w-4 h-4 shrink-0" /> الفكرة ببساطة
             </ArabicText>
-            <ArabicText className="text-[15px] font-medium text-stone-800 dark:text-zinc-200">{section.contentAr}</ArabicText>
+            <ArabicText className="text-[15px] font-medium text-stone-800 dark:text-zinc-200">
+              <RichTextWithSlides text={section.contentAr} lectureId={lectureId} isArabic />
+            </ArabicText>
           </div>
         </div>
 
@@ -225,8 +231,12 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
                             {i + 1}
                           </span>
                           <p className="text-stone-800 dark:text-stone-200">
-                            {lead && <strong className="text-stone-900 dark:text-white">{lead}: </strong>}
-                            {rest}
+                            {lead && (
+                              <strong className="text-stone-900 dark:text-white">
+                                <RichTextWithSlides text={lead} lectureId={lectureId} />:{' '}
+                              </strong>
+                            )}
+                            <RichTextWithSlides text={rest} lectureId={lectureId} />
                           </p>
                         </li>
                       );
@@ -239,7 +249,9 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
                   <span className="text-[13px] font-mono font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300 flex items-center gap-2 mb-1.5">
                     <Star className="w-4 h-4 fill-current" /> High-Yield Rule
                   </span>
-                  <p className="text-[15px] font-semibold text-stone-900 dark:text-stone-100 leading-relaxed">{section.keyRule}</p>
+                  <p className="text-[15px] font-semibold text-stone-900 dark:text-stone-100 leading-relaxed">
+                    <RichTextWithSlides text={section.keyRule} lectureId={lectureId} />
+                  </p>
                 </div>
               )}
             </div>
@@ -261,8 +273,12 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
                             {i + 1}
                           </span>
                           <ArabicText className="text-stone-600 dark:text-zinc-400">
-                            {lead && <strong className="text-stone-700 dark:text-zinc-300">{formatArabicWithEnglish(`${lead}:`)}</strong>}
-                            {lead ? ` ${rest}` : rest}
+                            {lead && (
+                              <strong className="text-stone-700 dark:text-zinc-300">
+                                <RichTextWithSlides text={lead} lectureId={lectureId} isArabic />:{' '}
+                              </strong>
+                            )}
+                            <RichTextWithSlides text={rest} lectureId={lectureId} isArabic />
                           </ArabicText>
                         </li>
                       );
@@ -275,7 +291,9 @@ export const LectureSection: React.FC<LectureSectionProps> = ({ section, index, 
                   <ArabicText as="span" className="text-sm font-bold text-amber-900 dark:text-amber-300 flex items-center gap-2 mb-1.5">
                     <Star className="w-4 h-4 fill-current" /> خد بالك في الامتحان
                   </ArabicText>
-                  <ArabicText className="text-[15px] font-semibold text-stone-900 dark:text-stone-100">{section.keyRuleAr}</ArabicText>
+                  <ArabicText className="text-[15px] font-semibold text-stone-900 dark:text-stone-100">
+                    <RichTextWithSlides text={section.keyRuleAr} lectureId={lectureId} isArabic />
+                  </ArabicText>
                 </div>
               )}
             </div>
