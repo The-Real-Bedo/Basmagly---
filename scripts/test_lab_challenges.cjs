@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const puppeteer = require('puppeteer-core');
 const { LAB_CATALOG } = require('./test_curriculum.cjs');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-const practice = new Set(['transmission-lab', 'topology-simulator', 'subnet-calculator', 'vacuum-world', 'edge-vs-cloud', 'iot-simulator', 'signal-convolution', 'win32-types-lab', 'network-devices', 'packet-journey', 'network-media', 'search-visualizer', 'signal-sampling', 'win32-code-lab']);
+const practice = new Set(['transmission-lab', 'topology-simulator', 'subnet-calculator', 'vacuum-world', 'edge-vs-cloud', 'iot-simulator', 'signal-convolution', 'win32-types-lab', 'network-devices', 'packet-journey', 'network-media', 'search-visualizer', 'signal-sampling', 'win32-code-lab', 'bfs-queue-lab', 'dfs-stack-lab', 'ucs-priority-lab', 'ipv6-compress', 'eui-64-lab', 'ipv6-structure-3d']);
 const captures = process.env.BASMAGLY_CAPTURE_DIR;
 (async () => {
   const browser = await puppeteer.launch({ executablePath: process.env.BASMAGLY_BROWSER_PATH || '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser', headless: true, pipe: true });
@@ -44,6 +44,31 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
   }
   async function status(expected) {
     assert.equal(await page.$eval(`${root} [data-testid="challenge-feedback"]`, e=>e.dataset.status), expected);
+  }
+  async function autoPlay() {
+    await button(/^Auto play/i);
+    await page.waitForFunction(root => {
+      const buttons = [...document.querySelectorAll(`${root} button`)].filter(b => !b.closest('[data-testid="lab-workbench"]'));
+      // While playing the toggle reads "Pause"; the search is done when it returns.
+      if (buttons.some(b => /^Pause/.test(b.innerText))) return false;
+      const step = buttons.find(b => /^Step/.test(b.innerText));
+      return !step || step.disabled;
+    }, {timeout: 30000}, root);
+    await delay(120);
+  }
+  async function checkbox(index) {
+    await page.$$eval(`${root} [data-lab-body] input[type="checkbox"]`, (els, index) => {
+      // The challenge panel renders inside the lab body; its prediction boxes are not lab controls.
+      const boxes = els.filter(e => !e.closest('[data-testid="lab-challenge"]'));
+      const e = boxes[index];
+      if (!e || e.disabled) throw Error('Checkbox unavailable');
+      if (!e.checked) e.click();
+    }, index);
+    await delay(80);
+  }
+  async function predict(value) {
+    await page.$eval(`${root} [data-testid="lab-challenge"] input[value="${value}"]`, e => { if (e.disabled) throw Error('Prediction locked'); e.click(); });
+    await delay(60);
   }
   async function formState() {
     return page.$$eval(`${root} [data-lab-body] input, ${root} [data-lab-body] select, ${root} [data-lab-body] button[aria-pressed]`, els => els.map(e=>({tag:e.tagName,value:e.value,checked:e.checked,pressed:e.getAttribute('aria-pressed')})));
@@ -101,7 +126,7 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
         expandedChecks++;
         if (practice.has(lab.id)) {
           const missions=await page.$$eval(`${root} [data-challenge-select] option`,els=>els.map(e=>e.value));
-          assert.equal(missions.length,2);
+          assert.ok(missions.length>=2,`${lab.id}: expected at least two missions, found ${missions.length}`);
           for (const [index, mission] of missions.entries()) {
             await select(0,mission,true);
             await click('[data-testid="start-challenge"]');
@@ -143,9 +168,20 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
                 await button(/Run flow/);await status('pending');await delay(2400);
                 break;
               case 'signal-convolution':
-                await select(1,index===0?'average':'weighted');
-                for(let i=0;i<(index===0?5:3);i++)await button(/^Step n/);
-                await input('#convolution-index',2);
+                if (mission === 'sig-slide-example1') {
+                  for(let i=0;i<4;i++)await button(/^Step n/);
+                } else if (mission === 'sig-slide-example2') {
+                  await input('input[aria-label="Convolution observation window size W"]',12);
+                } else if (mission === 'average-peak') {
+                  await select(0,'book');
+                  await select(1,'average');
+                  for(let i=0;i<5;i++)await button(/^Step n/);
+                  await input('#convolution-index',2);
+                } else {
+                  await select(1,'weighted');
+                  for(let i=0;i<3;i++)await button(/^Step n/);
+                  await input('#convolution-index',2);
+                }
                 break;
               case 'win32-types-lab':
                 if(index===0){await button(/^Message parameters/);await button(/^UINT_PTR$/,false,-1);}else await button(/^Unicode build/);
@@ -166,8 +202,49 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
                 else await button(/Clear/);
                 break;
               case 'search-visualizer':
-                await button(index===0?/^UCS/:/^BFS/);
-                for(let i=0;i<(index===0?4:2);i++)await button(/^Step/);
+                // Missions: Goal-13 slide trace (BFS), least-cost route (UCS), BFS cost trap.
+                if (mission === 'dual-target-trace') {
+                  await button(/^BFS/);
+                  for(let i=0;i<6;i++)await button(/^Step/);
+                } else if (mission === 'least-cost') {
+                  await button(/^UCS/);
+                  for(let i=0;i<4;i++)await button(/^Step/);
+                } else {
+                  await button(/^BFS/);
+                  for(let i=0;i<2;i++)await button(/^Step/);
+                }
+                break;
+              case 'bfs-queue-lab':
+                await autoPlay();
+                break;
+              case 'dfs-stack-lab':
+                await autoPlay();
+                break;
+              case 'ucs-priority-lab':
+                await autoPlay();
+                break;
+              case 'ipv6-compress':
+                if (mission === 'm-expand-4100') {
+                  await select(1, 'p-expand-4100');
+                } else {
+                  await checkbox(0);
+                  await checkbox(1);
+                  if (mission === 'm-run-choice') await predict('run-long');
+                }
+                break;
+              case 'eui-64-lab':
+                for(let i=0;i<3;i++)await button(/^Step/);
+                if (mission === 'm-eui-predict') await predict('p-fe');
+                break;
+              case 'ipv6-structure-3d':
+                if (mission === 'm-structure-predict') {
+                  await predict('p-subnet');
+                  await button(/Subnet ID · \/16/);
+                } else {
+                  await button(/Global Routing Prefix · \/48/);
+                  await button(/Subnet ID · \/16/);
+                  await button(/Interface ID · \/64/);
+                }
                 break;
               case 'signal-sampling':
                 await input(index===0?'input[aria-label="Sampling rate in samples per second"]':'input[aria-label="Quantization bit depth"]',index===0?14:5);
@@ -201,7 +278,13 @@ const captures = process.env.BASMAGLY_CAPTURE_DIR;
                 case 'network-devices':await select(1,'pcb');break;
                 case 'packet-journey':await button(/الخطوة الجاية/);break;
                 case 'network-media':await button(/Interference/);break;
-                case 'search-visualizer':await button(/^UCS/);break;
+                case 'search-visualizer':await button(/^Lecture 4 tree/);break;
+                case 'bfs-queue-lab':await button(/^Reset/);break;
+                case 'dfs-stack-lab':await button(/^Reset/);break;
+                case 'ucs-priority-lab':await button(/^Reset/);break;
+                case 'ipv6-compress':await select(0,'compress');break;
+                case 'eui-64-lab':await select(0,'FC-99-47-75-CE-E0');break;
+                case 'ipv6-structure-3d':await button(/All cells/);break;
                 case 'signal-sampling':await input('input[aria-label="Quantization bit depth"]',5);break;
                 case 'win32-code-lab':await button(/^Press A/);break;
               }

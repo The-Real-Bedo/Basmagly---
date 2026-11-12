@@ -1,5 +1,25 @@
 # Current study-platform handoff
 
+## Latest handoff — 41-lab test coverage and mission-integrity fixes (2026-11-11)
+
+**Start here.** Branch `feat/interactive-labs-3d`. Another session committed through `5988d1e` while this pass was running, so most of the audit work is already in history; the five files below are the uncommitted remainder. No push, merge or force-push.
+
+**What this pass fixed**
+- The new sub-768px `SmallScreenGate` made every 375px browser run render the warning instead of the app. All four lab suites now seed `sessionStorage['basmagly-gate-dismissed'] = '1'` in `evaluateOnNewDocument`, inside `try/catch` (opaque origins deny storage).
+- `SearchAlgorithmLab` now defaults to the Goal-13 slide tree, so the interaction test selects the "Lecture 4 tree · Goal O" preset before asserting `A → B → G → L → O`, cost 4 and 12/15/7 expansions.
+- Six registered labs had **no** interaction flow and the suite aborted with `Missing interaction flow`: `bfs-queue-lab`, `dfs-stack-lab`, `ucs-priority-lab`, `ipv6-compress`, `eui-64-lab`, `ipv6-structure-3d`. Each now has a flow with exact assertions (FIFO dequeue order + Goal-13 generation, F → B backtrack with peak depth 3, UCS extract-min then `g(n) = 4`, IPv6 rule compression/expansion, EUI-64 `FE99:47FF:FE75:CEE0`, 3D part focus).
+- Mission-integrity bugs: `ipv6-compress` / `m-expand-4100` and `signal-convolution` / `sig-slide-example2` reported success immediately after **Start challenge**. The first now loads the other expand example so picking `fd00:0:0:4100::` is required; the second starts at W = 4 and requires W ≥ 12, matching its "expand the observation window" goal.
+- Challenge suite is mission-id based for the labs whose mission count changed: `search-visualizer` (3) and `signal-convolution` (4). Mission count is asserted as ≥ 2 instead of exactly 2. Added a playback-aware `autoPlay()` (waits for the Auto Play/Pause toggle to return, not the Step button, which is disabled during playback) and a challenge-scoped checkbox helper (prediction boxes render inside the lab body).
+- Scenario label checks wait two animation frames plus 140 ms before measuring; the `vacuum-world` restored-view label was previously measured mid-relayout after a dialog closed.
+
+**Counts (from the data, not the prose):** 6 courses, 13 lectures, 286 in-lecture questions, 41 labs (AI 17, Networks 11, IoT 3, Windows 4, Signals 6), 11 sheets with 342 sheet problems. `docs/ACADEMIC_AUDIT.md` previously claimed 12 lectures / 162 questions / 35 labs / 361 problems / 9 sheets and is corrected.
+
+**Verified on the current tree:** `npx tsc --noEmit -p .` and `node scripts/test_curriculum.cjs` pass; `npm run build` passes (known Vite >500 kB warning only); `test_lab_interactions.cjs` 41/41 flows; `test_lab_challenges.cjs` 164 expanded views and 180 completed missions; `test_lab_scene_layout.cjs` 36 camera fits, 164 prominent-action checks, 92 scene flows, 596 annotation layouts; `test_ai_labs.cjs` model fixtures plus 12 interaction panels. No application/console errors or document overflow.
+
+**Uncommitted at handoff:** `docs/ACADEMIC_AUDIT.md`, `scripts/test_lab_challenges.cjs`, `scripts/test_lab_scene_layout.cjs`, `src/components/interactive/Ipv6CompressionLab.tsx`, `src/components/interactive/SignalConvolutionLab.tsx`.
+
+**Limits:** no new curriculum content was written in this pass; the fixes are harness coverage plus two mission-state corrections. No native Windows/network/audio proof is implied. Publish only on explicit authorization.
+
 ## Latest handoff — additional AI labs and light-mode default (2026-11-10)
 
 **Start here.** Continue on `feat/interactive-labs-3d`, preserving the earlier scene-layout/premium Expand work. The user requested more AI labs and light mode by default until manually switched. This pass is local only; no push, PR or merge was requested.

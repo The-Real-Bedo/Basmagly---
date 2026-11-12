@@ -25,8 +25,16 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
 
   return (
     <div
-      onClick={() => onSelect(course)}
-      className="min-w-0 bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-stone-400 dark:hover:border-stone-700 transition-all duration-200 flex flex-col justify-between group cursor-pointer"
+      onClick={() => {
+        if (course.isAvailable) {
+          onSelect(course);
+        }
+      }}
+      className={`min-w-0 bg-white dark:bg-stone-900 border border-beige-300 dark:border-stone-800 rounded-3xl p-5 sm:p-6 shadow-sm transition-all duration-200 flex flex-col justify-between ${
+        course.isAvailable
+          ? 'hover:shadow-md hover:border-stone-400 dark:hover:border-stone-700 group cursor-pointer'
+          : 'opacity-60 cursor-not-allowed select-none'
+      }`}
     >
       <div className="space-y-4">
         {/* Top: Icon & Status Badge */}

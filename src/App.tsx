@@ -45,7 +45,7 @@ const parseLocationState = () => {
 
 export const App: React.FC = () => {
   const initialNav = parseLocationState();
-  const initialCourse = initialNav?.courseId ? COURSES_DATA.find((c) => c.id === initialNav.courseId) || null : null;
+  const initialCourse = initialNav?.courseId ? COURSES_DATA.find((c) => c.id === initialNav.courseId && c.isAvailable) || null : null;
   const initialLecture = initialCourse && initialNav?.lectureId ? initialCourse.lectures.find((l) => l.id === initialNav.lectureId) || null : null;
 
   const [currentTerm, setCurrentTerm] = useState<1 | 2>(initialNav?.term || (initialCourse ? initialCourse.term : 1));
@@ -89,8 +89,13 @@ export const App: React.FC = () => {
         return;
       }
 
-      const course = COURSES_DATA.find((c) => c.id === state.courseId);
-      if (!course) return;
+      const course = COURSES_DATA.find((c) => c.id === state.courseId && c.isAvailable);
+      if (!course) {
+        setSelectedCourse(null);
+        setSelectedLecture(null);
+        setSelectedSheetId(null);
+        return;
+      }
 
       setSelectedCourse(course);
       setCurrentTerm(course.term);
@@ -170,6 +175,7 @@ export const App: React.FC = () => {
   };
 
   const handleOpenLecture = (course: Course, lecture: Lecture, tab: 'summary' | 'interactive' = 'summary') => {
+    if (!course.isAvailable) return;
     setSelectedCourse(course);
     setSelectedLecture(lecture);
     setSelectedSheetId(null);
@@ -179,8 +185,9 @@ export const App: React.FC = () => {
   };
 
   const handleOpenLab = (lab: LabDirectoryItem) => {
+    if (lab.category !== 'networks' && lab.courseId !== 'networks') return;
     const course = COURSES_DATA.find(c => c.id === lab.courseId);
-    if (!course) return;
+    if (!course || !course.isAvailable) return;
     const lecture = course.lectures.find(l => l.id === lab.lectureId);
     if (!lecture) return;
     handleOpenLecture(course, lecture, 'interactive');
@@ -248,7 +255,7 @@ export const App: React.FC = () => {
                 Term 2 Curriculum (Spring Semester)
               </h2>
               <ArabicText className="text-sm text-stone-600 dark:text-zinc-300 pt-1 text-center">
-                هنا هينزل كل منهج الترم التاني بملخصاته ومعامله وأسئلته أول ما يبدأ الترم على طول يا هندسة!
+                هنا احتمال ينزل ملخص مواد الترم التاني
               </ArabicText>
             </div>
             <button
@@ -273,16 +280,16 @@ export const App: React.FC = () => {
                 </h1>
                 <aside data-testid="hero-study-notice" className="w-full lg:w-3/4 mt-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-[#FAF7F2] dark:bg-stone-950 min-h-[240px] p-5 sm:p-6 flex flex-col justify-between gap-3">
                   <div className="flex items-center justify-end gap-2 text-amber-800 dark:text-amber-300">
-                    <ArabicText as="span" className="text-[13px] font-semibold text-inherit">تنبيه قبل البصمجة</ArabicText>
+                    <ArabicText as="span" className="text-[13px] font-semibold text-inherit">تنبيه قبل ما تبصمج</ArabicText>
                     <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
                   </div>
                   <ArabicText as="h2" className="text-xl sm:text-2xl font-semibold leading-relaxed text-stone-900 dark:text-stone-100">
-                    <span className="block">البصمجة ياما جابت تقديرات.</span>
-                    <span className="block">بس هتظبط المرة دي؟</span>
-                    <span className="mt-2 block text-3xl sm:text-4xl font-bold text-amber-800 dark:text-amber-300">موعدكش.</span>
+                    <span className="block">البصمجة بتعدّي أحياناً.. بس ليلة الامتحان غدّارة.</span>
+                    <span className="block">هتظبط معاك المرة دي؟</span>
+                    <span className="mt-2 block text-3xl sm:text-4xl font-bold text-amber-800 dark:text-amber-300">افهم الزتونة.</span>
                   </ArabicText>
                   <ArabicText className="text-sm sm:text-base text-stone-700 dark:text-zinc-300">
-                    اللي نقدر عليه: نلمّ لك المنهج، ونفكّ لك الفكرة. الباقي عليك يا هندسة.
+                    اللي نقدر عليه: بنفك لك الفكرة ونلخص لك الرغي. الباقي عليك يا هندسة.
                   </ArabicText>
                 </aside>
               </div>
@@ -326,7 +333,9 @@ export const App: React.FC = () => {
                   <CourseCard
                     key={course.id}
                     course={course}
-                    onSelect={(c) => setSelectedCourse(c)}
+                    onSelect={(c) => {
+                      if (c.isAvailable) setSelectedCourse(c);
+                    }}
                   />
                 ))}
               </div>
@@ -377,14 +386,20 @@ export const App: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredLabs.map((lab) => {
                   const IconComp = lab.icon;
+                  const isAvailable = lab.category === 'networks' || lab.courseId === 'networks';
                   return (
                     <div
                       key={lab.id}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleOpenLab(lab); } }}
-                      onClick={() => handleOpenLab(lab)}
-                      className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-stone-950 border border-beige-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 hover:shadow-md transition-all flex flex-col justify-between gap-3 group cursor-pointer"
+                      role={isAvailable ? "button" : undefined}
+                      tabIndex={isAvailable ? 0 : -1}
+                      onKeyDown={isAvailable ? (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleOpenLab(lab); } } : undefined}
+                      onClick={isAvailable ? () => handleOpenLab(lab) : undefined}
+                      className={`p-5 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
+                        isAvailable
+                          ? 'bg-[#FAF7F2] dark:bg-stone-950 border-beige-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 hover:shadow-md group cursor-pointer'
+                          : 'bg-stone-50/50 dark:bg-stone-950/40 border-stone-200 dark:border-stone-800/80 opacity-60 cursor-not-allowed select-none'
+                      }`}
+                      aria-disabled={!isAvailable}
                     >
                       <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
@@ -400,12 +415,20 @@ export const App: React.FC = () => {
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-beige-200 dark:bg-stone-800 flex items-center justify-center text-stone-800 dark:text-zinc-200 shrink-0 mt-0.5 group-hover:bg-stone-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-stone-900 transition-colors shadow-sm">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 shadow-sm transition-colors ${
+                            isAvailable
+                              ? 'bg-beige-200 dark:bg-stone-800 text-stone-800 dark:text-zinc-200 group-hover:bg-stone-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-stone-900'
+                              : 'bg-stone-200/60 dark:bg-stone-800/50 text-stone-400 dark:text-stone-500'
+                          }`}>
                             <IconComp className="w-5 h-5" />
                           </div>
                           <div>
                             {/* Requirement 8: Calm titles on hover */}
-                            <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100 group-hover:text-stone-900 dark:group-hover:text-white transition-colors">
+                            <h4 className={`font-bold text-sm transition-colors ${
+                              isAvailable
+                                ? 'text-stone-900 dark:text-stone-100 group-hover:text-stone-900 dark:group-hover:text-white'
+                                : 'text-stone-500 dark:text-stone-400'
+                            }`}>
                               {lab.title}
                             </h4>
                             <ArabicText className="text-sm text-stone-600 dark:text-zinc-300">
@@ -422,8 +445,12 @@ export const App: React.FC = () => {
                         <span className="text-[13px] font-arabic font-semibold text-stone-700 dark:text-zinc-300">
                           {lab.categoryLabelAr}
                         </span>
-                        <span className="flex items-center gap-1.5 font-bold text-sm text-stone-800 dark:text-zinc-200 group-hover:translate-x-0.5 transition-transform">
-                          <span>فتح المعمل</span>
+                        <span className={`flex items-center gap-1.5 font-bold text-sm ${
+                          isAvailable
+                            ? 'text-stone-800 dark:text-zinc-200 group-hover:translate-x-0.5 transition-transform'
+                            : 'text-stone-400 dark:text-stone-600'
+                        }`}>
+                          <span>{isAvailable ? 'فتح المعمل' : 'قريبًا'}</span>
                           <ArrowRight className="w-4 h-4" />
                         </span>
                       </div>

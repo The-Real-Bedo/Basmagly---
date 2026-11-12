@@ -1514,6 +1514,154 @@ const lecture3Questions: Question[] = [
     modelAnswerAr: 'طول الـ Prefix: عدد بتات الشبكة البادئة، وبيتكتب بعد علامة /، زي /24. قناع الشبكة: قيمة من 32 bit بتعلّم بتات الشبكة بـ1 وبتات الأجهزة بـ0. عنوان البث: العنوان الأخير في الشبكة الفرعية التقليدية، وبيُستخدم للوصول لكل الأجهزة في تلك الشبكة. الجهاز القابل للاستخدام: عنوان متاح للتوزيع على جهاز، مستثنى منه عنوانا الشبكة والبث في الشبكات التقليدية. الـ Bits المستعارة: بتات منتقلة من جزء الأجهزة لجزء الشبكة لإنشاء subnets أكتر. حجم الـ Block: مقدار الزيادة بين عناوين شبكات الـ subnets المتتالية في الـ octet المتغيّر.',
     keyPoints: ['Prefix length = leading network bits after slash', 'Subnet mask marks 1s network / 0s host', 'Broadcast reaches all hosts in subnet', 'Usable host excludes network and broadcast', 'Borrowed bits host to network', 'Block size increment in changing octet']
   }
+,
+  {
+    id: 'q-net3-41', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'For the subnet mask 255.255.255.240 (/28), what is the block size (magic number / increment) between consecutive subnets?',
+    questionAr: 'لقناع الشبكة 255.255.255.240 (/28)، ما هو حجم الـ Block (الرقم السحري / مقدار الزيادة) بين الشبكات الفرعية المتتالية؟',
+    options: ['8', '16', '32', '64'],
+    optionsAr: ['8', '16', '32', '64'], correctAnswer: 1,
+    explanation: 'Block size in the 4th octet is 256 − 240 = 16 (or 2^(32-28) = 2^4 = 16 addresses per subnet).',
+    explanationAr: 'حجم الـ Block في الـ octet الرابع هو 256 − 240 = 16 (أو 2^(32-28) = 2^4 = 16 عنوانًا لكل subnet).',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net3-42', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'A host is configured with the IP address 192.168.1.155/27. What is the Subnet Network Address to which this host belongs?',
+    questionAr: 'جهاز مضبوط بالعنوان 192.168.1.155/27. ما هو عنوان الشبكة الفرعية (Subnet Address) التي ينتمي إليها هذا الجهاز؟',
+    options: ['192.168.1.128', '192.168.1.144', '192.168.1.150', '192.168.1.160'],
+    optionsAr: ['192.168.1.128', '192.168.1.144', '192.168.1.150', '192.168.1.160'], correctAnswer: 0,
+    explanation: 'For /27, block size is 32. Subnet boundaries are .0, .32, .64, .96, .128, .160. Since 155 is between 128 and 159, the network address is 192.168.1.128.',
+    explanationAr: 'لقناع /27 حجم الـ Block هو 32. حدود الشبكات هي .0، .32، .64، .96، .128، .160. بما أن 155 يقع بين 128 و159، فإن عنوان الشبكة هو 192.168.1.128.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-43', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'For the host IP 192.168.1.155/27, what is the Directed Broadcast Address of its subnet?',
+    questionAr: 'لجهاز يحمل العنوان 192.168.1.155/27، ما هو عنوان البث الموجه (Broadcast Address) الخاص بشبكته الفرعية؟',
+    options: ['192.168.1.155', '192.168.1.159', '192.168.1.160', '192.168.1.255'],
+    optionsAr: ['192.168.1.155', '192.168.1.159', '192.168.1.160', '192.168.1.255'], correctAnswer: 1,
+    explanation: 'The subnet is 192.168.1.128/27 with block size 32. Next subnet starts at .160, so the broadcast address is 160 − 1 = 192.168.1.159.',
+    explanationAr: 'الشبكة الفرعية هي 192.168.1.128/27 وحجم الـ Block هو 32. الشبكة التالية تبدأ عند .160، إذن عنوان البث هو 160 − 1 = 192.168.1.159.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-44', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'What is the valid usable host address range for the subnet containing 192.168.1.155/27?',
+    questionAr: 'ما هو مدى عناوين الأجهزة الصالحة للاستخدام (Usable Host Range) للشبكة الفرعية التي تحتوي على 192.168.1.155/27؟',
+    options: ['192.168.1.128 to 192.168.1.159', '192.168.1.129 to 192.168.1.158', '192.168.1.130 to 192.168.1.160', '192.168.1.129 to 192.168.1.160'],
+    optionsAr: ['192.168.1.128 إلى 192.168.1.159', '192.168.1.129 إلى 192.168.1.158', '192.168.1.130 إلى 192.168.1.160', '192.168.1.129 إلى 192.168.1.160'], correctAnswer: 1,
+    explanation: 'First usable host is network + 1 = 192.168.1.129; last usable host is broadcast − 1 = 192.168.1.158.',
+    explanationAr: 'أول جهاز صالح هو عنوان الشبكة + 1 = 192.168.1.129؛ وآخر جهاز هو عنوان البث − 1 = 192.168.1.158.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-45', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'A network administrator needs to connect two routers via a point-to-point serial link. Which subnet mask provides exactly 2 usable host addresses with zero wasted addresses?',
+    questionAr: 'يحتاج مهندس الشبكات إلى توصيل راوترين عبر وصلة تسلسلية Point-to-Point. أي قناع شبكة يوفر جهازين صالحين فقط للاستخدام بدون أي إهدار للعناوين؟',
+    options: ['255.255.255.240 (/28)', '255.255.255.248 (/29)', '255.255.255.252 (/30)', '255.255.255.254 (/31)'],
+    optionsAr: ['255.255.255.240 (/28)', '255.255.255.248 (/29)', '255.255.255.252 (/30)', '255.255.255.254 (/31)'], correctAnswer: 2,
+    explanation: 'A /30 prefix leaves 2 host bits: 2^2 − 2 = 2 usable hosts, with subnet mask 255.255.255.252.',
+    explanationAr: 'بادئة /30 تترك بتّين للأجهزة: 2^2 − 2 = 2 جهاز قابل للاستخدام، وقناع الشبكة 255.255.255.252.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net3-46', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'A company is allocated 172.16.0.0/16 and requires at least 50 subnets. How many bits must be borrowed, and what is the new subnet mask?',
+    questionAr: 'خُصصت لشركة شبكة 172.16.0.0/16 وتحتاج إلى 50 شبكة فرعية على الأقل. كم عدد البتات المستعارة وما هو قناع الشبكة الجديد؟',
+    options: ['Borrow 5 bits, mask 255.255.248.0', 'Borrow 6 bits, mask 255.255.252.0', 'Borrow 7 bits, mask 255.255.254.0', 'Borrow 8 bits, mask 255.255.255.0'],
+    optionsAr: ['استلاف 5 بتات، القناع 255.255.248.0', 'استلاف 6 بتات، القناع 255.255.252.0', 'استلاف 7 بتات، القناع 255.255.254.0', 'استلاف 8 بتات، القناع 255.255.255.0'], correctAnswer: 1,
+    explanation: '2^5 = 32 < 50; 2^6 = 64 >= 50. Borrowing 6 bits gives prefix /16 + 6 = /22, and subnet mask 255.255.252.0.',
+    explanationAr: '2^5 = 32 < 50؛ 2^6 = 64 >= 50. استلاف 6 بتات يعطي بادئة /16 + 6 = /22، وقناع الشبكة 255.255.252.0.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-47', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'For the subnetted network 172.16.0.0/22, what is the block size in the third octet, and what is the network address of the second subnet?',
+    questionAr: 'للشبكة المقسمة 172.16.0.0/22، ما هو حجم الـ Block في الـ octet الثالث، وما هو عنوان الشبكة الفرعية الثانية؟',
+    options: ['Block size 2, second subnet 172.16.2.0', 'Block size 4, second subnet 172.16.4.0', 'Block size 8, second subnet 172.16.8.0', 'Block size 16, second subnet 172.16.16.0'],
+    optionsAr: ['حجم الـ Block هو 2، والشبكة الثانية 172.16.2.0', 'حجم الـ Block هو 4، والشبكة الثانية 172.16.4.0', 'حجم الـ Block هو 8، والشبكة الثانية 172.16.8.0', 'حجم الـ Block هو 16، والشبكة الثانية 172.16.16.0'], correctAnswer: 1,
+    explanation: 'The 3rd octet mask value is 252; block size = 256 − 252 = 4. Subnet 0 is 172.16.0.0/22, and Subnet 1 (second subnet) is 172.16.4.0/22.',
+    explanationAr: 'قيمة الـ octet الثالث في القناع هي 252؛ حجم الـ Block = 256 − 252 = 4. الشبكة الأولى هي 172.16.0.0/22، والشبكة الثانية هي 172.16.4.0/22.',
+    difficulty: 'hard'
+  },
+  {
+    id: 'q-net3-48', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'A department needs at least 25 usable host IP addresses. Which prefix provides the tightest fit without running out of addresses?',
+    questionAr: 'قسم في شركة يحتاج إلى 25 عنوان جهاز صالح على الأقل. ما هي البادئة (Prefix) التي تلبي هذا الاحتياج بأقل هدر ممكن؟',
+    options: ['/26 (62 hosts)', '/27 (30 hosts)', '/28 (14 hosts)', '/29 (6 hosts)'],
+    optionsAr: ['/26 (62 جهاز)', '/27 (30 جهاز)', '/28 (14 جهاز)', '/29 (6 أجهزة)'], correctAnswer: 1,
+    explanation: 'Formula 2^h − 2 >= 25. For h = 5 (prefix /27): 2^5 − 2 = 30 >= 25. Prefix /28 gives only 14 hosts, which is insufficient.',
+    explanationAr: 'المعادلة 2^h − 2 >= 25. عند h = 5 (بادئة /27): 2^5 − 2 = 30 >= 25. بينما /28 تعطي 14 جهازًا فقط وهي غير كافية.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net3-49', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'Which of the following IP addresses is a valid, assignable host IP address on the subnet 10.10.10.64/26?',
+    questionAr: 'أي من عناوين IP التالية هو عنوان جهاز (Host IP) صالح للتعيين على الشبكة الفرعية 10.10.10.64/26؟',
+    options: ['10.10.10.64', '10.10.10.99', '10.10.10.127', '10.10.10.128'],
+    optionsAr: ['10.10.10.64', '10.10.10.99', '10.10.10.127', '10.10.10.128'], correctAnswer: 1,
+    explanation: 'On 10.10.10.64/26, the network is .64, broadcast is .127, and usable hosts are .65 through .126. Thus, 10.10.10.99 is a valid host.',
+    explanationAr: 'على الشبكة 10.10.10.64/26، عنوان الشبكة هو .64، والبث هو .127، والأجهزة الصالحة من .65 إلى .126. بالتالي 10.10.10.99 عنوان جهاز صالح.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-50', courseId: 'networks', lectureId: 'net-lec-3', type: 'true_false',
+    question: 'The subnet mask 255.255.255.248 (/29) provides exactly 6 usable host addresses and advances subnets in blocks of 8 in the fourth octet.',
+    questionAr: 'قناع الشبكة 255.255.255.248 (/29) يوفر 6 أجهزة صالحة للاستخدام بالضبط وتتقدم الشبكات فيه بمقدار 8 في الـ octet الرابع.',
+    correctAnswer: true,
+    explanation: 'Block size is 256 − 248 = 8. Host bits h = 32 − 29 = 3; usable hosts = 2^3 − 2 = 6.',
+    explanationAr: 'حجم الـ Block هو 256 − 248 = 8. بتات الأجهزة h = 32 − 29 = 3؛ الأجهزة الصالحة = 2^3 − 2 = 6.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net3-51', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'How many bits must be borrowed to divide the network 192.168.10.0/24 into at least 30 subnets, and what is the resulting subnet mask?',
+    questionAr: 'كم عدد البتات التي يجب استلافها لتقسيم الشبكة 192.168.10.0/24 إلى 30 شبكة فرعية على الأقل، وما هو قناع الشبكة الناتج؟',
+    options: ['4 bits, mask 255.255.255.240', '5 bits, mask 255.255.255.248', '6 bits, mask 255.255.255.252', '3 bits, mask 255.255.255.224'],
+    optionsAr: ['4 بتات، القناع 255.255.255.240', '5 بتات، القناع 255.255.255.248', '6 بتات، القناع 255.255.255.252', '3 بتات، القناع 255.255.255.224'], correctAnswer: 1,
+    explanation: '2^4 = 16 < 30; 2^5 = 32 >= 30. Borrowing 5 bits creates 32 subnets with prefix /29 and mask 255.255.255.248.',
+    explanationAr: '2^4 = 16 < 30؛ 2^5 = 32 >= 30. استلاف 5 بتات ينتج 32 شبكة فرعية ببادئة /29 وقناع 255.255.255.248.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-52', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'Given the subnet 192.168.10.96/28, what is the last usable host IP address?',
+    questionAr: 'بالنظر إلى الشبكة الفرعية 192.168.10.96/28، ما هو آخر عنوان جهاز صالح للاستخدام (Last Usable Host)؟',
+    options: ['192.168.10.110', '192.168.10.111', '192.168.10.112', '192.168.10.126'],
+    optionsAr: ['192.168.10.110', '192.168.10.111', '192.168.10.112', '192.168.10.126'], correctAnswer: 0,
+    explanation: 'For /28, block size is 16. The broadcast address is 96 + 15 = 111. The last usable host is broadcast − 1 = 192.168.10.110.',
+    explanationAr: 'لقناع /28، حجم الـ Block هو 16. عنوان البث هو 96 + 15 = 111. وآخر جهاز صالح هو البث − 1 = 192.168.10.110.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net3-53', courseId: 'networks', lectureId: 'net-lec-3', type: 'mcq',
+    question: 'If a host is configured with the IP address 172.16.45.14/20, in which octet does the subnet boundary between network and host bits fall?',
+    questionAr: 'إذا ضُبط جهاز بالعنوان 172.16.45.14/20، في أي octet يقع الحد الفاصل بين بتات الشبكة وبتات الأجهزة؟',
+    options: ['First octet', 'Second octet', 'Third octet', 'Fourth octet'],
+    optionsAr: ['الـ octet الأول', 'الـ octet الثاني', 'الـ octet الثالث', 'الـ octet الرابع'], correctAnswer: 2,
+    explanation: 'A /20 prefix has 8 bits in octet 1, 8 bits in octet 2, and 4 bits in octet 3 (8+8+4 = 20). The boundary is in the third octet.',
+    explanationAr: 'بادئة /20 تحتوي على 8 بتات في الـ octet الأول و8 في الثاني و4 في الثالث (8+8+4 = 20). إذن الفاصل يقع في الـ octet الثالث.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net3-54', courseId: 'networks', lectureId: 'net-lec-3', type: 'essay',
+    question: 'Solve step-by-step: Given network 192.168.5.0/24, divide it into subnets requiring at least 12 usable hosts each. Show: (1) host bits required, (2) bits borrowed, (3) new prefix, (4) subnet mask, (5) block size, and (6) Network, First Host, Last Host, and Broadcast for the first 3 subnets.',
+    questionAr: 'حل المسألة خطوة بخطوة: بالنظر إلى الشبكة 192.168.5.0/24، قسّمها لشبكات فرعية تحتاج كل منها إلى 12 جهازًا صالحًا على الأقل. وضّح: (1) بتات الأجهزة المطلوبة، (2) البتات المستعارة، (3) البادئة الجديدة، (4) قناع الشبكة، (5) حجم الـ Block، و(6) عناوين الشبكة وأول جهاز وآخر جهاز والبث لأول 3 شبكات.',
+    correctAnswer: 'Step-by-step subnet calculation for 12 hosts from /24.',
+    modelAnswer: '1. Host bits needed: 2^h − 2 >= 12 -> 2^4 − 2 = 14 >= 12, so h = 4 host bits. 2. Borrowed bits: 8 − 4 = 4 bits borrowed. 3. New prefix: 24 + 4 = /28. 4. Subnet mask: 255.255.255.240. 5. Block size: 256 − 240 = 16 (or 2^4 = 16). 6. First 3 subnets: Subnet 0: Net 192.168.5.0, Usable 192.168.5.1–192.168.5.14, Broadcast 192.168.5.15. Subnet 1: Net 192.168.5.16, Usable 192.168.5.17–192.168.5.30, Broadcast 192.168.5.31. Subnet 2: Net 192.168.5.32, Usable 192.168.5.33–192.168.5.46, Broadcast 192.168.5.47.',
+    modelAnswerAr: '1. بتات الأجهزة المطلوبة: 2^h − 2 >= 12؛ إذن h = 4 بتات (2^4 − 2 = 14 جهاز). 2. البتات المستعارة: 8 − 4 = 4 بتات. 3. البادئة الجديدة: 24 + 4 = /28. 4. قناع الشبكة: 255.255.255.240. 5. حجم الـ Block: هو 256 − 240 = 16. 6. أول 3 شبكات فرعية: الشبكة 0: العنوان 192.168.5.0، الأجهزة 192.168.5.1 إلى 192.168.5.14، البث 192.168.5.15. الشبكة 1: العنوان 192.168.5.16، الأجهزة 192.168.5.17 إلى 192.168.5.30، البث 192.168.5.31. الشبكة 2: العنوان 192.168.5.32، الأجهزة 192.168.5.33 إلى 192.168.5.46، البث 192.168.5.47.',
+    keyPoints: ['h = 4 host bits (2^4 - 2 = 14 >= 12)', 'Borrow 4 bits from host -> prefix /28', 'Mask 255.255.255.240 with block size 16', 'Subnet 0: .0, hosts .1-.14, bcast .15', 'Subnet 1: .16, hosts .17-.30, bcast .31', 'Subnet 2: .32, hosts .33-.46, bcast .47']
+  },
+  {
+    id: 'q-net3-55', courseId: 'networks', lectureId: 'net-lec-3', type: 'essay',
+    question: 'Solve step-by-step: A host has IP address 10.20.85.200/22. Calculate: (1) the subnet mask, (2) the changing octet and its block size, (3) the Subnet Network Address, (4) the Directed Broadcast Address, and (5) the total number of usable host addresses in this subnet.',
+    questionAr: 'حل المسألة خطوة بخطوة: جهاز يحمل العنوان 10.20.85.200/22. احسب: (1) قناع الشبكة، (2) الـ octet المتغير وحجم الـ Block فيه، (3) عنوان الشبكة الفرعية، (4) عنوان البث الموجه، و(5) إجمالي عدد الأجهزة الصالحة للاستخدام في هذه الشبكة.',
+    correctAnswer: 'Step-by-step calculation for 10.20.85.200/22.',
+    modelAnswer: '1. Subnet mask: /22 is 11111111.11111111.11111100.00000000 = 255.255.252.0. 2. Changing octet: Octet 3 (value 252); block size = 256 − 252 = 4. 3. Network address: Multiples of 4 in octet 3: 80, 84, 88. Since 85 falls between 84 and 87, Network Address = 10.20.84.0/22. 4. Broadcast address: Last address in the block is 10.20.(84 + 4 − 1).255 = 10.20.87.255. 5. Usable hosts: Host bits = 32 − 22 = 10; usable hosts = 2^10 − 2 = 1024 − 2 = 1022 hosts (range: 10.20.84.1 to 10.20.87.254).',
+    modelAnswerAr: '1. قناع الشبكة: /22 بالنظام الثنائي هو 11111111.11111111.11111100.00000000 = 255.255.252.0. 2. الـ octet المتغير: هو الثالث (قيمته 252)؛ وحجم الـ Block = 256 − 252 = 4. 3. عنوان الشبكة: مضاعفات 4 في الـ octet الثالث هي 80، 84، 88. بما أن 85 تقع بين 84 و87، فعنوان الشبكة = 10.20.84.0/22. 4. عنوان البث: آخر عنوان في الـ Block هو 10.20.(84 + 4 − 1).255 = 10.20.87.255. 5. عدد الأجهزة الصالحة: بتات الأجهزة = 32 − 22 = 10؛ الأجهزة الصالحة = 2^10 − 2 = 1024 − 2 = 1022 جهازًا (المدى: 10.20.84.1 إلى 10.20.87.254).',
+    keyPoints: ['Mask: 255.255.252.0', 'Changing octet: 3rd octet, block size 4', 'Network Address: 10.20.84.0/22', 'Broadcast Address: 10.20.87.255', 'Usable Hosts: 2^10 - 2 = 1022 hosts (.84.1 to .87.254)']
+  }
 ];
 
 const lecture4Questions: Question[] = [
@@ -2057,6 +2205,154 @@ const lecture4Questions: Question[] = [
     modelAnswerAr: 'الضبط الثابت على الراوتر شبيه بالـ IPv4 مع استبدال IPv6 مكانه: الأمر بتاع ضبط عنوان global unicast على الواجهة هو ipv6 address متبوعًا بالعنوان/طول الـ prefix. وضبط الجهاز بيتعمل يدويًا وشبيه بضبط عنوان IPv4؛ والـ default gateway ممكن يتظبط يطابق إما عنوان الـ link-local (‏FE80) أو عنوان الـ global unicast (زي 2001:db8:acad:1::1) الخاص بواجهة الـ Gigabit Ethernet. والعنونة الديناميكية بتتم بالـ SLAAC أو الـ stateful DHCPv6. وعناوين الـ link-local ممكن تتأسس ديناميكيًا أو تتظبط يدويًا: راوترات Cisco IOS بتستخدم EUI-64 لتوليد الـ Interface ID لكل عناوين الـ link-local على واجهات IPv6، لكن عيب الـ link-local الديناميكي هو طول الـ interface ID، فلذلك غالبًا بتتظبط ثابت لعمل عناوين بسيطة سهلة الحفظ. التحقق: الأوامر شبيهة بالـ IPv4 — ‏show ipv6 interface brief وshow ipv6 route — وأمر ping متطابق تمامًا إلا إنه بيُستخدم مع عنوان IPv6.',
     keyPoints: ['ipv6 address ipv6-address/prefix-length on routers', 'Host gateway: FE80 link-local or global unicast', 'Dynamic: SLAAC or stateful DHCPv6', 'IOS link-local via EUI-64; long ID drawback; often static', 'show ipv6 interface brief / show ipv6 route / ping']
   }
+,
+  {
+    id: 'q-net4-41', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'According to RFC 5952 and lecture slide 8 rules, what is the correct compressed form of the IPv6 address 2001:0DB8:0000:0000:0008:0800:200C:417A?',
+    questionAr: 'وفقًا لقواعد RFC 5952 والشريحة 8 في المحاضرة، ما هي الصيغة المضغوطة الصحيحة لعنوان IPv6 التالي: 2001:0DB8:0000:0000:0008:0800:200C:417A؟',
+    options: ['2001:DB8::8:800:200C:417A', '2001:DB8:0:0:8:8:200C:417A', '2001:DB8::8:8:200C:417A', '2001:DB8:0000::8:800:200C:417A'],
+    optionsAr: ['2001:DB8::8:800:200C:417A', '2001:DB8:0:0:8:8:200C:417A', '2001:DB8::8:8:200C:417A', '2001:DB8:0000::8:800:200C:417A'], correctAnswer: 0,
+    explanation: 'Rule 1: omit leading zeros (0DB8 -> DB8, 0008 -> 8). Rule 2: replace the contiguous segment of two zero hextets with double colon (::). Notice that 0800 cannot drop its trailing zeros, becoming 800.',
+    explanationAr: 'القاعدة 1: حذف الأصفار البادئة (0DB8 تصبح DB8، و0008 تصبح 8). القاعدة 2: استبدال مقطعي الصفر المتتاليين بـ ::. لاحظ أن 0800 لا يمكن حذف أصفارها اللاحقة فتصبح 800.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net4-42', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'When expanding the compressed IPv6 address 2001:db8:acad:1::b into its full 8-hextet format, how many all-zero hextets (0000) are restored?',
+    questionAr: 'عند فك ضغط عنوان IPv6 المضغوط 2001:db8:acad:1::b إلى صيغته الكاملة المكونة من 8 مقاطع، كم مقطعًا صفريًا (0000) يتم استرجاعه؟',
+    options: ['2 all-zero hextets', '3 all-zero hextets', '4 all-zero hextets', '5 all-zero hextets'],
+    optionsAr: ['مقطعان صفريان (2)', '3 مقاطع صفرية', '4 مقاطع صفرية', '5 مقاطع صفرية'], correctAnswer: 1,
+    explanation: 'The address has 5 explicit hextets: 2001, db8, acad, 1, and b. An IPv6 address has 8 hextets in total, so :: represents 8 − 5 = 3 all-zero hextets (0000:0000:0000).',
+    explanationAr: 'العنوان يحتوي على 5 مقاطع ظاهرة: 2001 وdb8 وacad و1 وb. عنوان IPv6 يتكون من 8 مقاطع، إذن :: تعوض 8 − 5 = 3 مقاطع صفرية (0000:0000:0000).',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-43', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'A host has the MAC address 00:1A:2B:3C:4D:5E. What 64-bit Interface ID is produced using the EUI-64 process?',
+    questionAr: 'جهاز يحمل عنوان الماك 00:1A:2B:3C:4D:5E. ما هو الـ Interface ID (64 بت) الناتج باستخدام عملية EUI-64؟',
+    options: ['001A:2BFF:FE3C:4D5E', '021A:2BFF:FE3C:4D5E', '011A:2BFF:FE3C:4D5E', '201A:2BFF:FE3C:4D5E'],
+    optionsAr: ['001A:2BFF:FE3C:4D5E', '021A:2BFF:FE3C:4D5E', '011A:2BFF:FE3C:4D5E', '201A:2BFF:FE3C:4D5E'], correctAnswer: 1,
+    explanation: 'Step 1: insert FFFE in the middle -> 001A:2BFF:FE3C:4D5E. Step 2: flip 7th bit of first byte 00 (0000 0000 -> 0000 0010 = 02). Result: 021A:2BFF:FE3C:4D5E.',
+    explanationAr: 'الخطوة 1: إدخال FFFE في المنتصف -> 001A:2BFF:FE3C:4D5E. الخطوة 2: قلب البت السابع في البايت الأول 00 (يتحول 0000 0000 إلى 0000 0010 = 02). النتيجة: 021A:2BFF:FE3C:4D5E.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net4-44', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'From lecture slide 28, given the MAC address FC:99:47:75:CE:E0, what is the resulting EUI-64 Interface ID?',
+    questionAr: 'من الشريحة 28 بالمحاضرة، بالنظر إلى عنوان الماك FC:99:47:75:CE:E0، ما هو الـ EUI-64 Interface ID الناتج؟',
+    options: ['FC99:47FF:FE75:CEE0', 'FE99:47FF:FE75:CEE0', 'FD99:47FF:FE75:CEE0', 'EE99:47FF:FE75:CEE0'],
+    optionsAr: ['FC99:47FF:FE75:CEE0', 'FE99:47FF:FE75:CEE0', 'FD99:47FF:FE75:CEE0', 'EE99:47FF:FE75:CEE0'], correctAnswer: 1,
+    explanation: 'First byte FC in binary is 1111 1100. Inverting the 7th bit yields 1111 1110 = FE. Inserting FFFE into the middle gives FE99:47FF:FE75:CEE0.',
+    explanationAr: 'البايت الأول FC بالنظام الثنائي هو 1111 1100. قلب البت السابع يعطي 1111 1110 = FE. وإدخال FFFE في المنتصف يعطي FE99:47FF:FE75:CEE0.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net4-45', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'Given the MAC address BC:BA:C5:14:00:01, what does the first byte (BC) become after inverting the 7th bit (U/L bit) in EUI-64?',
+    questionAr: 'بالنظر إلى عنوان الماك BC:BA:C5:14:00:01، ماذا يصبح البايت الأول (BC) بعد قلب البت السابع (U/L bit) في EUI-64؟',
+    options: ['BA', 'BE', 'FC', 'BD'],
+    optionsAr: ['BA', 'BE', 'FC', 'BD'], correctAnswer: 1,
+    explanation: 'BC in hex is binary 1011 1100. Inverting the 7th bit (0 to 1) yields 1011 1110, which in hexadecimal is BE.',
+    explanationAr: 'BC بالنظام الست عشري هي ثنائيًا 1011 1100. قلب البت السابع (من 0 إلى 1) يعطي 1011 1110، وهي بالنظام الست عشري BE.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'q-net4-46', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'Why does RFC 5952 and IPv6 specification restrict the use of the double colon (::) to at most ONCE per address?',
+    questionAr: 'لماذا تمنع مواصفات IPv6 وRFC 5952 استخدام النقطتين المزدوجتين (::) أكثر من مرة واحدة في العنوان الواحد؟',
+    options: ['To conserve bandwidth', 'To prevent ambiguity about how many zero hextets are in each omitted position', 'Because routers cannot calculate checksums with multiple colons', 'Because IPv6 header size is fixed at 40 bytes'],
+    optionsAr: ['لتوفير الباندويث', 'لمنع الغموض والالتباس حول عدد المقاطع الصفرية الموجودة في كل موضع محذوف', 'لأن الراوترات لا تستطيع حساب الـ Checksum مع تكرار النقطتين', 'لأن حجم ترويسة IPv6 ثابت عند 40 بايت'], correctAnswer: 1,
+    explanation: 'If double colons appeared multiple times, it would be mathematically impossible to know how many zeros each double colon represented.',
+    explanationAr: 'لو ظهرت النقطتان المزدوجتان أكثر من مرة، لكان من المستحيل رياضيًا معرفة عدد المقاطع الصفرية التي تمثلها كل نقطتان مزدوجتان.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-47', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'An enterprise is assigned the IPv6 Global Routing Prefix 2001:0db8:cafe::/48. How many /64 subnets can the enterprise create using the standard 16-bit Subnet ID field?',
+    questionAr: 'خُصصت لمؤسسة بادئة التوجيه العالمي 2001:0db8:cafe::/48. كم شبكة فرعية من نوع /64 تستطيع المؤسسة إنشاءها باستخدام حقل الـ Subnet ID القياسي المكون من 16 بت؟',
+    options: ['256 subnets', '4,096 subnets', '65,536 subnets', '16,777,216 subnets'],
+    optionsAr: ['256 شبكة', '4,096 شبكة', '65,536 شبكة', '16,777,216 شبكة'], correctAnswer: 2,
+    explanation: 'The Subnet ID is 64 − 48 = 16 bits (the 4th hextet). 2^16 = 65,536 distinct /64 subnets.',
+    explanationAr: 'حقل الـ Subnet ID هو 64 − 48 = 16 بت (المقطع الرابع). 2^16 = 65,536 شبكة فرعية /64 مستقلة.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-48', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'For the prefix 2001:db8:cafe::/48, what is the subnet prefix of the first three subnets using standard /64 subnetting?',
+    questionAr: 'للبادئة 2001:db8:cafe::/48، ما هي بادئات أول ثلاث شبكات فرعية باستخدام التقسيم القياسي /64؟',
+    options: ['2001:db8:cafe:0000::/64, 2001:db8:cafe:0001::/64, 2001:db8:cafe:0002::/64', '2001:db8:cafe:1::/64, 2001:db8:cafe:2::/64, 2001:db8:cafe:3::/64', '2001:db8:cafe::1/64, 2001:db8:cafe::2/64, 2001:db8:cafe::3/64', '2001:db8:cafe:1000::/64, 2001:db8:cafe:2000::/64, 2001:db8:cafe:3000::/64'],
+    optionsAr: ['2001:db8:cafe:0000::/64 و2001:db8:cafe:0001::/64 و2001:db8:cafe:0002::/64', '2001:db8:cafe:1::/64 و2001:db8:cafe:2::/64 و2001:db8:cafe:3::/64', '2001:db8:cafe::1/64 و2001:db8:cafe::2/64 و2001:db8:cafe::3/64', '2001:db8:cafe:1000::/64 و2001:db8:cafe:2000::/64 و2001:db8:cafe:3000::/64'], correctAnswer: 0,
+    explanation: 'Subnet ID increments in the 4th hextet: 0000::/64 (or ::/64), 0001::/64 (or 1::/64), and 0002::/64 (or 2::/64).',
+    explanationAr: 'يزداد الـ Subnet ID في المقطع الرابع: 0000::/64، ثم 0001::/64، ثم 0002::/64.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-49', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'What is the Solicited-Node Multicast address corresponding to the unicast IPv6 address 2001:db8:acad:1::68?',
+    questionAr: 'ما هو عنوان الـ Solicited-Node Multicast المقابل لعنوان IPv6 الفردي التالي: 2001:db8:acad:1::68؟',
+    options: ['FF02::1:FF00:68', 'FF02::1:68', 'FF02::1:FF68', 'FF02::2:FF00:68'],
+    optionsAr: ['FF02::1:FF00:68', 'FF02::1:68', 'FF02::1:FF68', 'FF02::2:FF00:68'], correctAnswer: 0,
+    explanation: 'A Solicited-Node multicast address consists of FF02:0:0:0:0:1:FF00::/104 combined with the lower 24 bits of the unicast address. For ::68, the lower 24 bits are 00:0068, giving FF02::1:FF00:68.',
+    explanationAr: 'عنوان Solicited-Node multicast يتكون من البادئة FF02:0:0:0:0:1:FF00::/104 مدمجة مع آخر 24 بت من العنوان الفردي. للعنوان ::68، آخر 24 بت هي 00:0068، فتكون النتيجة FF02::1:FF00:68.',
+    difficulty: 'hard'
+  },
+  {
+    id: 'q-net4-50', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'A host interface has the Link-Local address FE80::021A:2BFF:FE3C:4D5E. What is its Solicited-Node multicast address?',
+    questionAr: 'واجهة جهاز تحمل عنوان Link-Local التالي: FE80::021A:2BFF:FE3C:4D5E. ما هو عنوان الـ Solicited-Node multicast الخاص بها؟',
+    options: ['FF02::1:FF3C:4D5E', 'FF02::1:FE3C:4D5E', 'FF02::1:FF1A:2BFF', 'FF02::2:FF3C:4D5E'],
+    optionsAr: ['FF02::1:FF3C:4D5E', 'FF02::1:FE3C:4D5E', 'FF02::1:FF1A:2BFF', 'FF02::2:FF3C:4D5E'], correctAnswer: 0,
+    explanation: 'The lower 24 bits (last 6 hex characters) of the address are 3C:4D5E. Prepending FF02::1:FF gives FF02::1:FF3C:4D5E.',
+    explanationAr: 'آخر 24 بت (آخر 6 خانات ست عشرية) من العنوان هي 3C:4D5E. بإضافتها للبادئة FF02::1:FF نحصل على FF02::1:FF3C:4D5E.',
+    difficulty: 'hard'
+  },
+  {
+    id: 'q-net4-51', courseId: 'networks', lectureId: 'net-lec-4', type: 'true_false',
+    question: 'In IPv6 compression (Rule 1), leading zeros in a hextet must be omitted, but trailing zeros (such as the zeros in :0800:) must NEVER be omitted because that would alter the numeric value.',
+    questionAr: 'في ضغط IPv6 (القاعدة 1)، يجب حذف الأصفار البادئة في المقطع، لكن الأصفار اللاحقة (مثل الأصفار في :0800:) يُحظر حذفها لأن ذلك يغير القيمة العددية للعنوان.',
+    correctAnswer: true,
+    explanation: 'Leading zeros (:0800: -> :800:) are omitted, but trailing zeros represent value magnitude and cannot be removed without changing the address.',
+    explanationAr: 'الأصفار البادئة في المقطع (:0800: تصبح :800:) تُحذف، أما الأصفار اللاحقة فتمثل قيمة المقطع ويؤدي حذفها لتغيير العنوان.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-52', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'Which of the following correctly identifies the Link-Local address prefix and scope in IPv6?',
+    questionAr: 'أي من الخيارات التالية يحدد بشكل صحيح بادئة عنوان الـ Link-Local ونطاقه في IPv6؟',
+    options: ['FE80::/10, valid only on the local link and not routable between networks', '2001::/3, globally routable across the public Internet', 'FC00::/7, routable within a local organization only', 'FF00::/8, used for multicast communications'],
+    optionsAr: ['FE80::/10، صالح فقط على الوصلة المحلية وغير قابل للتوجيه بين الشبكات', '2001::/3، قابل للتوجيه عالميًا عبر الإنترنت العام', 'FC00::/7، قابل للتوجيه داخل المؤسسة المحلية فقط', 'FF00::/8، يُستخدم للاتصالات المتعددة (Multicast)'], correctAnswer: 0,
+    explanation: 'Link-Local addresses use prefix FE80::/10 (range FE80 to FEBF). They are mandatory on all IPv6 interfaces, valid only on the local link, and routers do not forward packets with link-local source or destination.',
+    explanationAr: 'عناوين Link-Local تستخدم البادئة FE80::/10 (من FE80 إلى FEBF). وهي إلزامية على كل واجهة IPv6، وتصلح فقط على الوصلة المحلية ولا توجهها الراوترات لخارج الشبكة.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-53', courseId: 'networks', lectureId: 'net-lec-4', type: 'mcq',
+    question: 'In the IPv6 address 2001:0db8:acad:0001:021A:2BFF:FE3C:4D5E/64, which part is the Network Prefix and which part is the Interface ID?',
+    questionAr: 'في عنوان IPv6 التالي: 2001:0db8:acad:0001:021A:2BFF:FE3C:4D5E/64، أي جزء يمثل بادئة الشبكة (Network Prefix) وأي جزء يمثل معرّف الواجهة (Interface ID)؟',
+    options: ['Prefix is first 48 bits; Interface ID is last 80 bits', 'Prefix is first 64 bits (2001:db8:acad:1); Interface ID is last 64 bits (021a:2bff:fe3c:4d5e)', 'Prefix is first 32 bits; Interface ID is last 96 bits', 'Prefix is first 16 bits; Interface ID is last 112 bits'],
+    optionsAr: ['البادئة هي أول 48 بت؛ ومعرف الواجهة هو آخر 80 بت', 'البادئة هي أول 64 بت (2001:db8:acad:1)؛ ومعرف الواجهة هو آخر 64 بت (021a:2bff:fe3c:4d5e)', 'البادئة هي أول 32 بت؛ ومعرف الواجهة هو آخر 96 بت', 'البادئة هي أول 16 بت؛ ومعرف الواجهة هو آخر 112 بت'], correctAnswer: 1,
+    explanation: 'A /64 prefix length divides the 128-bit address equally: first 64 bits (4 hextets) identify the subnet network, and the final 64 bits (4 hextets) identify the interface endpoint.',
+    explanationAr: 'طول البادئة /64 يقسم العنوان المكون من 128 بت بالتساوي: أول 64 بت (4 مقاطع) تحدد شبكة الـ subnet، وآخر 64 بت (4 مقاطع) تحدد واجهة الجهاز.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'q-net4-54', courseId: 'networks', lectureId: 'net-lec-4', type: 'essay',
+    question: 'Solve step-by-step: Convert the MAC address C4:7D:4F:12:34:56 into a modified EUI-64 Interface ID. Detail: (1) splitting the MAC into two halves, (2) inserting FFFE in the center, (3) converting the first byte C4 into 8-bit binary, (4) inverting the 7th bit (U/L bit) and converting back to hex, and (5) writing the final 4-hextet Interface ID.',
+    questionAr: 'حل المسألة خطوة بخطوة: حوّل عنوان الماك C4:7D:4F:12:34:56 إلى معرّف واجهة EUI-64 معدل. وضّح بالتفصيل: (1) تقسيم الماك لنصفين، (2) إدخال FFFE في المنتصف، (3) تحويل البايت الأول C4 إلى نظام ثنائي من 8 بتات، (4) قلب البت السابع (U/L bit) والتحويل مجددًا للست عشري، و(5) كتابة الـ Interface ID النهائي في 4 مقاطع.',
+    correctAnswer: 'Step-by-step EUI-64 derivation for C4:7D:4F:12:34:56.',
+    modelAnswer: 'Step 1 (Split): C4:7D:4F and 12:34:56. Step 2 (Insert FFFE): C4:7D:4F:FF:FE:12:34:56. Step 3 (Binary conversion of first byte C4): C = 1100, 4 = 0100 -> C4 = 1100 0100. Step 4 (Flip 7th bit): 1100 0100 with 7th bit inverted becomes 1100 0110. Converting 1100 0110 back to hexadecimal: 1100 = C, 0110 = 6 -> C6. Step 5 (Group into 4 hextets): C67D:4FFF:FE12:3456.',
+    modelAnswerAr: 'الخطوة 1 (التقسيم): النصف الأول C4:7D:4F والنصف الثاني 12:34:56. الخطوة 2 (إدخال FFFE): يصبح C4:7D:4F:FF:FE:12:34:56. الخطوة 3 (تحويل البايت الأول C4 لثنائي): C = 1100، 4 = 0100 -> البايت C4 = 1100 0100. الخطوة 4 (قلب البت السابع): 1100 0100 بقلب البت السابع من اليسار (البت رقم 2 من اليمين) تصبح 1100 0110. بالتحويل للست عشري: 1100 = C، و0110 = 6 -> C6. الخطوة 5 (تجميع المقاطع الأربعة): C67D:4FFF:FE12:3456.',
+    keyPoints: ['Split into C4-7D-4F and 12-34-56', 'Insert FFFE in middle -> C47D:4FFF:FE12:3456', 'C4 binary = 1100 0100', 'Invert 7th bit -> 1100 0110 = C6 hex', 'Final Interface ID = C67D:4FFF:FE12:3456']
+  },
+  {
+    id: 'q-net4-55', courseId: 'networks', lectureId: 'net-lec-4', type: 'essay',
+    question: 'Solve step-by-step: Given the full uncompressed IPv6 address 2001:0000:0000:0042:0000:0000:0000:0001, apply Rule 1 and Rule 2 step-by-step to find its most compact compressed form, and explain why only one sequence of zeros can be replaced by double colons.',
+    questionAr: 'حل المسألة خطوة بخطوة: بالنظر إلى عنوان IPv6 الكامل التالي: 2001:0000:0000:0042:0000:0000:0000:0001، طبّق القاعدتين 1 و2 خطوة بخطوة للوصول إلى أقصى صيغة مضغوطة صحيحة، واشرح لماذا يمكن استبدال تسلسل واحد فقط من الأصفار بالنقطتين المزدوجتين.',
+    correctAnswer: 'Step-by-step IPv6 compression for 2001:0000:0000:0042:0000:0000:0000:0001.',
+    modelAnswer: 'Step 1 (Rule 1 - Omit leading zeros): In each 16-bit hextet, remove leading zeros. 2001 remains 2001. 0000 becomes 0. 0042 becomes 42. 0001 becomes 1. The address becomes: 2001:0:0:42:0:0:0:1. Step 2 (Rule 2 - Double colon :: for longest contiguous zero run): The first zero sequence has 2 consecutive hextets (:0:0:). The second zero sequence has 3 consecutive hextets (:0:0:0:). RFC 5952 mandates compressing the longest sequence of contiguous all-zero hextets. Therefore, the 3-hextet run is compressed with ::, yielding: 2001:0:0:42::1. Why only once: Using :: more than once would introduce ambiguity because a device expanding the address would not know how many zero hextets belong to each ::.',
+    modelAnswerAr: 'الخطوة 1 (القاعدة 1 - حذف الأصفار البادئة): في كل مقطع، تُحذف الأصفار البادئة فقط. 2001 تبقى 2001. مقاطع 0000 تصبح 0. مقطع 0042 يصبح 42. مقطع 0001 يصبح 1. يصبح العنوان: 2001:0:0:42:0:0:0:1. الخطوة 2 (القاعدة 2 - النقطتان المزدوجتان لأطول تسلسل أصفار): التسلسل الصفري الأول طوله مقطعان (:0:0:)، بينما التسلسل الثاني طوله 3 مقاطع متتالية (:0:0:0:). يفرض المعيار RFC 5952 ضغط التسلسل الأطول. لذلك يُضغط تسلسل الـ 3 مقاطع بـ ::، وتكون النتيجة النهائية: 2001:0:0:42::1. سبب استخدامها مرة واحدة فقط: لأن تكرار :: يخلق غموضًا يستحيل معه معرفة عدد المقاطع الصفرية في كل موضع.',
+    keyPoints: ['Rule 1 removes leading zeros: 2001:0:0:42:0:0:0:1', 'Identify zero runs: length 2 vs length 3', 'Rule 2 compresses longest run with :: -> 2001:0:0:42::1', 'Only one :: allowed to prevent decompression ambiguity']
+  }
 ];
 
 const lecture1Sections: SummarySection[] = [
@@ -2368,22 +2664,24 @@ const lecture3Sections: SummarySection[] = [
   ),
   section(
     '3. Subnetting Formulas and a Repeatable Method', '3. معادلات الـSubnetting وخطوات ثابتة للحل',
-    'Use the borrowed-bit count to find the number of equal-size subnets, then use the remaining host bits to calculate addresses per subnet. The changing mask octet determines the block size. (Source: CCNA-3.pdf, pp. 20–21.)',
-    'استخدم عدد الـbits المستعارة عشان تحسب عدد الـsubnets المتساوية، وبعدها استخدم host bits المتبقية لحساب العناوين في كل subnet. والـoctet المتغيّر في الـmask بيحدد حجم الـblock. (المصدر: CCNA-3.pdf، ص 20–21.)',
+    'Use the borrowed-bit count to find the number of equal-size subnets, then use the remaining host bits to calculate addresses per subnet. The changing mask octet determines the block size (magic number / increment). (Source: CCNA-3.pdf, pp. 20–21.)',
+    'استخدم عدد الـbits المستعارة عشان تحسب عدد الـsubnets المتساوية، وبعدها استخدم host bits المتبقية لحساب العناوين في كل subnet. والـoctet المتغيّر في الـmask بيحدد حجم الـblock (الرقم السحري ومقدار الزيادة بين الشبكات). (المصدر: CCNA-3.pdf، ص 20–21.)',
     [
-      'Subnets: `2ⁿ`, where `n` is the number of borrowed bits.',
-      'Addresses per subnet: `2ʰ`, where `h = 32 − new prefix`; traditional usable hosts are `2ʰ − 2`.',
-      'New prefix: Add borrowed bits to the original prefix; convert the resulting prefix to its dotted-decimal mask.',
-      'Block size: In the changing octet, calculate `256 − mask value`; network addresses advance by that amount.',
+      '5-Step Problem-Solving Recipe: (1) Find borrowed bits n such that 2ⁿ ≥ required subnets. (2) New prefix = original prefix + n. (3) Subnet mask: write binary 1s for the new prefix length and convert each octet to decimal. (4) Block size (increment) = 256 − changing octet mask value (or 2^(8−n_in_octet)). (5) Subnet table: Network ID advances by block size; first host = Network + 1; last host = Broadcast − 1; broadcast = next Network − 1.',
+      'Changing Octet Weights Table: 1 bit = 128 (block 128); 2 bits = 192 (block 64); 3 bits = 224 (block 32); 4 bits = 240 (block 16); 5 bits = 248 (block 8); 6 bits = 252 (block 4); 7 bits = 254 (block 2); 8 bits = 255 (block 1).',
+      'Subnets vs Usable Hosts: Subnets count = 2ⁿ (where n is borrowed bits); total IP addresses per subnet = 2ʰ (where h = 32 − new prefix); traditional usable hosts = 2ʰ − 2 (subtracting 2 for Network Address and Directed Broadcast Address).',
+      'Locating Any Host IP into its Subnet: Divide the host IP in the changing octet by the block size and take the floor: Subnet_Octet = floor(IP / Block) × Block. Example: 192.168.1.155/27 has block size 32. 155 / 32 = 4 remainder 27 -> Subnet Network is 192.168.1.128, Broadcast is 192.168.1.159, and usable hosts are .129 to .158.',
+      'Point-to-Point WAN Links (/30): A /30 prefix leaves 2 host bits (2² − 2 = 2 usable hosts) with mask 255.255.255.252 and block size 4; it is the industry standard for serial router-to-router connections because it eliminates address waste.',
     ],
     [
-      'عدد الـSubnets: ‏`2ⁿ`، و`n` هو عدد الـbits المستعارة.',
-      'العناوين في كل subnet: ‏`2ʰ`، حيث `h = 32 − الـprefix الجديد`؛ والـhosts القابلة للاستخدام بالطريقة التقليدية `2ʰ − 2`.',
-    'الـPrefix الجديد: زوّد عدد الـbits المستعارة على الـprefix الأصلي، وبعدها حوّل الـprefix للـmask العشري.',
-      'حجم الـBlock: في الـoctet المتغيّر احسب `256 − قيمة الـmask`؛ وعناوين الشبكة بتزيد بالمقدار ده.',
+      'خريطة الحل الذهبية في 5 خطوات: (1) احسب الـbits المستعارة n بحيث 2ⁿ ≥ عدد الـsubnets المطلوبة. (2) الـprefix الجديد = الـprefix الأصلي + n. (3) قناع الشبكة (Mask): اكتب وحايد ثنائية بعدد الـprefix وحوّل كل octet لعشري. (4) حجم الـBlock (مقدار الزيادة) = 256 − قيمة الـoctet المتغير في الـmask. (5) جدول الشبكات: عنوان الشبكة بيزيد بمقدار الـblock؛ أول host = الشبكة + 1؛ وآخر host = البث − 1؛ والبث = الشبكة التالية − 1.',
+      'جدول أوزان الـOctet المتغير: استلاف 1 bit يعطي 128 (الـblock رقمه 128)؛ استلاف 2 bits يعطي 192 (الـblock رقمه 64)؛ استلاف 3 bits يعطي 224 (الـblock رقمه 32)؛ استلاف 4 bits يعطي 240 (الـblock رقمه 16)؛ استلاف 5 bits يعطي 248 (الـblock رقمه 8)؛ استلاف 6 bits يعطي 252 (الـblock رقمه 4)؛ استلاف 7 bits يعطي 254 (الـblock رقمه 2).',
+      'الفرق بين عدد الـSubnets والأجهزة الصالحة: عدد الـSubnets = ‏2ⁿ (حيث n هي الـbits المستعارة)؛ إجمالي العناوين في كل subnet = ‏2ʰ (حيث h هي بتات الـhost المتبقية 32 − الـprefix)؛ والأجهزة الصالحة تقليديًا = ‏2ʰ − 2 (بنطرح 2 لعنوان الشبكة وعنوان الـBroadcast).',
+      'معرفة شبكة أي جهاز بالمسائل: اقسم رقم الـoctet المتغير للجهاز على حجم الـblock وخذ الناتج الصحيح: عنوان الشبكة = floor(IP / Block) × Block. مثال: الجهاز 192.168.1.155/27 حجم الـblock فيه 32. نقسم 155 على 32 يعطي 4 وباقي 27 -> عنوان الشبكة هو 192.168.1.128، والبث 192.168.1.159، والأجهزة من .129 لـ .158.',
+      'وصلات الراوترات Point-to-Point في /30: البادئة /30 بتسيب 2 بت للأجهزة (2² − 2 = 2 جهاز صالح) بقناع 255.255.255.252 وحجم block مقداره 4؛ وده المعيار المستخدم في وصلات الراوترات التسلسلية عشان يمنع إهدار أي عناوين.',
     ],
-    'Keep borrowed bits and remaining host bits separate; the traditional usable-host formula excludes network and broadcast addresses.',
-    'فرّق بين الـbits المستعارة والـhost bits المتبقية؛ ومعادلة الـhosts التقليدية بتستبعد عنواني الشبكة والـbroadcast.',
+    'Keep borrowed bits and remaining host bits separate; block size (256 − mask) immediately reveals all network boundaries.',
+    'فرّق بين الـbits المستعارة والـhost bits المتبقية؛ وحجم الـblock اللي بيساوي (256 − قيمة القناع) بيكشف لك كل حدود الشبكات فورًا.',
   ),
   section(
     '4. Octet-Boundary Subnetting', '4. تقسيم الشبكات عند حدود الـOctets',
@@ -2546,15 +2844,17 @@ const lecture4Sections: SummarySection[] = [
       'Three parts (p. 18): global routing prefix — assigned by the provider, typically /48 (Country); subnet ID — 16 bits used to subnet within an organization (Street); interface ID — 64 bits, equivalent to the IPv4 host portion (Home). Only addresses with the first three bits 001 (2000::/3, first hextet 2000-3FFF) are currently assigned; example 2001:0DB8:ACAD:1::10/64 expands to 2001:0DB8:ACAD:0001 + interface ID 0000:0000:0000:0010.',
       'Registry structure (pp. 19-20): the first 3 bits are the IANA global routing number; bits 16-24 identify the regional registry (AfriNIC, APNIC, LACNIC, RIPE NCC, ARIN); the remaining 8 bits up to /32 identify the ISP; the 3rd hextet is the site/customer identifier and the 4th hextet is the subnet ID — allowing 65,536 subnets with 18 quintillion addresses each. Registry examples: 2001:0000::/23 IANA, 2001:0200::/23 APNIC, 2001:0400::/23 ARIN, 2001:0600::/23 RIPE.',
       'Interface ID (p. 21): the remaining 64 bits, configured manually or dynamically via EUI-64; an interface may hold more than one IPv6 address; there are no broadcast addresses — multicast is used instead.',
-      'EUI-64 process (p. 26): split the 48-bit MAC into the 24-bit OUI and 24-bit device identifier, insert the 16-bit value FFFE in the middle, then flip the 7th bit (the U/L bit). Worked example: FC-99-47-75-CE-E0 → FC-99-47-FF-FE-75-CE-E0 → FE-99-47-FF-FE-75-CE-E0, i.e. interface ID FE99:47FF:FE75:CEE0.',
-      'Random generation (p. 27): under SLAAC the client may instead generate a random 64-bit Interface ID — Windows uses this method.',
+      'EUI-64 process (p. 26): 4-step derivation algorithm: (1) Split 48-bit MAC into two 24-bit halves (OUI and NIC identifier). (2) Insert the 16-bit value FFFE in the middle (yielding 64 bits). (3) Invert the 7th bit (U/L bit) of the first byte (XOR 0x02: in binary, 0 becomes 1 and 1 becomes 0). (4) Assemble into 4 hexadecimal hextets.',
+      'EUI-64 First Byte Conversion Cheat Sheet: 00 -> 02, 02 -> 00, FC -> FE, FE -> FC, BC -> BE, BE -> BC, 10 -> 12, A0 -> A2, 08 -> 0A. Slide worked example (p. 28): MAC FC-99-47-75-CE-E0 -> insert FFFE -> FC99:47FF:FE75:CEE0 -> flip 7th bit of FC (1111 1100 -> 1111 1110 = FE) -> FE99:47FF:FE75:CEE0. Another example: 00:1A:2B:3C:4D:5E becomes 021A:2BFF:FE3C:4D5E.',
+      'Random generation (p. 27): under SLAAC the client may instead generate a random 64-bit Interface ID — Windows uses this method to preserve user privacy across networks.',
     ],
     [
       'الأجزاء التلاتة في صفحة 18: الـ global routing prefix — متوزع من المزود، عادةً /48 (‏Country)؛ والـ subnet ID — ‏16 بت للتقسيم جوه المنظمة (‏Street)؛ والـ interface ID — ‏64 بت مكافئ لجزء الأجهزة في IPv4 (‏Home). حاليًا العناوين الموزعة هي اللي أول تلات بتات فيها 001 (نطاق 2000::/3 وأول hextet من 2000 لـ 3FFF)؛ ومثال ‏2001:0DB8:ACAD:1::10/64 بتتوسع لـ 2001:0DB8:ACAD:0001 مع interface ID هو 0000:0000:0000:0010.',
       'تركيبة السجلات في صفحتي 19 و20: أول 3 بتات هي رقم التوجيه العالمي بتاع IANA؛ والبتات من 16 لـ 24 بتحدد السجل الإقليمي (AfriNIC وAPNIC وLACNIC وRIPE NCC وARIN)؛ والـ 8 بتات الباقية لحد /32 بتحدد الـ ISP؛ والـ hextet التالت هو معرّف الموقع/العميل والرابع هو الـ subnet ID — بيسمح بـ 65,536 subnet وكل واحدة 18 كوينتيليون عنوان. أمثلة السجلات: ‏2001:0000::/23 لـ IANA، و2001:0200::/23 لـ APNIC، و2001:0400::/23 لـ ARIN، و2001:0600::/23 لـ RIPE.',
       'الـ Interface ID في صفحة 21: الـ 64 بت الباقية، بتتظبط يدويًا أو ديناميكيًا بـ EUI-64؛ والواجهة ممكن تحمل أكثر من عنوان IPv6؛ ومفيش عناوين broadcast — الـ multicast بيُستخدم بدلها.',
-      'عملية EUI-64 في صفحة 26: قسّم الـ MAC بتاع 48 بت إلى OUI (24 بت) ومعرّف جهاز (24 بت)، وأدرج القيمة FFFE (16 بت) في النص، وبعدها اقلب البتة السابعة (بتة الـ U/L). مثال محلول: ‏FC-99-47-75-CE-E0 تقوى ‏FC-99-47-FF-FE-75-CE-E0 وبعدها ‏FE-99-47-FF-FE-75-CE-E0، يعني interface ID هو ‏FE99:47FF:FE75:CEE0.',
-      'التوليد العشوائي في صفحة 27: تحت الـ SLAAC العميل ممكن بدل كده يولّد Interface ID عشوائي بطول 64 بت — وWindows بيستخدم الطريقة دي.',
+      'خطوات مسألة الـ EUI-64 في 4 خطوات واضحة في صفحة 26: (1) قسّم عنوان الـ MAC (‏48 بت) لنصفين متساويين كل واحد 24 بت (الـ OUI ورقم الجهاز). (2) احشر القيمة الثابتة FFFE في النص بين النصفين (ليصبح 64 بت). (3) اقلب البت السابع (Universal/Local bit) في البايت الأول من اليسار (البت رقم 2 من اليمين؛ الصفر يصبح 1 والواحد يصبح 0). (4) جمّع الناتج في 4 مقاطع ست عشرية كل مقطع 4 خانات مفصولة بنقطتين.',
+      'جدول تحويل البايت الأول في EUI-64: القيمة 00 تصبح 02، وFC تصبح FE، وBC تصبح BE، و10 تصبح 12، وA0 تصبح A2. مثال السلايد في صفحة 28: عنوان الماك FC-99-47-75-CE-E0 بيتحول لـ FE99:47FF:FE75:CEE0 (لأن FC ثنائيًا 1111 1100 وقلب البت السابع يعطي 1111 1110 = FE). ومثال 00:1A:2B:3C:4D:5E بيتحول لـ 021A:2BFF:FE3C:4D5E.',
+      'التوليد العشوائي في صفحة 27: تحت الـ SLAAC العميل ممكن بدل كده يولّد Interface ID عشوائي بطول 64 بت — وWindows بيستخدم الطريقة دي لحماية خصوصية المستخدم ومنع تتبع جهازه عبر الشبكات.',
     ],
     'Remember the /48 + /16 + /64 split and the EUI-64 recipe: split, insert FFFE, flip the U/L bit.',
     'افتكر التقسيم ‏/48 + /16 + /64 ووصفة الـ EUI-64: قسّم، أدرج FFFE، اقلب بتة الـ U/L.',

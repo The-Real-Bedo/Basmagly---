@@ -117,7 +117,7 @@ export const Ipv6CompressionLab: React.FC = () => {
       goalAr: 'بدّل لوضع Expand مع العنوان fd00:0:0:4100:: واكتب كل hextet بأربع خانات ست عشرية.',
       hint: 'The double colon stands for four missing zero hextets; expansion writes all eight groups.',
       hintAr: 'النقطتين بتقف مكان أربع hextets أصفار ناقصة؛ والتوسيع بيكتب المجموعات الثمانية كلها.',
-      start: () => { setMode('expand'); setPresetId('p-expand-4100'); setRule1(false); setRule2(false); },
+      start: () => { setMode('expand'); setPresetId('p-expand-8203'); setRule1(false); setRule2(false); },
       evaluate: () => result === 'fd00:0000:0000:4100:0000:0000:0000:0000'
         ? challengeFeedback('success', 'Correct: fd00:0000:0000:4100:0000:0000:0000:0000 is the preferred format.', 'صح: ‏fd00:0000:0000:4100:0000:0000:0000:0000 هي الصيغة المفضلة.')
         : challengeFeedback('retry', 'Not yet — every one of the eight hextets needs four digits.', 'لسه — كل hextet من التمنية محتاج أربع خانات.'),

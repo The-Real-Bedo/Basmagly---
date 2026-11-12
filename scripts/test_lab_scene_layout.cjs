@@ -48,6 +48,10 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
   let root, labelChecks = 0, sceneChecks = 0, actionChecks = 0;
   async function inspectLabels(context) {
+    // Label projection follows container size; give the resize observer two frames
+    // plus a short settle so a just-closed dialog cannot be measured mid-relayout.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await delay(140);
     const result = await page.$eval(root, element => {
       const rect = e => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, w: r.width, h: r.height }; };
       const labels = [...element.querySelectorAll('[data-scene-label]')].filter(e => getComputedStyle(e).display !== 'none');
