@@ -20,9 +20,11 @@ guard let doc = PDFDocument(url: URL(fileURLWithPath: pdfPath)) else {
 }
 
 let count = doc.pageCount
-print("Exporting \(count) pages from \(pdfPath) to \(outputDir)...")
+let maxPages = args.count > 3 ? (Int(args[3]) ?? count) : count
+let limit = min(count, maxPages)
+print("Exporting \(limit) pages from \(pdfPath) to \(outputDir)...")
 
-for i in 0..<count {
+for i in 0..<limit {
     guard let page = doc.page(at: i) else { continue }
     let pageNum = i + 1
     let bounds = page.bounds(for: .mediaBox)

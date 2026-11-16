@@ -185,7 +185,6 @@ export const App: React.FC = () => {
   };
 
   const handleOpenLab = (lab: LabDirectoryItem) => {
-    if (lab.category !== 'networks' && lab.courseId !== 'networks') return;
     const course = COURSES_DATA.find(c => c.id === lab.courseId);
     if (!course || !course.isAvailable) return;
     const lecture = course.lectures.find(l => l.id === lab.lectureId);
@@ -386,7 +385,8 @@ export const App: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredLabs.map((lab) => {
                   const IconComp = lab.icon;
-                  const isAvailable = lab.category === 'networks' || lab.courseId === 'networks';
+                  const labCourse = COURSES_DATA.find(c => c.id === lab.courseId);
+                  const isAvailable = Boolean(labCourse?.isAvailable);
                   return (
                     <div
                       key={lab.id}
