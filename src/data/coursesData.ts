@@ -21,5 +21,5 @@ export const COURSES_DATA: Course[] = [
       default: return { ...course, isAvailable: false };
     }
   }),
-  { ...SIGNAL_PROCESSING_COURSE, isAvailable: true },
+  { ...SIGNAL_PROCESSING_COURSE, isAvailable: false },
 ];
