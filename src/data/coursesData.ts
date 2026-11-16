@@ -13,7 +13,7 @@ import { MOBILE_PROGRAMMING_COURSE } from './mobileProgrammingCourse';
 export const COURSES_DATA: Course[] = [
   ...COURSE_SEEDS.map(course => {
     switch (course.id) {
-      case 'ai': return { ...course, lectures: [AI_LECTURE_ONE, ...AI_REMAINING_LECTURES], sheets: auditedAiSheets(course.sheets), isAvailable: false };
+      case 'ai': return { ...course, lectures: [AI_LECTURE_ONE, ...AI_REMAINING_LECTURES], sheets: auditedAiSheets(course.sheets), isAvailable: true };
       case 'networks': return { ...course, lectures: NETWORK_LECTURES, isAvailable: true };
       case 'iot': return { ...course, lectures: IOT_LECTURES, sheets: [...(course.sheets ?? []), IOT_QUESTION_BANK_SHEET], isAvailable: false };
       case 'windows-programming': return { ...WINDOWS_PROGRAMMING_COURSE, isAvailable: false };
@@ -21,5 +21,5 @@ export const COURSES_DATA: Course[] = [
       default: return { ...course, isAvailable: false };
     }
   }),
-  { ...SIGNAL_PROCESSING_COURSE, isAvailable: false },
+  { ...SIGNAL_PROCESSING_COURSE, isAvailable: true },
 ];
