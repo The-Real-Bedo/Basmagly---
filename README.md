@@ -1,8 +1,5 @@
 # Basmagly | بصمجّلي شكرًا
 
-**Turn the page. See the idea.**
-
-من صفحة لفكرة… ومن فكرة لتجربة.
 
 An English-first study workspace with supporting Egyptian Arabic explanations, source-linked lecture notes, worked practice, and visual experiments. The curriculum follows the supplied lecture decks; reference books provide explicitly identified background, not a claim of complete book coverage.
 
