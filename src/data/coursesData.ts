@@ -17,7 +17,7 @@ export const COURSES_DATA: Course[] = [
       case 'networks': return { ...course, lectures: NETWORK_LECTURES, isAvailable: true };
       case 'iot': return { ...course, lectures: IOT_LECTURES, sheets: [...(course.sheets ?? []), IOT_QUESTION_BANK_SHEET], isAvailable: false };
       case 'windows-programming': return { ...WINDOWS_PROGRAMMING_COURSE, isAvailable: false };
-      case 'mobile-programming': return { ...MOBILE_PROGRAMMING_COURSE, isAvailable: true };
+      case 'mobile-programming': return { ...MOBILE_PROGRAMMING_COURSE, isAvailable: false };
       default: return { ...course, isAvailable: false };
     }
   }),
